@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bushido Ops — Cybersecurity Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0E0E0C;
+  --bg2: #161614;
+  --bg3: #1E1E1B;
+  --border: #2A2A26;
+  --border2: #363630;
+  --text: #E8E6DC;
+  --text2: #8A8880;
+  --text3: #555450;
+  --accent: #C8602A;
+  --accent2: #E87A3A;
+  --gold: #C9A84C;
+  --gold2: #E0C068;
+  --green: #4A8C3F;
+  --green2: #6AAD5F;
+  --blue: #2A5FA8;
+  --blue2: #4A7FCA;
+  --red: #8C3A2A;
+  --red2: #B05040;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Noto Serif', Georgia, serif;
+  --sans: 'Syne', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index: 10;
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+}
+.logo-mark {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--sans); font-size: 18px; font-weight: 700;
+  letter-spacing: -0.3px; color: var(--text);
+}
+.logo-blade {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-ops { color: var(--accent); }
+.header-belt {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--text2);
+}
+.hb-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); transition: background 0.4s; }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 5;
+  padding: 4rem 2rem 3rem;
+  max-width: 900px; margin: 0 auto;
+  text-align: center;
+}
+.hero-kana {
+  font-family: var(--serif);
+  font-size: 11px; letter-spacing: 4px;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 1rem;
+  opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+}
+.hero-title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 700; line-height: 1.1;
+  letter-spacing: -2px;
+  margin-bottom: 1rem;
+  opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+}
+.hero-title em {
+  font-style: italic; font-family: var(--serif);
+  color: var(--accent);
+}
+.hero-sub {
+  font-size: 15px; color: var(--text2); max-width: 480px; margin: 0 auto 2.5rem;
+  opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+}
+
+/* ── BELT PROGRESSION ── */
+.belt-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; margin-bottom: 3rem;
+  opacity: 0; animation: fadeUp 0.7s 0.45s forwards;
+}
+.belt-step {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 0 6px; cursor: default;
+}
+.belt-step-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--border2);
+  transition: all 0.3s; position: relative;
+}
+.belt-step-dot.active { border-color: transparent; transform: scale(1.3); }
+.belt-step-dot.achieved { border-color: transparent; }
+.belt-step-label { font-size: 9px; color: var(--text3); letter-spacing: 0.5px; white-space: nowrap; }
+.belt-step-label.active { color: var(--text2); }
+.belt-connector { width: 24px; height: 2px; background: var(--border); margin-top: -14px; }
+.belt-connector.filled { background: var(--gold); }
+
+/* ── MAIN LAYOUT ── */
+.app-shell {
+  position: relative; z-index: 5;
+  max-width: 760px; margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+/* ── STAT ROW ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem;
+}
+.stat-cell {
+  background: var(--bg2); padding: 16px 12px; text-align: center;
+}
+.stat-v {
+  font-size: 26px; font-weight: 700; color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.stat-v.accent { color: var(--accent2); }
+.stat-v.gold { color: var(--gold2); }
+.stat-l { font-size: 10px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+/* ── RANK CARD ── */
+.rank-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 1.5rem; position: relative; overflow: hidden;
+}
+.rank-card::before {
+  content: ''; position: absolute; right: -20px; top: -20px;
+  width: 100px; height: 100px; border-radius: 50%;
+  background: var(--accent); opacity: 0.04; pointer-events: none;
+}
+.rank-icon {
+  width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; border: 2px solid var(--border2);
+}
+.rank-info { flex: 1; min-width: 0; }
+.rank-name { font-size: 16px; font-weight: 600; }
+.rank-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.rank-prog { margin-top: 10px; }
+.prog-track { height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+.prog-bar { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+.prog-label { font-size: 10px; color: var(--text3); margin-top: 4px; letter-spacing: 0.5px; }
+
+/* ── MODULE TABS ── */
+.module-tabs {
+  display: flex; gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; margin-bottom: 1.5rem;
+}
+.mod-tab {
+  flex: 1; padding: 10px 16px; text-align: center;
+  background: var(--bg2); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s;
+  color: var(--text2); border: none; text-transform: uppercase;
+}
+.mod-tab:hover { background: var(--bg3); color: var(--text); }
+.mod-tab.active { background: var(--accent); color: white; }
+.mod-tab .mod-badge {
+  display: inline-block; background: rgba(0,0,0,0.3);
+  font-size: 9px; padding: 1px 5px; border-radius: 4px; margin-left: 6px;
+}
+
+/* ── CAT ROW ── */
+.cat-row {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem;
+}
+.cat-pill {
+  padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--text2); cursor: pointer; transition: all 0.15s;
+}
+.cat-pill:hover { border-color: var(--text3); color: var(--text); }
+.cat-pill.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.75rem; margin-bottom: 0.75rem;
+  position: relative; overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.q-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.q-card.diff-white::before { background: #888; }
+.q-card.diff-yellow::before { background: var(--gold); }
+.q-card.diff-orange::before { background: var(--accent); }
+.q-card.diff-green::before { background: var(--green2); }
+.q-card.diff-blue::before { background: var(--blue2); }
+.q-card.diff-brown::before { background: #8B5E3C; }
+.q-card.diff-black::before { background: var(--text); }
+
+.q-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; }
+.diff-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 4px;
+}
+.cat-badge {
+  font-size: 10px; color: var(--text3); letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.q-progress { margin-left: auto; font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+.q-text {
+  font-size: 16px; line-height: 1.7; color: var(--text);
+  margin-bottom: 1.25rem;
+}
+
+.q-code {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 14px 16px;
+  font-family: var(--mono); font-size: 12px;
+  color: #A0C8A0; line-height: 1.7;
+  margin-bottom: 1.25rem;
+  overflow-x: auto; white-space: pre;
+  display: none;
+}
+.q-code.show { display: block; }
+
+/* ── OPTIONS ── */
+.options { display: flex; flex-direction: column; gap: 8px; }
+.opt {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  cursor: pointer; transition: all 0.15s;
+  text-align: left; width: 100%; color: var(--text);
+  font-family: var(--sans); font-size: 14px; line-height: 1.5;
+}
+.opt:hover:not(.locked) { border-color: var(--border2); background: var(--bg3); }
+.opt.locked { cursor: default; pointer-events: none; }
+.opt.correct { border-color: var(--green); background: rgba(74,140,63,0.12); color: var(--green2); }
+.opt.wrong { border-color: var(--red2); background: rgba(140,58,42,0.12); color: #D06050; }
+.opt-key {
+  width: 22px; height: 22px; border-radius: 4px; flex-shrink: 0;
+  background: var(--bg3); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; font-family: var(--mono);
+  color: var(--text2); margin-top: 2px; transition: all 0.15s;
+}
+.opt.correct .opt-key { background: var(--green); border-color: var(--green); color: white; }
+.opt.wrong .opt-key { background: var(--red); border-color: var(--red); color: white; }
+
+/* ── FEEDBACK ── */
+.feedback-box {
+  margin-top: 1rem; padding: 14px 16px;
+  border-radius: 8px; font-size: 13px; line-height: 1.7;
+  display: none; border-left: 3px solid;
+}
+.feedback-box.show { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.feedback-box.ok { background: rgba(74,140,63,0.1); border-color: var(--green); color: #90CC80; }
+.feedback-box.ko { background: rgba(140,58,42,0.1); border-color: var(--red2); color: #D08070; }
+.feedback-label { font-weight: 700; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── ACTIONS ── */
+.q-actions {
+  display: flex; justify-content: flex-end; margin-top: 0.75rem;
+}
+.btn {
+  padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  font-family: var(--sans); cursor: pointer; transition: all 0.15s;
+  letter-spacing: 0.3px;
+}
+.btn-ghost { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
+.btn-ghost:hover { border-color: var(--text3); color: var(--text); }
+.btn-primary { background: var(--accent); border: 1px solid var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+
+/* ── RESULT SCREEN ── */
+.result-screen {
+  display: none; text-align: center; padding: 3rem 1.5rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; animation: slideIn 0.4s ease;
+}
+.result-screen.show { display: block; }
+.res-glyph { font-size: 56px; margin-bottom: 1rem; }
+.res-title { font-size: 24px; font-weight: 700; margin-bottom: 0.5rem; }
+.res-sub { font-size: 14px; color: var(--text2); max-width: 400px; margin: 0 auto 2rem; line-height: 1.7; }
+.res-score-big { font-size: 52px; font-weight: 700; color: var(--gold2); line-height: 1; margin-bottom: 4px; }
+.res-score-lbl { font-size: 11px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2rem; }
+.res-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 5;
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; color: var(--text3);
+}
+.footer-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--text2); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── BELT COLORS ── */
+.bc-white  { background: #888780; }
+.bc-yellow { background: #C9A030; }
+.bc-orange { background: #D85A30; }
+.bc-green  { background: #4A8C3F; }
+.bc-blue   { background: #2A5FA8; }
+.bc-brown  { background: #7A4010; }
+.bc-black  { background: #2C2C2A; border: 1px solid #444; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { letter-spacing: -1px; }
+  .module-tabs { flex-direction: column; }
+  header { padding: 0 1rem; }
+  .app-shell { padding: 0 1rem 3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-mark">
+    <div class="logo-blade"></div>
+    Bushido <span class="logo-ops">Ops</span>
+  </div>
+  <div class="header-belt" id="header-belt-display">
+    <div class="hb-dot" id="hb-0"></div>
+    <div class="hb-dot" id="hb-1"></div>
+    <div class="hb-dot" id="hb-2"></div>
+    <div class="hb-dot" id="hb-3"></div>
+    <div class="hb-dot" id="hb-4"></div>
+    <div class="hb-dot" id="hb-5"></div>
+    <div class="hb-dot" id="hb-6"></div>
+    <span id="header-rank-lbl" style="margin-left:6px;">Cintura Bianca</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-kana">武士道 · Cybersecurity Dojo</div>
+  <h1 class="hero-title">Padronanza della sicurezza,<br><em>un grado alla volta</em></h1>
+  <p class="hero-sub">Rispondi alle domande, scala i gradi. Dalla cintura bianca alla nera — come nel karate, la conoscenza si guadagna.</p>
+  <div class="belt-bar" id="belt-bar"></div>
+</section>
+
+<!-- APP -->
+<main class="app-shell">
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-cell"><div class="stat-v gold" id="s-pts">0</div><div class="stat-l">Punti totali</div></div>
+    <div class="stat-cell"><div class="stat-v accent" id="s-streak">0</div><div class="stat-l">Serie 🔥</div></div>
+    <div class="stat-cell"><div class="stat-v" id="s-answered">0</div><div class="stat-l">Risposte</div></div>
+    <div class="stat-cell"><div class="stat-v" id="s-acc">—</div><div class="stat-l">Accuratezza</div></div>
+  </div>
+
+  <!-- RANK CARD -->
+  <div class="rank-card">
+    <div class="rank-icon" id="rank-icon" style="background:#1A1A18;">🥋</div>
+    <div class="rank-info">
+      <div class="rank-name" id="rank-name">Cintura Bianca</div>
+      <div class="rank-desc" id="rank-desc">Inizia il tuo percorso nel dojo</div>
+      <div class="rank-prog">
+        <div class="prog-track"><div class="prog-bar" id="prog-bar" style="width:0%;background:#888;"></div></div>
+        <div class="prog-label" id="prog-label">0 / 30 punti per il prossimo grado</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE TABS -->
+  <div class="module-tabs">
+    <button class="mod-tab active" id="tab-base" onclick="switchModule('base')">
+      ⛩ Fondamentali <span class="mod-badge">Bianca–Verde</span>
+    </button>
+    <button class="mod-tab" id="tab-adv" onclick="switchModule('adv')">
+      ⚔ Livello Avanzato <span class="mod-badge">Blu–Nera</span>
+    </button>
+  </div>
+
+  <!-- CATEGORY ROW -->
+  <div class="cat-row" id="cat-row"></div>
+
+  <!-- QUIZ AREA -->
+  <div id="quiz-area">
+    <div class="q-card" id="q-card">
+      <div class="q-meta">
+        <span class="diff-badge" id="diff-badge">—</span>
+        <span class="cat-badge" id="cat-badge">—</span>
+        <span class="q-progress" id="q-progress">1/5</span>
+      </div>
+      <div class="q-text" id="q-text">Scegli una categoria per iniziare...</div>
+      <pre class="q-code" id="q-code"></pre>
+      <div class="options" id="options"></div>
+      <div class="feedback-box" id="feedback">
+        <div class="feedback-label" id="fb-label">—</div>
+        <div id="fb-text"></div>
+      </div>
+    </div>
+    <div class="q-actions">
+      <button class="btn btn-primary" id="next-btn" style="display:none;" onclick="nextQ()">Prossima domanda →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-screen" id="result-screen">
+    <div class="res-glyph" id="res-glyph">⬛</div>
+    <div class="res-title" id="res-title">Sessione completata</div>
+    <div class="res-sub" id="res-sub">Hai completato la sessione.</div>
+    <div class="res-score-big" id="res-score">0</div>
+    <div class="res-score-lbl">punti guadagnati</div>
+    <div class="res-btns">
+      <button class="btn btn-ghost" onclick="restart()">↺ Riprova</button>
+      <button class="btn btn-primary" onclick="switchModule(currentModule==='base'?'adv':'base')">Prossimo modulo →</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">⚔ Bushido Ops</div>
+  <div>武士道 — La via del guerriero</div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const BELTS = [
+  { name:"Cintura Bianca",   emoji:"🥋", color:"#888780", bg:"rgba(136,135,128,0.15)", pts:0,   next:30,  desc:"Inizia il tuo percorso nel dojo" },
+  { name:"Cintura Gialla",   emoji:"🟡", color:"#C9A030", bg:"rgba(201,160,48,0.15)",  pts:30,  next:80,  desc:"Le basi prendono forma" },
+  { name:"Cintura Arancione",emoji:"🟠", color:"#D85A30", bg:"rgba(216,90,48,0.15)",   pts:80,  next:150, desc:"La tecnica si affina" },
+  { name:"Cintura Verde",    emoji:"🟢", color:"#4A8C3F", bg:"rgba(74,140,63,0.15)",   pts:150, next:250, desc:"Comprendi il flusso degli attacchi" },
+  { name:"Cintura Blu",      emoji:"🔵", color:"#2A5FA8", bg:"rgba(42,95,168,0.15)",   pts:250, next:380, desc:"Pensi come un attaccante" },
+  { name:"Cintura Marrone",  emoji:"🟤", color:"#7A4010", bg:"rgba(122,64,16,0.15)",   pts:380, next:550, desc:"La padronanza è vicina" },
+  { name:"Cintura Nera",     emoji:"⬛", color:"#C0C0B8", bg:"rgba(192,192,184,0.1)", pts:550, next:9999,desc:"Sei il dojo. Il dojo sei tu." },
+];
+
+const BELT_CLASSES = ["bc-white","bc-yellow","bc-orange","bc-green","bc-blue","bc-brown","bc-black"];
+
+const DIFF_STYLES = {
+  white:  { label:"Base",        bg:"rgba(136,135,128,0.2)", color:"#AAA898" },
+  yellow: { label:"Principiante",bg:"rgba(201,160,48,0.2)",  color:"#D4A840" },
+  orange: { label:"Intermedio",  bg:"rgba(216,90,48,0.2)",   color:"#E87050" },
+  green:  { label:"Avanzato",    bg:"rgba(74,140,63,0.2)",   color:"#6AAD5F" },
+  blue:   { label:"Esperto",     bg:"rgba(42,95,168,0.2)",   color:"#6090D8" },
+  brown:  { label:"Master",      bg:"rgba(122,64,16,0.2)",   color:"#B07840" },
+  black:  { label:"Sensei",      bg:"rgba(255,255,255,0.08)",color:"#D0CEC4" },
+};
+
+const DIFF_PTS = { white:5, yellow:8, orange:12, green:18, blue:25, brown:35, black:50 };
+
+/* ── BASE QUESTIONS ── */
+const BASE_QS = {
+  fondamentali: [
+    { q:"Qual è lo scopo principale di un firewall in una rete aziendale?", opts:["Cifrare tutti i dati in transito","Filtrare il traffico in base a regole definite","Autenticare gli utenti alla VPN","Monitorare i log di sistema"], ans:1, diff:"white", exp:"Un firewall filtra il traffico di rete in entrata e uscita in base a policy configurate, decidendo cosa permettere o bloccare." },
+    { q:"Cosa si intende per 'principio del minimo privilegio'?", opts:["Gli utenti devono avere accesso solo alle risorse necessarie al loro ruolo","Tutti gli admin hanno accesso root ai sistemi","I privilegi si assegnano in ordine alfabetico","Solo il CISO può avere accesso completo"], ans:0, diff:"yellow", exp:"Il least privilege limita l'accesso di ogni utente/servizio al minimo indispensabile, riducendo la superficie d'attacco." },
+    { q:"Un attacco 'man-in-the-middle' consiste in:", opts:["Inserire malware in un allegato email","Intercettare e potenzialmente alterare la comunicazione tra due parti","Bloccare l'accesso a un servizio con traffico massiccio","Sfruttare una vulnerabilità del kernel"], ans:1, diff:"orange", exp:"Nel MitM l'attaccante si posiziona tra due parti che credono di comunicare direttamente, potendo leggere o modificare i dati." },
+    { q:"SHA-256 è:", opts:["Un algoritmo di cifratura simmetrica","Un protocollo VPN","Una funzione hash crittografica","Un tipo di certificato SSL"], ans:2, diff:"white", exp:"SHA-256 è una funzione di hashing che produce un digest a 256 bit, usata per integrità dei dati, firme digitali e molto altro." },
+    { q:"Cosa identifica la sigla CIA nella sicurezza informatica?", opts:["Central Intelligence Agency","Confidentiality, Integrity, Availability","Cyber Intrusion Analysis","Certificate Infrastructure Authority"], ans:1, diff:"white", exp:"La triade CIA (Confidenzialità, Integrità, Disponibilità) è il framework base della sicurezza delle informazioni." },
+    { q:"Cosa si intende per 'social engineering' in sicurezza informatica?", opts:["L'uso di exploit automatizzati su sistemi social","Manipolazione psicologica delle persone per ottenere informazioni o accesso","Attacchi DDoS ai social network","Analisi dei profili social per OSINT"], ans:1, diff:"white", exp:"Il social engineering sfrutta la psicologia umana anziché le vulnerabilità tecniche — phishing, pretexting, baiting sono tecniche comuni." },
+    { q:"Qual è la differenza tra autenticazione e autorizzazione?", opts:["Sono sinonimi — significano la stessa cosa","L'autenticazione verifica l'identità, l'autorizzazione verifica i permessi","L'autenticazione usa password, l'autorizzazione usa biometria","L'autorizzazione avviene prima dell'autenticazione"], ans:1, diff:"yellow", exp:"Autenticazione = chi sei (verifica identità). Autorizzazione = cosa puoi fare (verifica permessi). Sono fasi distinte e sequenziali." },
+  ],
+  networking: [
+    { q:"Su quale porta opera di default il protocollo HTTPS?", opts:["80","443","8080","22"], ans:1, diff:"white", exp:"HTTPS usa la porta 443 TCP. La porta 80 è HTTP, la 22 è SSH, la 8080 è spesso usata come proxy HTTP alternativo." },
+    { q:"Cos'è un attacco DDoS?", opts:["Furto di credenziali via phishing","Saturazione di un servizio tramite traffico distribuito da molte sorgenti","Escalation di privilegi su un sistema Linux","Intercettazione passiva del traffico Wi-Fi"], ans:1, diff:"yellow", exp:"Un DDoS (Distributed Denial of Service) utilizza una botnet o molte sorgenti coordinate per sovraccaricare un servizio e renderlo irraggiungibile." },
+    { q:"In una scansione Nmap, il flag -sS esegue:", opts:["Una scansione UDP completa","Una scansione SYN (half-open)","Un OS fingerprinting aggressivo","Una scansione di tutte le porte superiori a 1024"], ans:1, diff:"green", exp:"Il SYN scan (-sS) invia pacchetti SYN e analizza la risposta senza completare il three-way handshake, risultando più silenzioso." },
+    { q:"Cosa indica il codice HTTP 403?", opts:["Risorsa non trovata","Errore interno del server","Accesso vietato (Forbidden)","Reindirizzamento permanente"], ans:2, diff:"yellow", exp:"HTTP 403 Forbidden indica che il server ha capito la richiesta ma si rifiuta di autorizzarla — diverso dal 401 che indica mancata autenticazione." },
+    { q:"Cosa fa il protocollo ARP?", opts:["Risolve nomi di dominio in indirizzi IP","Mappa indirizzi IP in indirizzi MAC sulla rete locale","Cifra il traffico di rete end-to-end","Assegna dinamicamente indirizzi IP ai dispositivi"], ans:1, diff:"yellow", exp:"ARP (Address Resolution Protocol) risolve indirizzi IP in MAC address sulla LAN. L'ARP spoofing/poisoning sfrutta la mancanza di autenticazione di questo protocollo." },
+    { q:"Qual è la funzione principale di un proxy inverso (reverse proxy)?", opts:["Nascondere l'identità del client al server","Distribuire le richieste in entrata tra più server backend, nascondendo la loro struttura","Cifrare il traffico tra il client e Internet","Filtrare i contenuti web per gli utenti interni"], ans:1, diff:"orange", exp:"Il reverse proxy riceve le richieste per conto dei server backend, gestendo load balancing, TLS termination e caching. Dal lato client appare come unico server." },
+  ],
+  blueteam: [
+    { q:"Cosa analizza un SIEM?", opts:["Solo i log del firewall perimetrale","Aggregazione e correlazione di log da sorgenti multiple per rilevare anomalie","Il codice sorgente delle applicazioni per trovare vulnerabilità","Il traffico DNS per bloccare malware con DGA"], ans:1, diff:"green", exp:"Un SIEM (Security Information and Event Management) aggrega log da endpoint, rete, applicazioni e cloud, correla gli eventi e genera alert su comportamenti anomali." },
+    { q:"Cosa si intende per 'hardening' di un sistema?", opts:["Aggiornare il firmware del router","Ridurre la superficie d'attacco disabilitando servizi, porte e funzionalità non necessarie","Installare un antivirus enterprise","Abilitare la crittografia end-to-end sulle email"], ans:1, diff:"yellow", exp:"L'hardening riduce la superficie d'attacco rimuovendo software inutili, disabilitando servizi non necessari, configurando permessi corretti e applicando patch." },
+    { q:"Quale vantaggio principale offre l'autenticazione a più fattori (MFA)?", opts:["Elimina completamente il rischio di phishing","Rende inutile l'uso di password complesse","Richiede più fattori di verifica, rendendo molto più difficile l'accesso non autorizzato anche con credenziali rubate","Cifra automaticamente le comunicazioni di rete"], ans:2, diff:"yellow", exp:"L'MFA aggiunge un layer di sicurezza: anche se le credenziali vengono compromesse, l'attaccante ha bisogno di un secondo fattore (OTP, biometria, token fisico)." },
+    { q:"Qual è la differenza tra un IDS e un IPS?", opts:["Un IDS è hardware, un IPS è software","Un IDS rileva e allerta, un IPS rileva e blocca attivamente","Un IDS protegge l'endpoint, un IPS la rete","Non c'è differenza pratica tra i due"], ans:1, diff:"green", exp:"Un IDS (Intrusion Detection System) rileva e allerta. Un IPS (Intrusion Prevention System) può intervenire attivamente bloccando il traffico malevolo in real time." },
+    { q:"In quale fase dell'Incident Response si raccolgono le prove forensi?", opts:["Preparazione","Contenimento","Identificazione ed eradicazione","Post-incident review"], ans:2, diff:"orange", exp:"Durante identificazione ed eradicazione si raccolgono prove forensi (memory dump, log, immagini disco) prima di pulire il sistema, per non perdere evidenze." },
+  ],
+  redteam_base: [
+    { q:"Cos'è un payload in ambito exploit?", opts:["Il codice che viene eseguito dopo aver sfruttato una vulnerabilità","Il report finale di un pentest","Il log degli errori di sistema","La firma digitale del malware"], ans:0, diff:"green", exp:"Il payload è il codice malevolo eseguito dopo il successo dell'exploit: può aprire una shell, creare un utente, o avviare un C2 agent." },
+    { q:"Cosa si intende per 'privilege escalation'?", opts:["Ottenere accesso a un sistema tramite phishing","Passare da un accesso limitato a privilegi più elevati (es. root/SYSTEM)","Esfiltrare dati sensibili da un database","Bypassare un Web Application Firewall"], ans:1, diff:"green", exp:"La privilege escalation (orizzontale o verticale) consente all'attaccante di ottenere livelli di accesso superiori a quelli inizialmente ottenuti." },
+    { q:"Quale tecnica usa un attaccante per mantenere la persistenza su un sistema compromesso?", opts:["SQL Injection","Backdoor, task schedulati, chiavi di registro, cron job","ARP Spoofing","Fuzzing dei parametri HTTP"], ans:1, diff:"green", exp:"La persistenza si ottiene con meccanismi che sopravvivono al riavvio: servizi Windows, cron job Linux, chiavi di avvio nel registro, SSH keys aggiunte, webshell." },
+    { q:"Il framework MITRE ATT&CK mappa:", opts:["Le vulnerabilità CVE per CVSS score","Le tattiche, tecniche e procedure (TTP) degli attaccanti reali","I controlli ISO 27001 per la compliance","Le porte di rete comunemente usate dai malware"], ans:1, diff:"orange", exp:"MITRE ATT&CK è una knowledge base delle TTP usate dai threat actor in ambienti reali, organizzata per tattiche (reconnaissance, persistence, lateral movement, ecc.)." },
+    { q:"Cosa si intende per 'footprinting' in un pentest?", opts:["L'installazione di rootkit sul sistema target","La raccolta passiva di informazioni sul target prima dell'attacco (OSINT, DNS, WHOIS)","Il processo di escalation dei privilegi","Il mascheramento del traffico malevolo in traffico legittimo"], ans:1, diff:"yellow", exp:"Il footprinting è la fase di reconnaissance: si raccolgono informazioni pubbliche (WHOIS, DNS, LinkedIn, Shodan) senza interagire direttamente con il target, per non lasciare tracce." },
+  ],
+};
+
+/* ── ADVANCED QUESTIONS ── */
+const ADV_QS = {
+  redteam: [
+    { q:"Durante un engagement red team stai eseguendo Kerberoasting. Quale condizione è necessaria affinché l'attacco abbia successo?", opts:["L'account target deve avere il flag 'Password never expires' abilitato","Un Service Principal Name (SPN) deve essere associato a un account utente di dominio","L'account attaccante deve avere privilegi di Domain Admin","Il KDC deve avere la pre-autenticazione Kerberos disabilitata"], ans:1, diff:"blue", exp:"Il Kerberoasting funziona richiedendo un TGS per qualsiasi SPN — il KDC risponde con un ticket cifrato con l'hash NTLM dell'account del servizio. Qualsiasi utente autenticato al dominio può fare questa richiesta, indipendentemente dai propri privilegi." },
+    { q:"In un attacco Pass-the-Hash, quale componente viene riutilizzato dall'attaccante per autenticarsi?", opts:["Il ticket Kerberos TGT in chiaro","L'hash NTLM della password senza doverla crackare","Il certificato SSL del domain controller","Il token di sessione OAuth2 rubato dalla memoria"], ans:1, diff:"blue", code:"mimikatz # sekurlsa::logonpasswords\n[*] Hash NTLM: aad3b435b51404eeaad3b435b51404ee\n\n$ evil-winrm -i 10.0.0.5 -u Administrator \\\n  -H aad3b435b51404eeaad3b435b51404ee", exp:"In Windows, il protocollo NTLM accetta direttamente l'hash come credenziale. L'attaccante che ha estratto l'hash (es. via Mimikatz) può usarlo direttamente con evil-winrm o Mimikatz stesso per autenticarsi senza conoscere la password in chiaro." },
+    { q:"Cos'è il 'Golden Ticket' in un attacco Active Directory?", opts:["Un exploit zero-day per il domain controller","Un TGT forgiato usando l'hash NTLM dell'account KRBTGT, valido per qualsiasi utente del dominio","Un certificato SSL autofirmato che bypassa LDAPS","Un token OAuth2 con scope Administrator emesso da Azure AD"], ans:1, diff:"brown", exp:"Conoscendo l'hash di KRBTGT (l'account che firma tutti i TGT nel dominio), l'attaccante può forgiare TGT arbitrari — per qualsiasi utente, con qualsiasi gruppo, con qualsiasi durata. La persistenza sopravvive anche al cambio password dell'account target, finché KRBTGT non viene resettato due volte." },
+    { q:"Stai effettuando un red team engagement con OPSEC constraints. Quale tecnica di C2 è più difficile da rilevare per un blue team con full packet inspection?", opts:["C2 over raw TCP sulla porta 4444","DNS tunneling con beacon ogni 60 secondi","C2 over HTTPS con domain fronting e jitter randomizzato tra 10-60s","Reverse shell via Netcat sulla porta 80"], ans:2, diff:"black", exp:"HTTPS con domain fronting usa CDN legittimi (Cloudflare, Azure) come proxy — il traffico appare diretto verso host trusted. Il jitter randomizza i beacon interval rendendo difficile il rilevamento per correlazione temporale. Il DNS tunneling è rilevabile per anomalie nei pattern di query (entropy, lunghezza, frequenza)." },
+  ],
+  activedirectory: [
+    { q:"Cos'è un attacco DCSync e quali privilegi richiede?", opts:["Richiede accesso fisico al domain controller per estrarre il database NTDS.dit","Sfrutta le permission DS-Replication-Get-Changes per impersonare un DC e richiedere hashes","Richiede lo sfruttamento di una vulnerabilità nel servizio DNS","Basta avere privilegi di Local Admin su qualsiasi macchina del dominio"], ans:1, diff:"brown", code:"mimikatz # lsadump::dcsync /domain:corp.local \\\n           /user:krbtgt\n[DC] 'corp.local' will be the domain\n[rpc] Service  : ldap\nObject  RDN     : krbtgt\nHash NTLM: [REDACTED]", exp:"DCSync usa il protocollo MS-DRSR per replicare oggetti come farebbe un DC. Richiede i permessi di replication — di default solo Domain Admins e Enterprise Admins li hanno. Spesso l'attaccante li acquisisce dopo privilege escalation." },
+    { q:"In un assessment Active Directory, trovi un account con la flag 'DONT_REQ_PREAUTH' abilitata. Quale attacco esegui?", opts:["Kerberoasting — perché l'account ha un SPN configurato","ASREPRoasting — perché puoi richiedere un AS-REP senza autenticazione e craccare offline l'hash","Silver Ticket — perché conosci il nome del servizio associato","Password spraying — perché la pre-autenticazione disabilitata indica password debole"], ans:1, diff:"blue", code:"# GetNPUsers.py (Impacket)\npython GetNPUsers.py corp.local/ \\\n  -no-pass -usersfile users.txt \\\n  -format hashcat -outputfile asrep.txt\n\n# Crack offline\nhashcat -m 18200 asrep.txt wordlist.txt", exp:"Quando la pre-autenticazione Kerberos è disabilitata, il KDC risponde a qualsiasi AS-REQ con un AS-REP contenente dati cifrati con l'hash della password. L'attaccante può richiedere questo blob senza autenticarsi e craccare offline con hashcat (mode 18200)." },
+    { q:"Quale tecnica di persistenza in Active Directory è la più difficile da rilevare e rimuovere?", opts:["Aggiungere un utente al gruppo Domain Admins","Modificare il descrittore di sicurezza di AdminSDHolder per propagare ACL malevole a tutti gli oggetti protetti","Creare un task schedulato sul domain controller","Installare una webshell su IIS del DC"], ans:1, diff:"black", exp:"AdminSDHolder è il template ACL per tutti gli oggetti protetti (Domain Admins, Schema Admins, ecc.). Il processo SDProp si esegue ogni 60 minuti e sovrascrive le ACL degli oggetti protetti con quelle di AdminSDHolder. Aggiungendo un'ACL su AdminSDHolder, l'attaccante ottiene persistenza che si auto-ripristina ogni ora." },
+  ],
+  forensics: [
+    { q:"Qual è l'ordine corretto di acquisizione delle prove digitali secondo il principio di volatilità?", opts:["Disco fisso → RAM → Log di rete → Registri CPU","Registri CPU/cache → RAM → Swap/pagefile → Log di rete → Disco → Backup","Log applicativi → Disco → RAM → Backup offsite","Backup → Disco → RAM → Registri di sistema"], ans:1, diff:"blue", exp:"Il principio RFC 3227 ordina la raccolta dalla volatilità massima a minima: registri CPU e cache → RAM → swap/pagefile → routing table/ARP → log di rete in volo → disco → backup. Acquisire RAM prima dello spegnimento è critico per trovare processi, connessioni e malware in-memory." },
+    { q:"Durante l'analisi di un sistema Windows compromesso, quale artefatto forensico contiene prove di esecuzione di un programma anche dopo cancellazione dal disco?", opts:["Il file pagefile.sys","Il Prefetch (C:\\Windows\\Prefetch\\*.pf) e i Shimcache/Amcache","Il log di Windows Defender","Il file hosts in System32\\drivers\\etc"], ans:1, diff:"blue", exp:"Il Prefetch traccia le ultime 128/1024 esecuzioni con timestamp, path e DLL caricate. Amcache.hve e ShimCache (AppCompatCache) registrano binari eseguiti anche se poi cancellati. Sono artefatti fondamentali per la timeline di execution durante IR." },
+    { q:"Durante l'analisi memoria RAM con Volatility, quale plugin useresti per rilevare process injection?", opts:["vol.py pslist","vol.py malfind — per trovare regioni di memoria con permessi RWX e firma PE anomala","vol.py netscan","vol.py hivelist"], ans:1, diff:"black", code:"# Volatility 3\nvol.py -f mem.raw windows.malfind \\\n  --pid 1337 2>/dev/null\n\nPID  Process   Start       Protection\n1337 svchost   0x1a0000   PAGE_EXECUTE_READWRITE\n4d 5a 90 00  MZ..", exp:"Il plugin malfind cerca regioni di memoria con flag RWX che contengono signature PE (MZ header) — tipico di codice iniettato non mappato da file su disco. Utile per rilevare shellcode, DLL injection, reflective loading." },
+  ],
+  webappsec: [
+    { q:"Qual è la differenza tra una SQL Injection basata su errore e una Blind SQLi basata su tempo?", opts:["Nella error-based l'attaccante vede il messaggio di errore SQL nel response; nella time-based usa SLEEP() per inferire dati dai ritardi","Non c'è differenza pratica — entrambe estraggono dati nello stesso modo","La error-based richiede autenticazione, la time-based no","La time-based funziona solo su database MySQL"], ans:0, diff:"blue", code:"-- Error-based (MySQL)\n' AND extractvalue(1,concat(0x7e,(SELECT version())))--\n\n-- Blind time-based\n' AND IF(1=1,SLEEP(5),0)-- \n-- Se risposta > 5s: condizione vera", exp:"Error-based SQLi sfrutta messaggi verbosi per estrarre dati direttamente. Blind time-based usa SLEEP(n) quando la condizione è vera — l'attaccante inferisce bit per bit dal ritardo, senza mai vedere dati nel response." },
+    { q:"Cos'è un attacco JWT 'algorithm confusion' e come si sfrutta?", opts:["Brute force del secret HMAC usato per firmare il token","Cambiare l'algoritmo da RS256 ad HS256 nel header del JWT usando la chiave pubblica RSA come secret HMAC","Modificare il payload del JWT senza invalidare la firma","Utilizzare un JWT scaduto con timestamp manomesso"], ans:1, diff:"black", code:"# Header originale\n{\"alg\": \"RS256\", \"typ\": \"JWT\"}\n\n# Header modificato  \n{\"alg\": \"HS256\", \"typ\": \"JWT\"}\n\n# Firma con chiave pubblica RSA come secret HMAC\nimport jwt\npubkey = open('public.pem').read()\ntoken = jwt.encode(payload, pubkey, algorithm='HS256')", exp:"Alcuni server verificano la firma usando l'algoritmo specificato nell'header JWT. Cambiando alg da RS256 a HS256 e usando la chiave pubblica RSA come secret HMAC — la firma è verificata dal server con la sua stessa chiave pubblica, che è conosciuta pubblicamente. Bypass completo dell'autenticazione." },
+    { q:"Cos'è l'IDOR e perché è pericoloso nelle REST API?", opts:["SQL Injection tramite parametri ID — si previene con prepared statements","Insecure Direct Object Reference — accesso a risorse altrui manipolando ID senza verifica di autorizzazione lato server","Mass Assignment — assegnazione di proprietà non previste agli oggetti","Path Traversal — navigazione al di fuori del path autorizzato"], ans:1, diff:"blue", exp:"L'IDOR (OWASP A01 Broken Access Control) si verifica quando l'app usa riferimenti diretti a oggetti (ID, filename) senza verificare che l'utente corrente sia autorizzato. Es: GET /api/orders?user_id=123 → cambi a 124 e vedi gli ordini altrui. Frequentissimo nelle API REST moderne." },
+  ],
+  malware: [
+    { q:"Cosa si intende per 'reflective DLL injection' e perché è considerata stealth?", opts:["Iniezione di DLL legittima di Windows in un processo malware per mascherarne l'attività","Tecnica che carica una DLL direttamente dalla memoria senza passare per il filesystem o il normale loader di Windows","Utilizzo di DLL con lo stesso nome di quelle di sistema (DLL hijacking)","Iniezione di codice tramite CreateRemoteThread con indirizzo in una DLL legittima"], ans:1, diff:"brown", exp:"La reflective DLL injection implementa un loader minimale nella DLL stessa. Quando iniettata in memoria, si auto-carica risolvendo le import senza usare LoadLibrary. Non appare in GetModuleHandle/EnumProcessModules, non lascia tracce sul disco. Base di molti C2 framework (Cobalt Strike Beacon, Meterpreter)." },
+    { q:"Cos'è il 'living off the land' (LotL) e quale vantaggio offre agli attaccanti?", opts:["Una tecnica di social engineering che sfrutta temi ambientali come esca nel phishing","L'uso di tool e binari legittimi già presenti nel sistema (LOLBins) per eseguire attività malevole","Una categoria di malware che si auto-replica solo su reti isolate (air-gapped)","L'esfiltrazione di dati tramite canali steganografici nelle immagini"], ans:1, diff:"blue", exp:"LotL sfrutta LOLBins (Living Off the Land Binaries) come certutil.exe, mshta.exe, regsvr32.exe, powershell.exe per scaricare payload ed eseguire script. Sono firmati Microsoft, whitelistati da molti AV, e il loro uso non è di per sé anomalo — quindi sfuggono a molti controlli signature-based." },
+    { q:"Un campione di malware genera domini C2 tramite algoritmo. Come si chiama e come si contrasta?", opts:["DNS hijacking — si contrasta con DNSSEC","Domain Generation Algorithm (DGA) — si contrasta con ML-based DNS analytics, sinkholing e threat intelligence feed","Fast-flux DNS — si contrasta bloccando record A con TTL < 300s","DNS over HTTPS — si contrasta ispezionando il traffico HTTPS verso provider DoH"], ans:1, diff:"black", exp:"Il DGA genera centinaia/migliaia di domini pseudo-random ogni giorno — il malware prova finché non trova quello registrato dal C2. La difesa richiede: ML per rilevare pattern DGA (alta entropia, struttura lessicale anomala), feed di famiglie DGA note, sinkholing, e anomaly detection sul volume di query NXDOMAIN per host." },
+  ],
+};
+
+const BASE_CATS = [
+  { id:"fondamentali",  label:"Fondamentali" },
+  { id:"networking",    label:"Networking" },
+  { id:"blueteam",      label:"Blue Team" },
+  { id:"redteam_base",  label:"Red Team" },
+];
+
+const ADV_CATS = [
+  { id:"redteam",       label:"Red Team" },
+  { id:"activedirectory",label:"Active Directory" },
+  { id:"forensics",     label:"DFIR" },
+  { id:"webappsec",     label:"Web App" },
+  { id:"malware",       label:"Malware" },
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let G = {
+  pts: 0, streak: 0, totalAns: 0, totalCorr: 0,
+  module: 'base',
+  cat: 'fondamentali',
+  queue: [], idx: 0,
+  sessCorr: 0, sessTot: 0,
+  locked: false,
+};
+
+let currentModule = 'base';
+
+/* ═══════════════════════════════════════════
+   BELT UTILITIES
+═══════════════════════════════════════════ */
+function getBeltIdx(pts) {
+  let b = 0;
+  for (let i = BELTS.length - 1; i >= 0; i--) {
+    if (pts >= BELTS[i].pts) { b = i; break; }
+  }
+  return b;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER UI
+═══════════════════════════════════════════ */
+function renderStats() {
+  document.getElementById('s-pts').textContent = G.pts;
+  document.getElementById('s-streak').textContent = G.streak;
+  document.getElementById('s-answered').textContent = G.totalAns;
+  document.getElementById('s-acc').textContent = G.totalAns > 0
+    ? Math.round((G.totalCorr / G.totalAns) * 100) + '%' : '—';
+
+  const bi = getBeltIdx(G.pts);
+  const belt = BELTS[bi];
+  const rankIcon = document.getElementById('rank-icon');
+  rankIcon.textContent = belt.emoji;
+  rankIcon.style.background = belt.bg;
+  document.getElementById('rank-name').textContent = belt.name;
+  document.getElementById('rank-desc').textContent = belt.desc;
+
+  const nextIdx = Math.min(bi + 1, BELTS.length - 1);
+  const next = BELTS[nextIdx];
+  const pct = bi === BELTS.length - 1 ? 100
+    : Math.round(((G.pts - belt.pts) / (next.pts - belt.pts)) * 100);
+  document.getElementById('prog-bar').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('prog-bar').style.background = belt.color;
+  document.getElementById('prog-label').textContent = bi === BELTS.length - 1
+    ? 'Grado massimo raggiunto — Sensei!'
+    : `${G.pts} / ${next.pts} punti per ${next.name}`;
+
+  // Header dots
+  for (let i = 0; i < 7; i++) {
+    const dot = document.getElementById('hb-' + i);
+    if (dot) {
+      const bc = BELT_CLASSES[i];
+      dot.className = 'hb-dot';
+      if (i < bi) { dot.classList.add(bc); dot.style.opacity = '0.5'; }
+      else if (i === bi) { dot.classList.add(bc); dot.style.opacity = '1'; dot.style.transform = 'scale(1.3)'; }
+      else { dot.style.opacity = '0.2'; dot.style.background = 'var(--text3)'; dot.style.transform = ''; }
+    }
+  }
+  document.getElementById('header-rank-lbl').textContent = belt.name;
+
+  // Belt bar in hero
+  renderBeltBar(bi);
+}
+
+function renderBeltBar(activeBi) {
+  const bar = document.getElementById('belt-bar');
+  if (!bar) return;
+  bar.innerHTML = '';
+  BELTS.forEach((b, i) => {
+    const step = document.createElement('div');
+    step.className = 'belt-step';
+    const dot = document.createElement('div');
+    dot.className = 'belt-step-dot ' + BELT_CLASSES[i];
+    if (i === activeBi) dot.classList.add('active');
+    if (i < activeBi) dot.classList.add('achieved');
+    if (i > activeBi) { dot.style.opacity = '0.25'; dot.style.filter = 'grayscale(1)'; }
+    const lbl = document.createElement('div');
+    lbl.className = 'belt-step-label' + (i === activeBi ? ' active' : '');
+    lbl.textContent = b.name.replace('Cintura ', '');
+    step.appendChild(dot);
+    step.appendChild(lbl);
+    bar.appendChild(step);
+    if (i < BELTS.length - 1) {
+      const conn = document.createElement('div');
+      conn.className = 'belt-connector' + (i < activeBi ? ' filled' : '');
+      bar.appendChild(conn);
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   MODULE / CAT
+═══════════════════════════════════════════ */
+function switchModule(mod) {
+  currentModule = mod;
+  G.module = mod;
+  document.getElementById('tab-base').classList.toggle('active', mod === 'base');
+  document.getElementById('tab-adv').classList.toggle('active', mod === 'adv');
+
+  const cats = mod === 'base' ? BASE_CATS : ADV_CATS;
+  G.cat = cats[0].id;
+  buildCatRow(cats);
+  startQuiz();
+}
+
+function buildCatRow(cats) {
+  const row = document.getElementById('cat-row');
+  row.innerHTML = '';
+  cats.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-pill' + (i === 0 ? ' active' : '');
+    btn.textContent = c.label;
+    btn.dataset.cat = c.id;
+    btn.onclick = () => {
+      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      G.cat = c.id;
+      startQuiz();
+    };
+    row.appendChild(btn);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   QUIZ FLOW
+═══════════════════════════════════════════ */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  const bank = G.module === 'base' ? BASE_QS : ADV_QS;
+  const all = bank[G.cat] || [];
+  G.queue = shuffle(all);
+  G.idx = 0; G.sessCorr = 0; G.sessTot = 0;
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('quiz-area').style.display = 'block';
+  renderQ();
+}
+
+function renderQ() {
+  const q = G.queue[G.idx];
+  if (!q) { showResult(); return; }
+  G.locked = false;
+  document.getElementById('next-btn').style.display = 'none';
+
+  const card = document.getElementById('q-card');
+  card.className = 'q-card diff-' + q.diff;
+  // re-trigger animation
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = '';
+
+  const ds = DIFF_STYLES[q.diff] || DIFF_STYLES.white;
+  const badge = document.getElementById('diff-badge');
+  badge.textContent = ds.label;
+  badge.style.background = ds.bg;
+  badge.style.color = ds.color;
+
+  const cats = G.module === 'base' ? BASE_CATS : ADV_CATS;
+  const catObj = cats.find(c => c.id === G.cat);
+  document.getElementById('cat-badge').textContent = catObj ? catObj.label : '';
+  document.getElementById('q-progress').textContent = `${G.idx + 1} / ${G.queue.length}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  const codeEl = document.getElementById('q-code');
+  if (q.code) { codeEl.textContent = q.code; codeEl.classList.add('show'); }
+  else { codeEl.classList.remove('show'); codeEl.textContent = ''; }
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  const keys = ['A', 'B', 'C', 'D'];
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-key">${keys[i]}</span><span>${o}</span>`;
+    btn.onclick = () => pickAns(i, q);
+    opts.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  document.getElementById('fb-label').textContent = '';
+  document.getElementById('fb-text').textContent = '';
+}
+
+function pickAns(idx, q) {
+  if (G.locked) return;
+  G.locked = true;
+
+  const optEls = document.querySelectorAll('.opt');
+  optEls.forEach((el, i) => {
+    el.classList.add('locked');
+    if (i === q.ans) el.classList.add('correct');
+    else if (i === idx && idx !== q.ans) el.classList.add('wrong');
+  });
+
+  const ok = idx === q.ans;
+  const pts = ok ? (DIFF_PTS[q.diff] || 5) : 0;
+  if (ok) { G.pts += pts; G.streak++; G.totalCorr++; G.sessCorr++; }
+  else { G.streak = 0; }
+  G.totalAns++; G.sessTot++;
+  renderStats();
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (ok ? 'ok' : 'ko');
+  document.getElementById('fb-label').textContent = ok ? `✓  Corretto! +${pts} punti` : '✗  Non corretto';
+  document.getElementById('fb-text').textContent = q.exp;
+
+  document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function nextQ() {
+  G.idx++;
+  if (G.idx >= G.queue.length) { showResult(); return; }
+  renderQ();
+}
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+
+  const bi = getBeltIdx(G.pts);
+  document.getElementById('res-glyph').textContent = BELTS[bi].emoji;
+
+  const pct = G.sessTot > 0 ? Math.round((G.sessCorr / G.sessTot) * 100) : 0;
+  let title, sub;
+  if (pct === 100) { title = 'Perfetto, Sensei!'; sub = `Nessun errore su ${G.sessTot} domande. Il dojo ti inchina.`; }
+  else if (pct >= 80) { title = 'Ottima sessione, guerriero!'; sub = `${G.sessCorr}/${G.sessTot} corrette (${pct}%). La tua tecnica è affilata.`; }
+  else if (pct >= 50) { title = 'Buona sessione'; sub = `${G.sessCorr}/${G.sessTot} corrette (${pct}%). Alcune tecniche richiedono ancora studio.`; }
+  else { title = 'Il dojo ti chiama ancora'; sub = `${G.sessCorr}/${G.sessTot} corrette (${pct}%). Ripassa le spiegazioni e riprova — ogni sconfitta è una lezione.`; }
+
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-sub').textContent = sub;
+  const earnedPts = G.sessCorr * (G.module === 'base' ? 10 : 25);
+  document.getElementById('res-score').textContent = '+' + earnedPts;
+}
+
+function restart() {
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('quiz-area').style.display = 'block';
+  startQuiz();
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+buildCatRow(BASE_CATS);
+renderStats();
+startQuiz();
+</script>
+</body>
+</html>
