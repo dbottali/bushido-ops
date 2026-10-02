@@ -1,32 +1,54 @@
-# Bushido Ops — Pixel-Accurate Prototype
+# Bushido Ops
 
-This version solves the visual-detail problem by using the generated pixel-art mockup as the main page artwork.
+A pixel-art cybersecurity dojo for practical digital self-defense. This is the interactive, animated prototype: the landing page leads into a playable white-belt phishing exercise.
 
-## Why this exists
+![Bushido Ops home](docs/home-preview.jpg)
 
-Trying to recreate detailed pixel-art sprites, dojo scenery, wooden platforms, bamboo, scrolls, HUD elements, and arcade panels with pure HTML/CSS produces ugly placeholder graphics.
+## What works
 
-For this level of detail, the correct workflow is:
+- Responsive home page, dojo navigation, and eight belt previews.
+- Original pixel-art characters with stepped idle motion, jabs, and hover reactions.
+- Warm-up, short lesson, and three-question quiz with explanations and retries.
+- Session XP: 20 for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module awards once per session.
+- Keyboard-accessible controls and support for reduced-motion preferences.
 
-1. Design the visual language as artwork.
-2. Use artwork/assets in the webpage.
-3. Build HTML/CSS around those assets.
-4. Later, slice the mockup into real reusable assets: background, sprites, buttons, icons, panels, belt characters, etc.
+Only the white-belt pilot is playable. Progress is held in memory and resets when the page reloads. Learner accounts, persistent progress, and the remaining curriculum are future work.
 
-## Files
+## Run locally
 
-- `index.html` — static GitHub Pages page.
-- `assets/bushido-ops-pixel-page.png` — the detailed pixel-art landing artwork.
+Requirements: Node.js 22.13.0 or later and pnpm 11.25.0, as pinned in `package.json`.
 
-## Publish on GitHub Pages
+```sh
+git clone https://github.com/dbottali/bushido-ops.git
+cd bushido-ops
+pnpm install --frozen-lockfile
+pnpm dev
+```
 
-1. Create a GitHub repository.
-2. Upload `index.html` and the `assets/` folder.
-3. Go to **Settings → Pages**.
-4. Select the main branch and `/root`.
-5. Save.
+Open the local URL printed by the development server. A clean clone uses the portable development profile.
 
-## Important note
+## Check and build
 
-This is a **visual prototype / presentation landing page**, not the final production implementation.
-The next production step is to create a proper asset kit and rebuild the page with real HTML sections.
+```sh
+pnpm exec tsc --noEmit
+pnpm build
+pnpm start
+```
+
+The production build creates a Cloudflare Worker and browser assets in `dist/`. `pnpm start` previews that build locally through Wrangler.
+
+## Deployment
+
+This repository contains the full application source. The current review deployment is hosted through Sites and is separate from GitHub.
+
+The Worker build requires a compatible hosting runtime. The old root-level static `index.html` has been replaced by the application source; GitHub Pages needs a separate static build before it can serve this version.
+
+## Stack and project notes
+
+React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Workers. Artwork and local fonts are included under `public/`.
+
+- [Project brief and roadmap](docs/PROJECT.md)
+- [Validation and known limitations](docs/QA.md)
+- [Platform and runtime details](docs/PLATFORM.md)
+
+This replacement is committed on top of the previous repository history. Earlier versions remain available through Git.
