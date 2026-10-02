@@ -41,7 +41,14 @@ The production build creates a Cloudflare Worker and browser assets in `dist/`. 
 
 This repository contains the full application source. The current review deployment is hosted through Sites and is separate from GitHub.
 
-The Worker build requires a compatible hosting runtime. The old root-level static `index.html` has been replaced by the application source; GitHub Pages needs a separate static build before it can serve this version.
+The Worker build requires a compatible hosting runtime. GitHub Pages uses the dedicated browser-only build, which preserves the animated home and the playable pilot:
+
+```sh
+pnpm dev:pages
+pnpm build:pages
+```
+
+The static build is generated in `dist-pages/`, with asset URLs configured for `https://dbottali.github.io/bushido-ops/`. Copy the contents of that directory into the repository root for branch-based GitHub Pages publishing. [Deployment instructions](docs/PAGES.md).
 
 ## Stack and project notes
 

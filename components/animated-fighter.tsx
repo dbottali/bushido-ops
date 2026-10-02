@@ -108,7 +108,7 @@ export function AnimatedFighter({ className = "", punch = false, delay = 0 }: {
     host.addEventListener("pointerenter", react);
     const observer = new IntersectionObserver(entries => { visible = entries[0]?.isIntersecting ?? true; });
     observer.observe(wrapper);
-    image.src = "/art/dojo-reference.png";
+    image.src = "./art/dojo-reference.png";
     return () => { disposed = true; cancelAnimationFrame(frame); observer.disconnect(); host.removeEventListener("pointerenter", react); image.onload = null; };
   }, [delay, punch]);
 

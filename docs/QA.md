@@ -12,3 +12,12 @@
 - Browser-console errors inspected were extension metadata errors, not application errors.
 
 Remaining: full curriculum, durable progress, dedicated hand-authored sprite animation, comprehensive accessibility review, and broader device testing.
+
+## GitHub Pages build
+
+- Dedicated Vite client build completed successfully; TypeScript validation passed.
+- The static entry mounts the existing React home and pilot, with no server dependency.
+- Generated HTML, JavaScript, CSS, artwork, favicon, and both local font URLs returned successfully under the `/bushido-ops/` prefix in a local HTTP verification.
+- Both character image references resolve relative to the page directory, including when the page uses a URL hash for training navigation.
+- The compiled entry replaces the earlier full-page-image `index.html`.
+- Browser QA could not be repeated for the Pages build because the isolated preview could not access the linked dependency directory. The shared home, pilot, and animation components retain the earlier interactive validation; the Pages adapter changes mounting and asset paths.
