@@ -7,7 +7,7 @@
 - Quiz: 2/3 answers earns no quiz XP; a retry with 3/3 brings total to 100 and displays practice-complete feedback.
 - Home reflects earned XP during the same open session. A fresh navigation/reload resets session state as documented.
 - Mobile home and dojo tested at 390 CSS pixels in a temporary same-origin iframe. Both document widths remained 390 pixels; warm-up interaction awarded 20 XP. The temporary fixture is removed before publishing.
-- Original-pixel canvas characters visually reviewed. Idle motion uses four stepped upper-body poses, with a brief jab and hover reaction. Belt characters have staggered idle motion. This is a small rig, not a complete arcade spritesheet.
+- The earlier split-body animation has been replaced by the quiet whole-character update documented below.
 - The preview browser reported no registered WebMCP tools. Page-scoped tool validation is unavailable in that context; WebMCP is optional and was not a user-requested release requirement.
 - Browser-console errors inspected were extension metadata errors, not application errors.
 
@@ -20,4 +20,15 @@ Remaining: full curriculum, durable progress, dedicated hand-authored sprite ani
 - Generated HTML, JavaScript, CSS, artwork, favicon, and both local font URLs returned successfully under the `/bushido-ops/` prefix in a local HTTP verification.
 - Both character image references resolve relative to the page directory, including when the page uses a URL hash for training navigation.
 - The compiled entry replaces the earlier full-page-image `index.html`.
-- Browser QA could not be repeated for the Pages build because the isolated preview could not access the linked dependency directory. The shared home, pilot, and animation components retain the earlier interactive validation; the Pages adapter changes mounting and asset paths.
+- Pages browser QA has now been repeated after making the existing dependency tree accessible inside the isolated preview. The Pages adapter continues to mount the same home and white-belt pilot.
+
+## Quiet animation update
+
+- TypeScript check and production Pages build passed.
+- Desktop Pages preview visually checked: complete character contours, original layout, no separated head or arm. The current home screenshot is in `home-preview.jpg`.
+- With no interaction, all four home fighters reported quiet mode and zero reactions; an observed quiz idle pose moved by only one source pixel.
+- Entering the hero with the mouse triggered exactly one attention reaction. After its 900 ms sequence it returned to quiet mode; the reaction count stayed at one while the pointer remained over it.
+- Belt CSS was inspected in the running browser: three motion patterns, periods of 5.2/6.1/7 seconds, and staggered delays.
+- White-belt warm-up completed in the updated preview and awarded 20 XP. Its training character loaded in quiet mode.
+- Inspected browser logs contained an extension metadata error and no application error.
+- Reduced-motion behavior is implemented in canvas and CSS and was reviewed in source; OS preference changes were not emulated in this check.

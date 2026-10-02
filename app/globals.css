@@ -112,13 +112,23 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .footer-fighter { position: absolute; left: 68%; top: 1%; width: 31%; height: 91%; }
 .training-fighter { flex-shrink: 0; width: 125px; height: 129px; }
 .belt-art { position: relative; width: calc(133 * var(--s)); height: calc(73 * var(--s)); }
-.belt-art .belt-character { position: absolute; left: 0; top: 0; width: 57.14%; height: 100%; animation: belt-guard 1.1s steps(1, end) infinite; animation-delay: var(--idle-delay, 0s); }
+.belt-art .belt-character { position: absolute; left: 0; top: 0; width: 57.14%; height: 100%; transform-origin: center bottom; animation: belt-guard var(--idle-period, 5.2s) steps(1, end) infinite; animation-delay: var(--idle-delay, 0s); }
 .belt-art .belt-symbol { position: absolute; left: 57.14%; top: 19.2%; width: 42.86%; height: 60.3%; }
-.belt-step:hover .belt-character { animation: belt-ready .35s steps(1, end) infinite; }
-.card-lesson .card-art { animation: desk-work 1.3s steps(1, end) infinite; }
-@keyframes belt-guard { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(calc(-1 * var(--s))); } 50% { transform: translateY(calc(-2 * var(--s))); } 75% { transform: translateY(calc(-1 * var(--s))); } }
-@keyframes belt-ready { 0%, 100% { transform: translate(0,0); } 33% { transform: translate(calc(1 * var(--s)),calc(-2 * var(--s))); } 66% { transform: translate(calc(-1 * var(--s)),calc(-1 * var(--s))); } }
-@keyframes desk-work { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(calc(-1 * var(--s))); } }
+.belt-step:nth-child(3n + 2) .belt-character { animation-name: belt-weight; }
+.belt-step:nth-child(3n) .belt-character { animation-name: belt-breathe; }
+.belt-step:focus-visible .belt-character { animation: belt-ready .7s steps(1, end) 1; }
+.card-lesson .card-art { animation: desk-work 6.8s steps(1, end) infinite; }
+.card-lesson:focus-visible .card-art { animation: desk-attention .9s steps(1, end) 1; }
+@media (hover: hover) and (pointer: fine) {
+  .belt-step:hover .belt-character { animation: belt-ready .7s steps(1, end) 1; }
+  .card-lesson:hover .card-art { animation: desk-attention .9s steps(1, end) 1; }
+}
+@keyframes belt-guard { 0%, 61%, 78%, 100% { transform: translateY(0); } 62%, 77% { transform: translateY(calc(-1 * var(--s))); } }
+@keyframes belt-weight { 0%, 71%, 87%, 100% { transform: translateX(0); } 72%, 86% { transform: translateX(calc(1 * var(--s))); } }
+@keyframes belt-breathe { 0%, 52%, 69%, 100% { transform: scaleY(1); } 53%, 68% { transform: scaleY(.99); } }
+@keyframes belt-ready { 0%, 100% { transform: translate(0,0); } 30% { transform: translate(calc(1 * var(--s)),calc(-2 * var(--s))); } 65% { transform: translate(0,calc(-1 * var(--s))); } }
+@keyframes desk-work { 0%, 79%, 90%, 100% { transform: translateY(0); } 80%, 89% { transform: translateY(calc(-.5 * var(--s))); } }
+@keyframes desk-attention { 0%, 100% { transform: translateY(0); } 35%, 65% { transform: translateY(calc(-1 * var(--s))); } }
 .footer-action { position: relative; margin-left: calc(28 * var(--s)); z-index: 1; text-align: center; }
 .footer-action .pixel-button { width: calc(342 * var(--s)); min-height: calc(51 * var(--s)); font-size: calc(31 * var(--s)); gap: calc(38 * var(--s)); }
 .footer-action p { font-size: calc(13 * var(--s)); color: #b9bec9; font-weight: 600; margin-top: calc(13 * var(--s)); }
@@ -304,6 +314,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .belt-character, .card-lesson .card-art { animation: none !important; transform: none !important; }
 }
 
 @utility scrollbar-thin {

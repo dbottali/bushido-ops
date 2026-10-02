@@ -7,7 +7,7 @@ A pixel-art cybersecurity dojo for practical digital self-defense. This is the i
 ## What works
 
 - Responsive home page, dojo navigation, and eight belt previews.
-- Original pixel-art characters with stepped idle motion, jabs, and hover reactions.
+- Original pixel-art characters with very small, occasional idle motion and a single brief reaction on mouse hover or keyboard focus. No automatic punches.
 - Warm-up, short lesson, and three-question quiz with explanations and retries.
 - Session XP: 20 for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module awards once per session.
 - Keyboard-accessible controls and support for reduced-motion preferences.

@@ -2,9 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** A small pixel-art rig. Every visible pixel comes from the supplied character. */
-export function AnimatedFighter({ className = "", punch = false, delay = 0 }: {
-  className?: string; punch?: boolean; delay?: number;
+type FighterRole = "hero" | "warmup" | "quiz" | "footer" | "training";
+type Pose = { x: number; squash: number };
+const rest: Pose = { x: 0, squash: 0 };
+const profiles: Record<FighterRole, { period: number; phase: number; duration: number; attention: Pose[] }> = {
+  hero: { period: 5200, phase: 0, duration: 900, attention: [rest, { x: 0, squash: 1 }, { x: 2, squash: 1 }, { x: 1, squash: 0 }, rest] },
+  warmup: { period: 6700, phase: 1500, duration: 1050, attention: [rest, { x: 0, squash: 1 }, { x: 0, squash: 3 }, { x: 0, squash: 1 }, rest] },
+  quiz: { period: 6100, phase: 3200, duration: 850, attention: [rest, { x: -1, squash: 0 }, { x: 1, squash: 1 }, { x: 0, squash: 1 }, rest] },
+  footer: { period: 7900, phase: 4100, duration: 1000, attention: [rest, { x: 0, squash: 1 }, { x: 0, squash: 2 }, { x: 0, squash: 1 }, rest] },
+  training: { period: 7300, phase: 900, duration: 800, attention: [rest, { x: 0, squash: 1 }, { x: 1, squash: 1 }, rest] },
+};
+
+/** Complete character frames keep the outline intact; quiet idle, one hover reaction. */
+export function AnimatedFighter({ className = "", role = "hero" }: {
+  className?: string; role?: FighterRole;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -16,34 +27,47 @@ export function AnimatedFighter({ className = "", punch = false, delay = 0 }: {
     if (!canvas || !wrapper) return;
     const context = canvas.getContext("2d");
     if (!context) return;
-    setReady(false);
-    let disposed = false;
-    let frame = 0;
-    let visible = true;
-    let hoverPunch = -Infinity;
+
+    const profile = profiles[role];
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const image = new Image();
     const sourceW = 120, sourceH = 148;
     canvas.width = 154; canvas.height = 158;
     context.imageSmoothingEnabled = false;
+    setReady(false);
 
-    function makeLayer(source: HTMLCanvasElement, x: number, y: number, w: number, h: number) {
-      const layer = document.createElement("canvas");
-      layer.width = w; layer.height = h;
-      layer.getContext("2d")!.drawImage(source, x, y, w, h, 0, 0, w, h);
-      return layer;
-    }
+    let disposed = false;
+    let loaded = false;
+    let visible = true;
+    let frame = 0;
+    let reactionStarted = -Infinity;
+    let reactions = 0;
+    let paint: (now: number, force?: boolean) => void = () => {};
+
+    const stop = () => { cancelAnimationFrame(frame); frame = 0; };
+    const schedule = () => {
+      if (!disposed && loaded && visible && !document.hidden && !motion.matches && !frame) {
+        frame = requestAnimationFrame(tick);
+      }
+    };
+    const tick = (now: number) => {
+      frame = 0;
+      if (disposed || !visible || document.hidden) return;
+      paint(now);
+      schedule();
+    };
 
     image.onload = () => {
       if (disposed) return;
       const sprite = document.createElement("canvas");
       sprite.width = sourceW; sprite.height = sourceH;
-      const spriteContext = sprite.getContext("2d", { willReadFrequently: true })!;
+      const spriteContext = sprite.getContext("2d", { willReadFrequently: true });
+      if (!spriteContext) return;
       spriteContext.imageSmoothingEnabled = false;
       spriteContext.drawImage(image, 819, 168, sourceW, sourceH, 0, 0, sourceW, sourceH);
       const pixels = spriteContext.getImageData(0, 0, sourceW, sourceH);
-      // Flood the connected light wall from the perimeter, preserving the white
-      // gi enclosed by its dark pixel outline. This is a runtime sprite mask.
+
+      // Remove the connected wall, keeping the original character in one piece.
       const visited = new Uint8Array(sourceW * sourceH);
       const queue = new Uint32Array(sourceW * sourceH);
       let tail = 0, head = 0;
@@ -63,54 +87,110 @@ export function AnimatedFighter({ className = "", punch = false, delay = 0 }: {
         visit(index - sourceW); visit(index + sourceW);
       }
       spriteContext.putImageData(pixels, 0, 0);
-      const headLayer = makeLayer(sprite, 0, 0, sourceW, 47);
-      const armLayer = makeLayer(sprite, 72, 46, 48, 48);
-      const body = makeLayer(sprite, 0, 0, sourceW, sourceH);
-      const bodyContext = body.getContext("2d")!;
-      bodyContext.clearRect(0, 0, sourceW, 47);
-      bodyContext.clearRect(72, 46, 48, 48);
+
+      // Cache whole poses. No independently detached head or arm, and no rotation.
+      const poses = new Map<string, HTMLCanvasElement>();
+      const key = (pose: Pose) => `${pose.x}:${pose.squash}`;
+      const makePose = (pose: Pose) => {
+        const complete = document.createElement("canvas");
+        complete.width = canvas.width; complete.height = canvas.height;
+        const completeContext = complete.getContext("2d")!;
+        completeContext.imageSmoothingEnabled = false;
+        const height = sourceH - pose.squash;
+        completeContext.drawImage(sprite, 0, 0, sourceW, sourceH, 9 + pose.x, 153 - height, sourceW, height);
+        poses.set(key(pose), complete);
+      };
+      for (const pose of [rest, { x: 0, squash: 1 }, { x: -1, squash: 0 }, ...profile.attention]) {
+        if (!poses.has(key(pose))) makePose(pose);
+      }
       const started = performance.now();
       let lastTick = -1;
+      let lastPose = "";
       let firstPaint = true;
 
-      const draw = (now: number) => {
-        if (disposed) return;
-        if (visible || motion.matches) {
-          const tick = Math.floor((now - started + delay) / 125);
-          if (tick !== lastTick || motion.matches) {
-            lastTick = tick;
-            const idle = motion.matches ? 0 : [0, 1, 2, 1][tick % 4];
-            const cycle = (now - started + delay) % 4200;
-            const hoverTime = now - hoverPunch;
-            const attackTime = hoverTime < 500 ? hoverTime : punch && cycle > 3600 ? cycle - 3600 : -1;
-            const attack = motion.matches || attackTime < 0 ? 0 : Math.min(3, Math.floor(attackTime / 125));
-            const poses = [{ x: 0, y: 0, angle: 0 }, { x: -4, y: 1, angle: .08 }, { x: 13, y: -5, angle: -.16 }, { x: 3, y: -2, angle: -.05 }];
-            const pose = poses[attack];
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            // Keep feet planted while the upper body breathes in four steps.
-            context.drawImage(body, 0, 100, sourceW, 48, 9, 105, sourceW, 48);
-            context.drawImage(body, 0, 47, sourceW, 53, 9, 52 + idle, sourceW, 53);
-            context.drawImage(headLayer, 9, 5 + idle);
-            context.save();
-            context.translate(81 + pose.x, 76 + pose.y + idle);
-            context.rotate(pose.angle);
-            context.drawImage(armLayer, 0, -25);
-            context.restore();
-            if (firstPaint) { firstPaint = false; setReady(true); }
+      paint = (now, force = false) => {
+        const currentTick = Math.floor(now / 125);
+        if (!force && currentTick === lastTick) return;
+        lastTick = currentTick;
+        const elapsed = now - reactionStarted;
+        const reacting = !motion.matches && elapsed >= 0 && elapsed < profile.duration;
+        let pose = rest;
+        if (reacting) {
+          const index = Math.min(profile.attention.length - 1, Math.floor(elapsed / profile.duration * profile.attention.length));
+          pose = profile.attention[index];
+        } else if (!motion.matches) {
+          const phase = ((now - started + profile.phase) % profile.period) / profile.period;
+          // Mostly still, with at most one source pixel of occasional idle motion.
+          if (role === "warmup") {
+            if (phase > .72 && phase < .84) pose = { x: -1, squash: 0 };
+          } else if (role !== "footer" && phase > .62 && phase < .76) {
+            pose = { x: 0, squash: 1 };
           }
         }
-        frame = requestAnimationFrame(draw);
+        const mode = motion.matches ? "reduced" : reacting ? "attention" : "quiet";
+        const signature = `${mode}:${key(pose)}`;
+        if (!force && signature === lastPose) return;
+        lastPose = signature;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(poses.get(key(pose))!, 0, 0);
+        wrapper.dataset.motion = mode;
+        canvas.dataset.pose = key(pose);
+        if (firstPaint) { firstPaint = false; setReady(true); }
       };
-      frame = requestAnimationFrame(draw);
+      loaded = true;
+      paint(performance.now(), true);
+      schedule();
     };
-    const host = wrapper.closest(".activity-card, .hero, .journey-footer, .training-intro") ?? wrapper;
-    const react = () => { hoverPunch = performance.now(); };
-    host.addEventListener("pointerenter", react);
-    const observer = new IntersectionObserver(entries => { visible = entries[0]?.isIntersecting ?? true; });
+
+    // Cards react as a whole; the hero reacts only over the character itself.
+    const host = wrapper.closest(".activity-card") ?? wrapper;
+    const react = () => {
+      if (!loaded || !visible || motion.matches || document.hidden) return;
+      const now = performance.now();
+      if (now - reactionStarted < 1800) return;
+      reactionStarted = now;
+      wrapper.dataset.reactions = String(++reactions);
+      paint(now, true);
+      schedule();
+    };
+    const onPointerEnter = (event: Event) => {
+      if ((event as PointerEvent).pointerType === "mouse") react();
+    };
+    const onPreferenceChange = () => {
+      reactionStarted = -Infinity;
+      stop();
+      if (loaded) paint(performance.now(), true);
+      schedule();
+    };
+    const onVisibilityChange = () => {
+      reactionStarted = -Infinity;
+      if (document.hidden) stop();
+      else { if (loaded) paint(performance.now(), true); schedule(); }
+    };
+    const observer = new IntersectionObserver(entries => {
+      visible = entries[0]?.isIntersecting ?? true;
+      if (!visible) { reactionStarted = -Infinity; stop(); }
+      else { if (loaded) paint(performance.now(), true); schedule(); }
+    });
+
+    host.addEventListener("pointerenter", onPointerEnter);
+    host.addEventListener("focusin", react);
+    motion.addEventListener("change", onPreferenceChange);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     observer.observe(wrapper);
     image.src = "./art/dojo-reference.png";
-    return () => { disposed = true; cancelAnimationFrame(frame); observer.disconnect(); host.removeEventListener("pointerenter", react); image.onload = null; };
-  }, [delay, punch]);
 
-  return <div ref={wrapperRef} className={`arcade-fighter ${className}`} data-ready={ready} aria-hidden="true"><canvas ref={canvasRef} /></div>;
+    return () => {
+      disposed = true;
+      stop();
+      observer.disconnect();
+      host.removeEventListener("pointerenter", onPointerEnter);
+      host.removeEventListener("focusin", react);
+      motion.removeEventListener("change", onPreferenceChange);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      image.onload = null;
+    };
+  }, [role]);
+
+  return <div ref={wrapperRef} className={`arcade-fighter ${className}`} data-ready={ready} data-role={role} aria-hidden="true"><canvas ref={canvasRef} /></div>;
 }
