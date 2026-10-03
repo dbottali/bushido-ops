@@ -6,7 +6,7 @@ Product owner: Damiano. Initial release: 0.1, interactive prototype.
 Practical, welcoming cybersecurity training in a pixel-art dojo. A session consists of a warm-up, a short lesson, and a quiz. The eight-belt path describes the learning journey. Copy and visual direction follow the supplied English-language reference.
 
 ## Design contract
-`public/art/dojo-reference.png` is the approved reference. Preserve its ivory, red, and navy palette, pixel frames, Japanese dojo, characters, section order, and content. Use original illustration regions without redrawing them. Text, navigation, buttons, exercises, progress bars, and dialogs are accessible UI. Desktop follows the reference proportions. Smaller screens reflow the same content so text and controls remain usable. Future visual changes require the product owner's direction.
+`public/art/dojo-reference.png` is the approved layout reference. Preserve its ivory, red, and navy palette, pixel frames, Japanese dojo, section order, and content. The approved character update adds complete sprite poses and matching clean background crops. Other regions, including lesson art, lettering and belt characters, continue to use the original. Text, navigation, buttons, exercises, progress bars, and dialogs are accessible UI. Desktop follows the reference proportions. Smaller screens reflow the same content so text and controls remain usable.
 
 ## Release 0.1 — implemented
 - Home navigation, hero, warm-up/lesson/quiz cards, why, eight belts, three principles, and final CTA.
@@ -15,10 +15,10 @@ Practical, welcoming cybersecurity training in a pixel-art dojo. A session consi
 - Eight belt previews; only the white-belt pilot is playable. Future content is explicitly marked.
 - Responsive layout, keyboard-accessible controls, local fonts, and custom favicon.
 - Optional page-scoped agent actions: read session progress and open a training module.
-- Quiet pixel animation: the white-gi character stays intact in cached whole-character frames. Automatic idle motion is limited to one source pixel, with long pauses, distinct timings, and a still footer character. Mouse entry or keyboard focus triggers one brief role-specific reaction; keeping the pointer in place does not repeat it. Belt characters alternate small breathing or weight-shift motions. Animation honors reduced-motion preferences and pauses offscreen or in hidden tabs.
+- Three animated fighters rendered on a 64 × 56 grid with sixteen opaque colors and nearest-neighbor scaling. Each cached frame is a complete redrawn body. Calm idle uses small breathing and bobbing movements, distinct periods and pauses. Mouse entry or card keyboard focus triggers one brief punch without repeating while the pointer remains in place. The footer is still at rest and briefly changes guard on interaction. Belts retain small breathing or weight shifts. Motion honors reduced-motion preferences and pauses offscreen or in hidden tabs.
 
 ## Prototype boundaries
-This is a working prototype, not a complete course. Progress lives in React state for the currently open page; reloading resets it. No learner accounts, database, analytics, payments, certifications, or external integrations. Belt advancement beyond the pilot is not implemented. The review site is private to its owner. The phrase “No signup” describes the learning interface, not the hosting access. Animation uses complete frames of the existing illustration with small, stepped position changes; the body is never separated into moving parts or rescaled between frames. A dedicated hand-drawn sprite sheet remains future work.
+This is a working prototype, not a complete course. Progress lives in React state for the currently open page; reloading resets it. No learner accounts, database, analytics, payments, certifications, or external integrations. Belt advancement beyond the pilot is not implemented. “No signup” describes the learning interface. Dedicated generated sprite sheets use complete-body poses, a fixed per-character scale and a shared 8-bit palette; the head and arm are never animated as separate cutouts.
 
 ## Next milestones
 1. **Approve the interface and pilot.** Compare desktop with the reference and review mobile, keyboard use, explanations, and XP behavior. Resolve design deviations before expanding.
@@ -45,4 +45,4 @@ Primary learner audience; full white-belt curriculum; persistent progress; belt 
 - Quiz: a blue-outfit kung-fu fighter inspired by Chun-Li.
 - Idle motion stays very small. Larger gestures require mouse interaction or keyboard focus.
 
-The original hero fix is implemented. The two new character images are pending because image generation is currently usage-limited. They are not included in this update. See `CHARACTERS.md` for the intended sprite specifications.
+All three characters and the matching clean background are included. The latest approved style is 8-bit pixel art. See `CHARACTERS.md` for assets, timing and frame layout.

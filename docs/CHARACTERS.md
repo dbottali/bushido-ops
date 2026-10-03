@@ -1,21 +1,29 @@
-# Bushido Ops character art specification
+# Bushido Ops — 8-bit characters
 
-Approved cast: original Ryu-style main hero, boxer for Warm-up, Chun-Li-inspired fighter for Quiz. The original main hero stays unchanged in identity and outfit.
+The approved cast is implemented: a Ryu-style white-gi main hero, a boxer in Warm-up, and a Chun-Li-inspired fighter in Quiz. The main hero is also used in training and the footer.
 
-## New assets — pending
+| Role | Sprite sheet | Appearance |
+| --- | --- | --- |
+| Main hero | `public/art/fighters/ryu-frames.png` | White gi, dark belt, red headband |
+| Warm-up | `public/art/fighters/boxer-frames.png` | Red gloves, navy shorts, boxing shoes |
+| Quiz | `public/art/fighters/quiz-frames.png` | Blue training outfit, hair buns, ivory boots |
 
-Generation through the built-in image tool was blocked by the current image usage limit. No generated asset is included and no replacement character is presented as finished.
+Each transparent PNG has eight complete poses in a 4 × 2 sheet. The top row contains guard, knee bend, breathing return and neutral poses; the bottom row contains windup, traveling punch, extended punch and recovery. `lib/fighter-atlases.json` records crop rectangles and foot anchors. All frames of a character share one scale.
 
-Create one transparent PNG per character. Match the reference's compact 16-bit arcade proportions, crisp stepped dark navy outlines and limited palette. Both feet must be visible; no floor, platform, shadow, text, labels, watermark or extra character. Head, neck, torso and limbs must be connected in a complete calm idle pose.
+`AnimatedFighter` caches each complete pose on a 192 × 168 canvas, samples it onto a 64 × 56 grid, maps opaque pixels to a shared sixteen-color palette and enlarges with nearest-neighbor scaling. No smoothing or dithering is used.
 
-### Boxer prompt
+## Movement
 
-Full-body male boxer, three-quarter facing right, red boxing gloves close to chest, short dark hair, ivory headband, warm tan skin, navy shorts with ivory waistband, navy and ivory boxing shoes. Compact athletic build, expressive head and short sturdy legs. Pixel art as if drawn at native 96 × 144, enlarged with nearest neighbor. Dark navy-black outlines, ivory, deep red and warm brown shading. Center the complete character with transparent margins.
+- At rest, only calm poses are used. The deeper knee bend is excluded from automatic idle animation. Bobbing is at most two pixels on the 192 × 168 drawing canvas, with pauses and separate rhythms per role.
+- Mouse entry triggers one punch lasting 780–900 ms. The complete shoulder, torso, head and arm change together; no detached limb is translated across a static body.
+- Keyboard focus on Warm-up or Quiz triggers the same reaction. A 1.8-second cooldown prevents rapid retriggers.
+- The footer stays still at rest and changes guard briefly on interaction.
+- Reduced-motion mode displays a static guard. Offscreen and hidden-tab animation pauses.
 
-### Quiz fighter prompt
+## Background
 
-Full-body female kung-fu fighter inspired by a classic Chun-Li silhouette, three-quarter facing right. Blue qipao training outfit with muted gold trim and short puff sleeves, navy leggings, ivory boots, black hair in two ox-horn buns with small ivory ribbons, ivory wrist wraps. Calm ready stance, arms close to body, friendly confident expression. Warm tan skin and the same compact arcade proportions, palette and pixel scale as the boxer and main hero. Center the complete character with transparent margins.
+`public/art/dojo-background-clean.png` has the same 1672 × 941 dimensions as the original reference. Only hero, Warm-up, Quiz and footer-left scene crops use it. Lesson art, lettering, belt characters, icons and other regions still use `dojo-reference.png`.
 
-## Integration
+The clean scene is a fixed layer rather than stretched rectangles following the character. The old illustration remains visible until both the sprite and background have loaded. Sprite frames contain no floor, wall or shadow pixels.
 
-Save final assets inside `public/art/`, include matching copies under the root `art/` directory in the Pages update, and select them per card role. Verify alpha, body continuity, feet placement and layout at desktop and mobile widths. Keep complete-frame movement; avoid separate head/arm transforms.
+Generation prompts are recorded in `ART-GENERATION.md`; validation is in `QA.md`.

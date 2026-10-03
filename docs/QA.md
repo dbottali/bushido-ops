@@ -1,43 +1,28 @@
-# Release 0.1 validation
+# Bushido Ops validation — 3 October 2026
 
-- TypeScript check passed before final packaging; final source is checked again in the publishing workflow.
-- Desktop home visually reviewed against supplied reference. Original dojo artwork and hero/footer lettering are reused. Borders, navigation, and regular text are native UI; this is a faithful reconstruction, not a claim of pixel-for-pixel identity.
-- White-belt warm-up: incorrect answer keeps XP at 0; correct answer earns 20; repeat completion remains at 20.
+## Current 8-bit character update
+
+- TypeScript and production GitHub Pages build passed after the final character and responsive changes.
+- All three sprite sheets were inspected visually and checked for transparency, eight complete poses and foot anchors. Sheets are 1774 × 887; crops use actual coordinates rather than assuming equal integer cell dimensions.
+- Render code was reviewed: each displayed frame is one complete body, sampled onto a 64 × 56 grid, sixteen opaque colors and nearest-neighbor scaling. Head, neck, chest and arms are not transformed independently.
+- Desktop preview visually checked: Ryu-style hero and footer, boxer in Warm-up, blue-outfit fighter in Quiz, connected contours and clean hero/card backgrounds. Lesson art and belt characters use the original reference. Proof: `home-preview.jpg`.
+- Hero idle was observed in quiet mode with different calm frames and a one-pixel bob. Card fighters reported zero reactions before interaction.
+- Mouse entry on the hero triggered one punch, which returned to quiet mode. The reaction count remained one while the pointer stayed in place.
+- Keyboard focus on Warm-up and Quiz triggered independent complete-frame reactions. Both reported punch mode and a windup frame; Warm-up returned to quiet before the Quiz reaction.
+- Mobile layout was visually checked in a same-origin iframe with 390 usable CSS pixels. Document client width and scroll width were both 390. Boxer and Quiz fighter feet align with scene ground despite SVG letterboxing. Obsolete narrow-screen actor-position overrides were removed. Proof: `mobile-characters-preview.jpg`.
+- Updated Warm-up awarded 20 XP for the correct answer and loaded the 8-bit Ryu-style training character.
+- Inspected browser logs contained extension metadata errors and no application errors.
+- Reduced-motion and offscreen/hidden-tab behavior were reviewed in source. OS motion-preference changes were not emulated.
+- The temporary mobile fixture is removed before packaging. This package is for manual GitHub upload; the update is not claimed to be live.
+
+## Existing pilot validation
+
+Previously verified, with learning logic unchanged by this visual update:
+
+- Incorrect Warm-up earns no XP; correct answer earns 20; repeat completion does not award twice.
 - Lesson completion brings XP to 50.
-- Quiz: 2/3 answers earns no quiz XP; a retry with 3/3 brings total to 100 and displays practice-complete feedback.
-- Home reflects earned XP during the same open session. A fresh navigation/reload resets session state as documented.
-- Mobile home and dojo tested at 390 CSS pixels in a temporary same-origin iframe. Both document widths remained 390 pixels; warm-up interaction awarded 20 XP. The temporary fixture is removed before publishing.
-- The earlier split-body animation has been replaced by the quiet whole-character update documented below.
-- The preview browser reported no registered WebMCP tools. Page-scoped tool validation is unavailable in that context; WebMCP is optional and was not a user-requested release requirement.
-- Browser-console errors inspected were extension metadata errors, not application errors.
+- A 2/3 quiz earns no quiz XP. A retry with 3/3 brings the total to 100 and displays practice-complete feedback.
+- Home reflects earned XP during the open session. Reloading resets the session.
+- Local Pages URLs work under `/bushido-ops/`, including hash navigation, artwork and fonts.
 
-Remaining: full curriculum, durable progress, dedicated hand-authored sprite animation, comprehensive accessibility review, and broader device testing.
-
-## GitHub Pages build
-
-- Dedicated Vite client build completed successfully; TypeScript validation passed.
-- The static entry mounts the existing React home and pilot, with no server dependency.
-- Generated HTML, JavaScript, CSS, artwork, favicon, and both local font URLs returned successfully under the `/bushido-ops/` prefix in a local HTTP verification.
-- Both character image references resolve relative to the page directory, including when the page uses a URL hash for training navigation.
-- The compiled entry replaces the earlier full-page-image `index.html`.
-- Pages browser QA has now been repeated after making the existing dependency tree accessible inside the isolated preview. The Pages adapter continues to mount the same home and white-belt pilot.
-
-## Quiet animation update
-
-- TypeScript check and production Pages build passed.
-- Desktop Pages preview visually checked: complete character contours, original layout, no separated head or arm. The current home screenshot is in `home-preview.jpg`.
-- With no interaction, all four home fighters reported quiet mode and zero reactions; an observed quiz idle pose moved by only one source pixel.
-- Entering the hero with the mouse triggered exactly one attention reaction. After its 900 ms sequence it returned to quiet mode; the reaction count stayed at one while the pointer remained over it.
-- Belt CSS was inspected in the running browser: three motion patterns, periods of 5.2/6.1/7 seconds, and staggered delays.
-- White-belt warm-up completed in the updated preview and awarded 20 XP. Its training character loaded in quiet mode.
-- Inspected browser logs contained an extension metadata error and no application error.
-- Reduced-motion behavior is implemented in canvas and CSS and was reviewed in source; OS preference changes were not emulated in this check.
-
-## Character continuity and floor fix — 3 October 2026
-
-- TypeScript and the production Pages build passed.
-- Every pose draws the complete character at its original pixel dimensions. Only its position changes; head, chest and arm are never moved independently.
-- The extraction includes the full soles and excludes stage pixels outside the foot contours. The enclosed wall between the legs is transparent.
-- The hero's stage repair is a stationary layer, independent of the animated canvas.
-- Updated desktop preview visually checked. The hover reaction was triggered; the character remained intact and the floor did not form a rectangle around its feet. Proof is in `character-fix-preview.jpg`.
-- New boxer and quiz-fighter assets have not been generated or verified; their creation is blocked by the current image limit.
+The desktop is a faithful reconstruction of the design, not a claim of pixel-for-pixel identity. Full curriculum, durable progress, comprehensive accessibility review and broader device testing remain future work.

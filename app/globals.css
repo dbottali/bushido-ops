@@ -55,7 +55,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .card-heading .dojo-art { width: calc(45 * var(--s)); height: calc(40 * var(--s)); object-fit: contain; }
 .card-heading h2 { font: bold calc(31 * var(--s))/1 "Dojo Terminal", monospace; letter-spacing: calc(.3 * var(--s)); }
 .activity-card p { margin-top: calc(7 * var(--s)); font-size: calc(14 * var(--s)); line-height: 1.5; font-weight: 600; }
-.card-art { position: absolute; right: calc(11 * var(--s)); top: calc(21 * var(--s)); width: calc(230 * var(--s)); height: calc(106 * var(--s)); }
+.card-art { position: absolute; right: calc(11 * var(--s)); top: calc(21 * var(--s)); width: calc(230 * var(--s)); height: calc(106 * var(--s)); container-type: inline-size; }
 .card-lesson .card-art { width: calc(210 * var(--s)); top: calc(8 * var(--s)); height: calc(118 * var(--s)); }
 .card-quiz .card-art { width: calc(245 * var(--s)); top: calc(19 * var(--s)); }
 .card-track { position: absolute; bottom: calc(9 * var(--s)); left: calc(18 * var(--s)); font-size: calc(14 * var(--s)); letter-spacing: calc(.5 * var(--s)); }
@@ -94,25 +94,19 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .footer-progress { display: flex; align-items: center; gap: calc(12 * var(--s)); font: calc(21 * var(--s))/1 "Dojo Terminal", monospace; margin-top: calc(9 * var(--s)); }
 .footer-progress [data-slot="progress"] { width: calc(150 * var(--s)); height: calc(13 * var(--s)); border: 2px solid #d7e2e9; background: repeating-linear-gradient(90deg, transparent 0,transparent 20px,#e7edf0 21px,transparent 22px); border-radius: 0; }
 .coins { margin-left: calc(22 * var(--s)); color: #ffd56d; }
-.arcade-fighter { position: relative; overflow: visible; width: 154px; height: 158px; }
+.arcade-fighter { position: relative; overflow: visible; width: 192px; height: 168px; }
 .arcade-fighter canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
 .arcade-fighter[data-ready="false"] { visibility: hidden; }
-.hero-character-wall, .hero-character-floor, .card-character-clear, .footer-character-clear { visibility: hidden; }
-.hero-scene:has(.arcade-fighter[data-ready="true"]) .hero-character-wall,
-.hero-scene:has(.arcade-fighter[data-ready="true"]) .hero-character-floor,
-.card-art:has(.arcade-fighter[data-ready="true"]) .card-character-clear,
-.footer-left:has(.arcade-fighter[data-ready="true"]) .footer-character-clear { visibility: visible; }
-.hero-character-wall { position: absolute; left: 10.2%; top: 32.2%; width: 13.9%; height: 48.3%; }
-.hero-character-floor { position: absolute; left: 10.2%; top: 80.82%; width: 13.9%; height: 4.46%; }
-.hero-fighter { position: absolute; left: 9.833%; top: 30.479%; width: 16.109%; height: 54.11%; }
+.hero-clean-scene, .card-clean-scene, .footer-clean-scene { position: absolute; inset: 0; width: 100%; height: 100%; visibility: hidden; }
+.hero-scene:has(.arcade-fighter[data-ready="true"]) .hero-clean-scene,
+.card-art:has(.arcade-fighter[data-ready="true"]) .card-clean-scene,
+.footer-left:has(.arcade-fighter[data-ready="true"]) .footer-clean-scene { visibility: visible; }
+.hero-fighter { position: absolute; left: 8.68%; top: 29.45%; width: 20.084%; height: 57.534%; }
 .card-art > .dojo-art { height: 100%; }
-.card-character-clear { position: absolute; background: #fffdf9; left: 0; top: 0; width: 36%; height: 92%; }
-.card-fighter { position: absolute; left: -3%; top: -6%; width: 45%; height: auto; aspect-ratio: 154 / 158; }
-.card-quiz .card-character-clear { left: 6%; width: 30%; top: 2%; height: 92%; }
-.card-quiz .card-fighter { left: 4%; top: -3%; height: auto; }
-.footer-character-clear { position: absolute; left: 70.5%; top: 3%; width: 28%; height: 91%; background: #06192e; }
-.footer-fighter { position: absolute; left: 68%; top: 1%; width: 31%; height: 91%; }
-.training-fighter { flex-shrink: 0; width: 125px; height: 129px; }
+.card-fighter { position: absolute; left: -7%; top: calc(50% - 27.323cqw); width: 55.65%; height: auto; aspect-ratio: 192 / 168; }
+.card-quiz .card-fighter { left: 2.45%; top: calc(50% - 22.56cqw); width: 52.25%; }
+.footer-fighter { position: absolute; left: 68%; top: 1%; width: 39.65%; height: 91%; }
+.training-fighter { flex-shrink: 0; width: 158px; height: 138px; }
 .belt-art { position: relative; width: calc(133 * var(--s)); height: calc(73 * var(--s)); }
 .belt-art .belt-character { position: absolute; left: 0; top: 0; width: 57.14%; height: 100%; transform-origin: center bottom; animation: belt-guard var(--idle-period, 5.2s) steps(1, end) infinite; animation-delay: var(--idle-delay, 0s); }
 .belt-art .belt-symbol { position: absolute; left: 57.14%; top: 19.2%; width: 42.86%; height: 60.3%; }
@@ -275,8 +269,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
   .card-heading { gap: 10px; }
   .card-heading h2 { font-size: 31px; }
   .card-art, .card-lesson .card-art, .card-quiz .card-art { top: 44px; right: 8px; height: 116px; }
-  .card-fighter { top: 22%; }
-  .card-quiz .card-fighter { top: 20%; }
   .activity-card p { font-size: 14px; width: 53%; }
   .section-heading { font-size: 13px; letter-spacing: .3px; }
   .section-heading span::before, .section-heading span::after { content: "✣"; margin-inline: 8px; }

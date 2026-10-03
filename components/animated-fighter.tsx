@@ -1,22 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import atlases from "@/lib/fighter-atlases.json";
 
 type FighterRole = "hero" | "warmup" | "quiz" | "footer" | "training";
-type Pose = { x: number; y: number };
-const rest: Pose = { x: 0, y: 0 };
-const profiles: Record<FighterRole, { period: number; phase: number; duration: number; attention: Pose[] }> = {
-  hero: { period: 5200, phase: 0, duration: 900, attention: [rest, { x: 0, y: -1 }, { x: 2, y: -1 }, { x: 1, y: 0 }, rest] },
-  warmup: { period: 6700, phase: 1500, duration: 1050, attention: [rest, { x: 0, y: -1 }, { x: -2, y: 0 }, { x: 0, y: -1 }, rest] },
-  quiz: { period: 6100, phase: 3200, duration: 850, attention: [rest, { x: -1, y: 0 }, { x: 1, y: -1 }, { x: 0, y: -1 }, rest] },
-  footer: { period: 7900, phase: 4100, duration: 1000, attention: [rest, { x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: -1 }, rest] },
-  training: { period: 7300, phase: 900, duration: 800, attention: [rest, { x: 0, y: -1 }, { x: 1, y: -1 }, rest] },
+type Character = keyof typeof atlases;
+type Profile = { character: Character; period: number; phase: number; idleSpan: number; idle: number[]; bob: number[]; action: number[]; duration: number };
+const profiles: Record<FighterRole, Profile> = {
+  hero: { character: "ryu", period: 3200, phase: 0, idleSpan: 1400, idle: [0, 2, 3, 2, 0], bob: [0, -1, -2, -1, 0], action: [4, 5, 6, 6, 7, 0], duration: 900 },
+  warmup: { character: "boxer", period: 3800, phase: 1400, idleSpan: 1200, idle: [0, 2, 0], bob: [0, 0, 0], action: [4, 5, 6, 6, 7, 0], duration: 780 },
+  quiz: { character: "quiz", period: 4100, phase: 2400, idleSpan: 1100, idle: [0, 2, 3, 0], bob: [0, -1, -1, 0], action: [4, 5, 6, 6, 7, 0], duration: 850 },
+  footer: { character: "ryu", period: 6200, phase: 3600, idleSpan: 0, idle: [0], bob: [0], action: [0, 1, 2, 0], duration: 650 },
+  training: { character: "ryu", period: 3500, phase: 1000, idleSpan: 1200, idle: [0, 2, 3, 2, 0], bob: [0, -1, -2, -1, 0], action: [4, 5, 6, 6, 7, 0], duration: 900 },
 };
+const pixelPalette = [
+  [10, 16, 32], [24, 35, 66], [39, 64, 105], [54, 93, 204],
+  [72, 140, 222], [93, 49, 33], [150, 80, 32], [217, 136, 57],
+  [255, 200, 112], [255, 225, 160], [152, 34, 24], [228, 51, 50],
+  [255, 244, 218], [174, 179, 189], [105, 113, 128], [201, 166, 71],
+];
 
-/** Complete character frames keep the outline intact; quiet idle, one hover reaction. */
-export function AnimatedFighter({ className = "", role = "hero" }: {
-  className?: string; role?: FighterRole;
-}) {
+/** Each source frame is a complete redrawn pose, including the shoulder and neck. */
+export function AnimatedFighter({ className = "", role = "hero" }: { className?: string; role?: FighterRole }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -27,147 +32,97 @@ export function AnimatedFighter({ className = "", role = "hero" }: {
     if (!canvas || !wrapper) return;
     const context = canvas.getContext("2d");
     if (!context) return;
-
     const profile = profiles[role];
+    const atlas = atlases[profile.character];
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const image = new Image();
-    const sourceW = 120, sourceH = 152;
-    canvas.width = 154; canvas.height = 158;
+    const background = new Image();
+    canvas.width = 192; canvas.height = 168;
     context.imageSmoothingEnabled = false;
     setReady(false);
+    delete wrapper.dataset.loadError;
 
-    let disposed = false;
-    let loaded = false;
-    let visible = true;
-    let frame = 0;
-    let reactionStarted = -Infinity;
-    let reactions = 0;
+    let disposed = false, loaded = false, imageLoaded = false, backgroundLoaded = role === "training", visible = true;
+    let raf = 0, reactionStarted = -Infinity, reactions = 0;
     let paint: (now: number, force?: boolean) => void = () => {};
-
-    const stop = () => { cancelAnimationFrame(frame); frame = 0; };
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
     const schedule = () => {
-      if (!disposed && loaded && visible && !document.hidden && !motion.matches && !frame) {
-        frame = requestAnimationFrame(tick);
-      }
+      if (!disposed && loaded && visible && !document.hidden && !motion.matches && !raf) raf = requestAnimationFrame(tick);
     };
     const tick = (now: number) => {
-      frame = 0;
-      if (disposed || !visible || document.hidden) return;
-      paint(now);
-      schedule();
+      raf = 0;
+      if (disposed || !visible || document.hidden || motion.matches) return;
+      paint(now); schedule();
     };
-
-    image.onload = () => {
-      if (disposed) return;
-      const sprite = document.createElement("canvas");
-      sprite.width = sourceW; sprite.height = sourceH;
-      const spriteContext = sprite.getContext("2d", { willReadFrequently: true });
-      if (!spriteContext) return;
-      spriteContext.imageSmoothingEnabled = false;
-      spriteContext.drawImage(image, 819, 168, sourceW, sourceH, 0, 0, sourceW, sourceH);
-      const pixels = spriteContext.getImageData(0, 0, sourceW, sourceH);
-
-      // Remove the connected wall, keeping the original character in one piece.
-      const visited = new Uint8Array(sourceW * sourceH);
-      const queue = new Uint32Array(sourceW * sourceH);
-      let tail = 0, head = 0;
-      const visit = (index: number) => {
-        if (index < 0 || index >= visited.length || visited[index]) return;
-        const p = index * 4;
-        if (pixels.data[p] < 177 || pixels.data[p + 1] < 151 || pixels.data[p + 2] < 126) return;
-        visited[index] = 1; queue[tail++] = index;
-      };
-      for (let x = 0; x < sourceW; x++) { visit(x); visit((sourceH - 1) * sourceW + x); }
-      for (let y = 0; y < sourceH; y++) { visit(y * sourceW); visit(y * sourceW + sourceW - 1); }
-      // The wall between the legs is enclosed by the character and the floor.
-      visit(123 * sourceW + 62);
-      while (head < tail) {
-        const index = queue[head++];
-        pixels.data[index * 4 + 3] = 0;
-        if (index % sourceW > 0) visit(index - 1);
-        if (index % sourceW < sourceW - 1) visit(index + 1);
-        visit(index - sourceW); visit(index + sourceW);
-      }
-      spriteContext.putImageData(pixels, 0, 0);
-
-      // Keep the full soles while excluding the wooden stage from the sprite.
-      // The stage begins at source row 309; only the two foot outlines continue below it.
-      const character = new Path2D();
-      character.rect(0, 0, sourceW, 141);
-      character.moveTo(19, 137);
-      character.lineTo(39, 137);
-      character.lineTo(42, 143);
-      character.lineTo(43, 152);
-      character.lineTo(15, 152);
-      character.lineTo(15, 145);
-      character.lineTo(19, 137);
-      character.closePath();
-      character.moveTo(79, 137);
-      character.lineTo(98, 137);
-      character.lineTo(98, 141);
-      character.lineTo(114, 144);
-      character.lineTo(114, 152);
-      character.lineTo(77, 152);
-      character.lineTo(77, 145);
-      character.closePath();
-      spriteContext.globalCompositeOperation = "destination-in";
-      spriteContext.fill(character);
-      spriteContext.globalCompositeOperation = "source-over";
-
-      // Translate intact pixels only. Never separate body parts or rescale the body.
-      const poses = new Map<string, HTMLCanvasElement>();
-      const key = (pose: Pose) => `${pose.x}:${pose.y}`;
-      const makePose = (pose: Pose) => {
+    const initialize = () => {
+      if (disposed || loaded || !imageLoaded || !backgroundLoaded) return;
+      const frames = atlas.frames.map(rect => {
         const complete = document.createElement("canvas");
         complete.width = canvas.width; complete.height = canvas.height;
-        const completeContext = complete.getContext("2d")!;
-        completeContext.imageSmoothingEnabled = false;
-        completeContext.drawImage(sprite, 9 + pose.x, 5 + pose.y);
-        poses.set(key(pose), complete);
-      };
-      for (const pose of [rest, { x: 0, y: -1 }, { x: -1, y: 0 }, { x: 1, y: 0 }, ...profile.attention]) {
-        if (!poses.has(key(pose))) makePose(pose);
-      }
+        const frameContext = complete.getContext("2d")!;
+        frameContext.imageSmoothingEnabled = false;
+        frameContext.drawImage(image, rect.x, rect.y, rect.w, rect.h,
+          Math.round(84 - rect.anchorX * atlas.scale), Math.round(158 - rect.anchorY * atlas.scale),
+          Math.round(rect.w * atlas.scale), Math.round(rect.h * atlas.scale));
+        // Render on a 64 × 56 grid with sixteen solid colors, then enlarge whole pixels.
+        const pixelFrame = document.createElement("canvas");
+        pixelFrame.width = 64; pixelFrame.height = 56;
+        const pixelContext = pixelFrame.getContext("2d", { willReadFrequently: true })!;
+        pixelContext.imageSmoothingEnabled = false;
+        pixelContext.drawImage(complete, 0, 0, pixelFrame.width, pixelFrame.height);
+        const pixels = pixelContext.getImageData(0, 0, pixelFrame.width, pixelFrame.height);
+        for (let p = 0; p < pixels.data.length; p += 4) {
+          if (pixels.data[p + 3] < 128) { pixels.data[p + 3] = 0; continue; }
+          let best = pixelPalette[0], distance = Infinity;
+          for (const color of pixelPalette) {
+            const r = pixels.data[p] - color[0], g = pixels.data[p + 1] - color[1], b = pixels.data[p + 2] - color[2];
+            const difference = 2 * r * r + 4 * g * g + 3 * b * b;
+            if (difference < distance) { distance = difference; best = color; }
+          }
+          pixels.data[p] = best[0]; pixels.data[p + 1] = best[1]; pixels.data[p + 2] = best[2]; pixels.data[p + 3] = 255;
+        }
+        pixelContext.putImageData(pixels, 0, 0);
+        frameContext.clearRect(0, 0, complete.width, complete.height);
+        frameContext.drawImage(pixelFrame, 0, 0, complete.width, complete.height);
+        return complete;
+      });
       const started = performance.now();
-      let lastTick = -1;
-      let lastPose = "";
-      let firstPaint = true;
-
+      let lastTick = -1, lastPose = "", firstPaint = true;
       paint = (now, force = false) => {
-        const currentTick = Math.floor(now / 125);
+        const currentTick = Math.floor(now / 100);
         if (!force && currentTick === lastTick) return;
         lastTick = currentTick;
         const elapsed = now - reactionStarted;
         const reacting = !motion.matches && elapsed >= 0 && elapsed < profile.duration;
-        let pose = rest;
+        let index = 0, bob = 0;
         if (reacting) {
-          const index = Math.min(profile.attention.length - 1, Math.floor(elapsed / profile.duration * profile.attention.length));
-          pose = profile.attention[index];
-        } else if (!motion.matches) {
-          const phase = ((now - started + profile.phase) % profile.period) / profile.period;
-          // Mostly still, with at most one source pixel of occasional idle motion.
-          if (role === "warmup") {
-            if (phase > .72 && phase < .84) pose = { x: -1, y: 0 };
-          } else if (role !== "footer" && phase > .62 && phase < .76) {
-            pose = { x: role === "quiz" ? -1 : 1, y: 0 };
+          const step = Math.min(profile.action.length - 1, Math.floor(elapsed / profile.duration * profile.action.length));
+          index = profile.action[step];
+        } else if (!motion.matches && profile.idleSpan > 0) {
+          const position = (now - started + profile.phase) % profile.period;
+          if (position < profile.idleSpan) {
+            const step = Math.min(profile.idle.length - 1, Math.floor(position / profile.idleSpan * profile.idle.length));
+            index = profile.idle[step]; bob = profile.bob[step];
           }
         }
-        const mode = motion.matches ? "reduced" : reacting ? "attention" : "quiet";
-        const signature = `${mode}:${key(pose)}`;
+        const mode = motion.matches ? "reduced" : reacting ? "punch" : "quiet";
+        const signature = `${mode}:${index}:${bob}`;
         if (!force && signature === lastPose) return;
         lastPose = signature;
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(poses.get(key(pose))!, 0, 0);
+        context.drawImage(frames[index], 0, bob);
         wrapper.dataset.motion = mode;
-        canvas.dataset.pose = key(pose);
+        canvas.dataset.frame = String(index);
+        canvas.dataset.bob = String(bob);
         if (firstPaint) { firstPaint = false; setReady(true); }
       };
-      loaded = true;
-      paint(performance.now(), true);
-      schedule();
+      loaded = true; paint(performance.now(), true); schedule();
     };
+    image.onload = () => { imageLoaded = true; initialize(); };
+    image.onerror = () => { wrapper.dataset.loadError = "sprite"; };
+    background.onload = () => { backgroundLoaded = true; initialize(); };
+    background.onerror = () => { wrapper.dataset.loadError = "background"; };
 
-    // Cards react as a whole; the hero reacts only over the character itself.
     const host = wrapper.closest(".activity-card") ?? wrapper;
     const react = () => {
       if (!loaded || !visible || motion.matches || document.hidden) return;
@@ -175,15 +130,11 @@ export function AnimatedFighter({ className = "", role = "hero" }: {
       if (now - reactionStarted < 1800) return;
       reactionStarted = now;
       wrapper.dataset.reactions = String(++reactions);
-      paint(now, true);
-      schedule();
+      paint(now, true); schedule();
     };
-    const onPointerEnter = (event: Event) => {
-      if ((event as PointerEvent).pointerType === "mouse") react();
-    };
+    const onPointerEnter = (event: Event) => { if ((event as PointerEvent).pointerType === "mouse") react(); };
     const onPreferenceChange = () => {
-      reactionStarted = -Infinity;
-      stop();
+      reactionStarted = -Infinity; stop();
       if (loaded) paint(performance.now(), true);
       schedule();
     };
@@ -197,25 +148,22 @@ export function AnimatedFighter({ className = "", role = "hero" }: {
       if (!visible) { reactionStarted = -Infinity; stop(); }
       else { if (loaded) paint(performance.now(), true); schedule(); }
     });
-
     host.addEventListener("pointerenter", onPointerEnter);
     host.addEventListener("focusin", react);
     motion.addEventListener("change", onPreferenceChange);
     document.addEventListener("visibilitychange", onVisibilityChange);
     observer.observe(wrapper);
-    image.src = "./art/dojo-reference.png";
-
+    image.src = atlas.file;
+    if (role !== "training") background.src = "./art/dojo-background-clean.png";
     return () => {
-      disposed = true;
-      stop();
-      observer.disconnect();
+      disposed = true; stop(); observer.disconnect();
       host.removeEventListener("pointerenter", onPointerEnter);
       host.removeEventListener("focusin", react);
       motion.removeEventListener("change", onPreferenceChange);
       document.removeEventListener("visibilitychange", onVisibilityChange);
-      image.onload = null;
+      image.onload = null; image.onerror = null; background.onload = null; background.onerror = null;
     };
   }, [role]);
 
-  return <div ref={wrapperRef} className={`arcade-fighter ${className}`} data-ready={ready} data-role={role} aria-hidden="true"><canvas ref={canvasRef} /></div>;
+  return <div ref={wrapperRef} className={`arcade-fighter ${className}`} data-ready={ready} data-role={role} data-character={profiles[role].character} data-style="8-bit" aria-hidden="true"><canvas ref={canvasRef} /></div>;
 }

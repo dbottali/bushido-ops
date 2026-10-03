@@ -7,7 +7,7 @@ A pixel-art cybersecurity dojo for practical digital self-defense. This is the i
 ## What works
 
 - Responsive home page, dojo navigation, and eight belt previews.
-- Original pixel-art characters with very small, occasional idle motion and a single brief reaction on mouse hover or keyboard focus. No automatic punches.
+- 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on mouse entry or keyboard focus, with no automatic punches.
 - Warm-up, short lesson, and three-question quiz with explanations and retries.
 - Session XP: 20 for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module awards once per session.
 - Keyboard-accessible controls and support for reduced-motion preferences.
@@ -39,7 +39,7 @@ The production build creates a Cloudflare Worker and browser assets in `dist/`. 
 
 ## Deployment
 
-This repository contains the full application source. The current review deployment is hosted through Sites and is separate from GitHub.
+This repository contains the full application source and a browser-only build for GitHub Pages. The earlier Sites review deployment is separate and is not updated by a GitHub upload.
 
 The Worker build requires a compatible hosting runtime. GitHub Pages uses the dedicated browser-only build, which preserves the animated home and the playable pilot:
 
@@ -56,6 +56,8 @@ React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Worker
 
 - [Project brief and roadmap](docs/PROJECT.md)
 - [Validation and known limitations](docs/QA.md)
+- [Characters and 8-bit animation](docs/CHARACTERS.md)
+- [Upload this animation update](docs/ANIMATION-UPDATE.md)
 - [Platform and runtime details](docs/PLATFORM.md)
 
 This replacement is committed on top of the previous repository history. Earlier versions remain available through Git.
