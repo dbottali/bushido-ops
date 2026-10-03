@@ -1,4 +1,4 @@
-# Aggiornamento animazioni Bushido Ops
+# Correzione personaggio Bushido Ops
 
 Questo archivio aggiorna la versione GitHub Pages già funzionante.
 
@@ -12,3 +12,5 @@ Questo archivio aggiorna la versione GitHub Pages già funzionante.
 Il nuovo `index.html` usa i nuovi file in `assets`. I vecchi bundle possono restare: non sono più caricati. Artwork e font già presenti non richiedono un nuovo upload. Nessun file nascosto è necessario per questo aggiornamento.
 
 Il pugno automatico è stato eliminato. I personaggi restano quasi fermi e fanno una sola breve reazione quando il mouse entra sul personaggio o sulla sua card. Le reazioni delle card funzionano anche con il focus da tastiera. I movimenti e i tempi sono differenziati.
+
+Questa versione elimina anche il pavimento dal ritaglio animato e mantiene testa, collo, petto e braccia come un unico disegno senza ridimensionamenti fra i fotogrammi. Mantiene il protagonista originale stile Ryu. Il pugile e la combattente per il quiz sono ancora da creare e non sono inclusi: la generazione è bloccata dal limite immagini.

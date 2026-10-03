@@ -32,3 +32,12 @@ Remaining: full curriculum, durable progress, dedicated hand-authored sprite ani
 - White-belt warm-up completed in the updated preview and awarded 20 XP. Its training character loaded in quiet mode.
 - Inspected browser logs contained an extension metadata error and no application error.
 - Reduced-motion behavior is implemented in canvas and CSS and was reviewed in source; OS preference changes were not emulated in this check.
+
+## Character continuity and floor fix — 3 October 2026
+
+- TypeScript and the production Pages build passed.
+- Every pose draws the complete character at its original pixel dimensions. Only its position changes; head, chest and arm are never moved independently.
+- The extraction includes the full soles and excludes stage pixels outside the foot contours. The enclosed wall between the legs is transparent.
+- The hero's stage repair is a stationary layer, independent of the animated canvas.
+- Updated desktop preview visually checked. The hover reaction was triggered; the character remained intact and the floor did not form a rectangle around its feet. Proof is in `character-fix-preview.jpg`.
+- New boxer and quiz-fighter assets have not been generated or verified; their creation is blocked by the current image limit.

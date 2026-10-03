@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 
 type FighterRole = "hero" | "warmup" | "quiz" | "footer" | "training";
-type Pose = { x: number; squash: number };
-const rest: Pose = { x: 0, squash: 0 };
+type Pose = { x: number; y: number };
+const rest: Pose = { x: 0, y: 0 };
 const profiles: Record<FighterRole, { period: number; phase: number; duration: number; attention: Pose[] }> = {
-  hero: { period: 5200, phase: 0, duration: 900, attention: [rest, { x: 0, squash: 1 }, { x: 2, squash: 1 }, { x: 1, squash: 0 }, rest] },
-  warmup: { period: 6700, phase: 1500, duration: 1050, attention: [rest, { x: 0, squash: 1 }, { x: 0, squash: 3 }, { x: 0, squash: 1 }, rest] },
-  quiz: { period: 6100, phase: 3200, duration: 850, attention: [rest, { x: -1, squash: 0 }, { x: 1, squash: 1 }, { x: 0, squash: 1 }, rest] },
-  footer: { period: 7900, phase: 4100, duration: 1000, attention: [rest, { x: 0, squash: 1 }, { x: 0, squash: 2 }, { x: 0, squash: 1 }, rest] },
-  training: { period: 7300, phase: 900, duration: 800, attention: [rest, { x: 0, squash: 1 }, { x: 1, squash: 1 }, rest] },
+  hero: { period: 5200, phase: 0, duration: 900, attention: [rest, { x: 0, y: -1 }, { x: 2, y: -1 }, { x: 1, y: 0 }, rest] },
+  warmup: { period: 6700, phase: 1500, duration: 1050, attention: [rest, { x: 0, y: -1 }, { x: -2, y: 0 }, { x: 0, y: -1 }, rest] },
+  quiz: { period: 6100, phase: 3200, duration: 850, attention: [rest, { x: -1, y: 0 }, { x: 1, y: -1 }, { x: 0, y: -1 }, rest] },
+  footer: { period: 7900, phase: 4100, duration: 1000, attention: [rest, { x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: -1 }, rest] },
+  training: { period: 7300, phase: 900, duration: 800, attention: [rest, { x: 0, y: -1 }, { x: 1, y: -1 }, rest] },
 };
 
 /** Complete character frames keep the outline intact; quiet idle, one hover reaction. */
@@ -31,7 +31,7 @@ export function AnimatedFighter({ className = "", role = "hero" }: {
     const profile = profiles[role];
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const image = new Image();
-    const sourceW = 120, sourceH = 148;
+    const sourceW = 120, sourceH = 152;
     canvas.width = 154; canvas.height = 158;
     context.imageSmoothingEnabled = false;
     setReady(false);
@@ -79,6 +79,8 @@ export function AnimatedFighter({ className = "", role = "hero" }: {
       };
       for (let x = 0; x < sourceW; x++) { visit(x); visit((sourceH - 1) * sourceW + x); }
       for (let y = 0; y < sourceH; y++) { visit(y * sourceW); visit(y * sourceW + sourceW - 1); }
+      // The wall between the legs is enclosed by the character and the floor.
+      visit(123 * sourceW + 62);
       while (head < tail) {
         const index = queue[head++];
         pixels.data[index * 4 + 3] = 0;
@@ -88,19 +90,42 @@ export function AnimatedFighter({ className = "", role = "hero" }: {
       }
       spriteContext.putImageData(pixels, 0, 0);
 
-      // Cache whole poses. No independently detached head or arm, and no rotation.
+      // Keep the full soles while excluding the wooden stage from the sprite.
+      // The stage begins at source row 309; only the two foot outlines continue below it.
+      const character = new Path2D();
+      character.rect(0, 0, sourceW, 141);
+      character.moveTo(19, 137);
+      character.lineTo(39, 137);
+      character.lineTo(42, 143);
+      character.lineTo(43, 152);
+      character.lineTo(15, 152);
+      character.lineTo(15, 145);
+      character.lineTo(19, 137);
+      character.closePath();
+      character.moveTo(79, 137);
+      character.lineTo(98, 137);
+      character.lineTo(98, 141);
+      character.lineTo(114, 144);
+      character.lineTo(114, 152);
+      character.lineTo(77, 152);
+      character.lineTo(77, 145);
+      character.closePath();
+      spriteContext.globalCompositeOperation = "destination-in";
+      spriteContext.fill(character);
+      spriteContext.globalCompositeOperation = "source-over";
+
+      // Translate intact pixels only. Never separate body parts or rescale the body.
       const poses = new Map<string, HTMLCanvasElement>();
-      const key = (pose: Pose) => `${pose.x}:${pose.squash}`;
+      const key = (pose: Pose) => `${pose.x}:${pose.y}`;
       const makePose = (pose: Pose) => {
         const complete = document.createElement("canvas");
         complete.width = canvas.width; complete.height = canvas.height;
         const completeContext = complete.getContext("2d")!;
         completeContext.imageSmoothingEnabled = false;
-        const height = sourceH - pose.squash;
-        completeContext.drawImage(sprite, 0, 0, sourceW, sourceH, 9 + pose.x, 153 - height, sourceW, height);
+        completeContext.drawImage(sprite, 9 + pose.x, 5 + pose.y);
         poses.set(key(pose), complete);
       };
-      for (const pose of [rest, { x: 0, squash: 1 }, { x: -1, squash: 0 }, ...profile.attention]) {
+      for (const pose of [rest, { x: 0, y: -1 }, { x: -1, y: 0 }, { x: 1, y: 0 }, ...profile.attention]) {
         if (!poses.has(key(pose))) makePose(pose);
       }
       const started = performance.now();
@@ -122,9 +147,9 @@ export function AnimatedFighter({ className = "", role = "hero" }: {
           const phase = ((now - started + profile.phase) % profile.period) / profile.period;
           // Mostly still, with at most one source pixel of occasional idle motion.
           if (role === "warmup") {
-            if (phase > .72 && phase < .84) pose = { x: -1, squash: 0 };
+            if (phase > .72 && phase < .84) pose = { x: -1, y: 0 };
           } else if (role !== "footer" && phase > .62 && phase < .76) {
-            pose = { x: 0, squash: 1 };
+            pose = { x: role === "quiz" ? -1 : 1, y: 0 };
           }
         }
         const mode = motion.matches ? "reduced" : reacting ? "attention" : "quiet";

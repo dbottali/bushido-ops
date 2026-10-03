@@ -18,7 +18,7 @@ Practical, welcoming cybersecurity training in a pixel-art dojo. A session consi
 - Quiet pixel animation: the white-gi character stays intact in cached whole-character frames. Automatic idle motion is limited to one source pixel, with long pauses, distinct timings, and a still footer character. Mouse entry or keyboard focus triggers one brief role-specific reaction; keeping the pointer in place does not repeat it. Belt characters alternate small breathing or weight-shift motions. Animation honors reduced-motion preferences and pauses offscreen or in hidden tabs.
 
 ## Prototype boundaries
-This is a working prototype, not a complete course. Progress lives in React state for the currently open page; reloading resets it. No learner accounts, database, analytics, payments, certifications, or external integrations. Belt advancement beyond the pilot is not implemented. The review site is private to its owner. The phrase “No signup” describes the learning interface, not the hosting access. Animation uses complete frames of the existing illustration with small, stepped position and height changes. A dedicated hand-drawn sprite sheet remains future work.
+This is a working prototype, not a complete course. Progress lives in React state for the currently open page; reloading resets it. No learner accounts, database, analytics, payments, certifications, or external integrations. Belt advancement beyond the pilot is not implemented. The review site is private to its owner. The phrase “No signup” describes the learning interface, not the hosting access. Animation uses complete frames of the existing illustration with small, stepped position changes; the body is never separated into moving parts or rescaled between frames. A dedicated hand-drawn sprite sheet remains future work.
 
 ## Next milestones
 1. **Approve the interface and pilot.** Compare desktop with the reference and review mobile, keyboard use, explanations, and XP behavior. Resolve design deviations before expanding.
@@ -37,3 +37,12 @@ This is a working prototype, not a complete course. Progress lives in React stat
 
 ## Decisions still open
 Primary learner audience; full white-belt curriculum; persistent progress; belt advancement rules; when and whether to make the review site public.
+
+## Approved character direction — 3 October 2026
+
+- Main hero: preserve the original Ryu-style white-gi character.
+- Warm-up: a boxer with red gloves.
+- Quiz: a blue-outfit kung-fu fighter inspired by Chun-Li.
+- Idle motion stays very small. Larger gestures require mouse interaction or keyboard focus.
+
+The original hero fix is implemented. The two new character images are pending because image generation is currently usage-limited. They are not included in this update. See `CHARACTERS.md` for the intended sprite specifications.

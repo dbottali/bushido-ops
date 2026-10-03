@@ -97,12 +97,14 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .arcade-fighter { position: relative; overflow: visible; width: 154px; height: 158px; }
 .arcade-fighter canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
 .arcade-fighter[data-ready="false"] { visibility: hidden; }
-.hero-character-wall, .card-character-clear, .footer-character-clear { visibility: hidden; }
+.hero-character-wall, .hero-character-floor, .card-character-clear, .footer-character-clear { visibility: hidden; }
 .hero-scene:has(.arcade-fighter[data-ready="true"]) .hero-character-wall,
+.hero-scene:has(.arcade-fighter[data-ready="true"]) .hero-character-floor,
 .card-art:has(.arcade-fighter[data-ready="true"]) .card-character-clear,
 .footer-left:has(.arcade-fighter[data-ready="true"]) .footer-character-clear { visibility: visible; }
-.hero-character-wall { position: absolute; left: 10.2%; top: 32.2%; width: 13.9%; height: 50.7%; }
-.hero-fighter { position: absolute; left: 9.65%; top: 30.6%; width: 16.1%; height: 54.1%; }
+.hero-character-wall { position: absolute; left: 10.2%; top: 32.2%; width: 13.9%; height: 48.3%; }
+.hero-character-floor { position: absolute; left: 10.2%; top: 80.82%; width: 13.9%; height: 4.46%; }
+.hero-fighter { position: absolute; left: 9.833%; top: 30.479%; width: 16.109%; height: 54.11%; }
 .card-art > .dojo-art { height: 100%; }
 .card-character-clear { position: absolute; background: #fffdf9; left: 0; top: 0; width: 36%; height: 92%; }
 .card-fighter { position: absolute; left: -3%; top: -6%; width: 45%; height: auto; aspect-ratio: 154 / 158; }
