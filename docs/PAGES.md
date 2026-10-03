@@ -4,14 +4,14 @@ La webapp animata funziona interamente nel browser. La build dedicata include gl
 
 ## Prima installazione del pacchetto pronto
 
-1. Estrai `bushido-ops-pages-fix.zip`.
+1. Estrai il pacchetto aggiornato `bushido-ops-philosophy.zip`. Per i dettagli dell’ultimo aggiornamento, vedi `PHILOSOPHY-UPDATE.md`.
 2. Apri il repository `dbottali/bushido-ops`, sulla branch `main`.
 3. Usa **Add file → Upload files** e carica il contenuto interno della cartella estratta nella radice del repository. I file sorgenti aggiornati accompagnano i file già compilati.
-4. Conferma la sostituzione di `index.html`, `README.md` e degli altri file esistenti. Su macOS, **Command + Shift + punto** mostra i file nascosti da includere nell'upload.
+4. Conferma la sostituzione di `index.html`, `README.md` e degli altri file esistenti. Questo pacchetto non richiede file nascosti.
 5. Crea il commit su `main` e attendi che il deploy Pages nella scheda **Actions** sia completato.
 6. Apri `https://dbottali.github.io/bushido-ops/` e ricarica con **Command + Shift + R**.
 
-Il pacchetto aggiorna la pagina iniziale, le animazioni e il pilot con warm-up, lesson e quiz. Il progresso resta valido per la sessione aperta e si azzera al reload.
+Il pacchetto aggiorna la pagina iniziale, i personaggi 8 bit, Philosophy e il pilot con warm-up, lesson e quiz. Il progresso e le scelte del codice del dojo restano validi per la sessione aperta e si azzerano al reload.
 
 ## Build successive
 

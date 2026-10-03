@@ -79,8 +79,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .belt-step:hover .dojo-art { transform: translateY(-3px); }
 .belt-step:hover strong { color: #b80910; }
 .principles { height: calc(71 * var(--s)); display: grid; grid-template-columns: 1fr 1.06fr 1.17fr; align-items: center; border: 2px solid #bfb4a4; background: #fffdfa; }
-.principles > div { display: flex; align-items: center; gap: calc(26 * var(--s)); padding-inline: calc(52 * var(--s)); }
-.principles > div + div { border-left: 2px dashed #bbad9c; padding-left: calc(60 * var(--s)); }
+.principles > a { display: flex; align-items: center; gap: calc(26 * var(--s)); padding-inline: calc(52 * var(--s)); }
+.principles > a + a { border-left: 2px dashed #bbad9c; padding-left: calc(60 * var(--s)); }
 .principles .dojo-art { width: calc(63 * var(--s)); height: calc(61 * var(--s)); flex-shrink: 0; }
 .principles h3 { color: #b80910; font: bold calc(25 * var(--s))/1 "Dojo Terminal", monospace; letter-spacing: calc(.5 * var(--s)); }
 .principles p { font-size: calc(11.5 * var(--s)); line-height: 1.25; font-weight: 600; margin-top: calc(2 * var(--s)); white-space: nowrap; }
@@ -233,8 +233,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
   .belt-step strong { margin-left: 0; margin-top: 6px; font-size: 23px; }
   .belt-step::after { display: none; }
   .principles { height: auto; grid-template-columns: 1fr; }
-  .principles > div, .principles > div + div { border-left: 0; border-bottom: 1px dashed #bdae9c; padding: 16px 20px; gap: 25px; }
-  .principles > div:last-child { border-bottom: 0; }
+  .principles > a, .principles > a + a { border-left: 0; border-bottom: 1px dashed #bdae9c; padding: 16px 20px; gap: 25px; }
+  .principles > a:last-child { border-bottom: 0; }
   .principles p { font-size: 15px; line-height: 1.5; white-space: normal; margin-top: 4px; }
   .journey-footer { height: auto; min-height: 320px; margin-top: 28px; padding: 26px 24px 32px; flex-direction: column; gap: 26px; }
   .footer-left { width: 160px; height: auto; opacity: .22; }
@@ -278,7 +278,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
   .values-grid p { font-size: 14px; }
   .belt-path { gap: 22px 5px; }
   .belt-step strong { font-size: 20px; }
-  .principles > div, .principles > div + div { padding: 16px 12px; gap: 16px; }
+  .principles > a, .principles > a + a { padding: 16px 12px; gap: 16px; }
   .principles .dojo-art { width: 50px; height: 49px; }
   .principles p { font-size: 13px; }
   .footer-progress { gap: 8px; font-size: 19px; }
@@ -411,4 +411,135 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Philosophy uses the existing dojo palette, pixel artwork and readable text scale. */
+html:has(.philosophy-shell) { scroll-behavior: auto; }
+.principles > a:hover { background: #f6eddd; }
+.philosophy-shell { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 20px auto 0; }
+.philosophy-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 22px; }
+.philosophy-header nav { display: flex; align-items: center; gap: 28px; font: bold 24px/1 "Dojo Terminal", monospace; }
+.philosophy-header nav a { padding-block: 8px; }
+.philosophy-header nav a[aria-current="page"] { color: #b80910; box-shadow: 0 3px 0 #b80910; }
+.philosophy-header nav a:hover, .philosophy-footer a:hover { color: #ba1316; }
+.philosophy-header > .pixel-button { min-height: 44px; }
+.philosophy-main, .philosophy-intro h1, .training-main { outline: none; }
+.philosophy-intro { display: grid; grid-template-columns: minmax(0, 1.17fr) minmax(0, 1fr); gap: 36px; align-items: center; margin: 40px 0 32px; }
+.philosophy-intro h1 { font: 25px/1.7 "Dojo Pixel", monospace; margin: 14px 0; letter-spacing: -.7px; }
+.philosophy-intro h1 span { display: block; }
+.philosophy-lead { font-size: 18px; font-weight: 700; line-height: 1.55; color: #9f1016; }
+.philosophy-intro-copy > p:last-of-type { font-size: 16px; line-height: 1.75; margin-top: 12px; max-width: 610px; }
+.philosophy-intro-copy > .pixel-button { margin-top: 24px; min-height: 46px; }
+.philosophy-dojo { padding: 6px; }
+.philosophy-stage { position: relative; aspect-ratio: 956 / 292; overflow: hidden; background: #f2e6d6; }
+.philosophy-stage:has(.arcade-fighter[data-ready="true"]) .hero-clean-scene { visibility: visible; }
+.philosophy-dojo > p { background: #091d34; color: #fff4da; text-align: center; padding: 16px 12px; font: bold 19px/1.35 "Dojo Terminal", monospace; }
+.philosophy-dojo > p > span { color: #e3b66d; margin-right: 6px; }
+.philosophy-manifesto { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 2px solid #c6bba8; padding: 16px 0; font: bold 21px/1.3 "Dojo Terminal", monospace; text-align: center; }
+.philosophy-manifesto > span + span { border-left: 1px dashed #bdae98; }
+.philosophy-section-title { margin: 34px 0 20px; }
+.philosophy-section-title h2, .philosophy-code h2 { font: bold 34px/1.2 "Dojo Terminal", monospace; margin-block: 4px 8px; }
+.philosophy-section-title > p:last-child, .philosophy-code-heading p:last-child { font-size: 15px; line-height: 1.65; color: #565047; }
+.philosophy-tabs > [data-slot="tabs-list"] { width: 100%; height: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 0; background: transparent; border-radius: 0; margin-bottom: 14px; }
+.philosophy-tabs [data-slot="tabs-trigger"] { height: 92px; padding: 16px 20px; gap: 20px; border: 2px solid #152237; border-radius: 0; background: #fffdf9; color: #132136; box-shadow: 2px 2px 0 #98a0a8; text-align: left; justify-content: flex-start; white-space: normal; transition: none; }
+.philosophy-tabs [data-slot="tabs-trigger"]::before { content: ""; position: absolute; inset: 4px; border: 1px solid #bfc0b8; pointer-events: none; }
+.philosophy-tabs [data-slot="tabs-trigger"][data-state="active"] { background: #f8ecd8; color: #a40e14; border-color: #a40e14; box-shadow: 2px 2px 0 #a40e14; }
+.philosophy-tabs [data-slot="tabs-trigger"] > .dojo-art { width: 48px; height: 47px; flex-shrink: 0; }
+.philosophy-tabs [data-slot="tabs-trigger"] > span { min-width: 0; }
+.philosophy-tabs small { display: block; font: bold 15px/1.2 "Dojo Terminal", monospace; letter-spacing: .4px; color: #62584b; }
+.philosophy-tabs strong { display: block; font: bold 29px/1.1 "Dojo Terminal", monospace; margin-top: 3px; }
+.philosophy-principle-panel { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 32px; padding: 28px; }
+.philosophy-principle-copy h3 { font: bold 34px/1.15 "Dojo Terminal", monospace; margin: 8px 0 12px; }
+.philosophy-principle-copy > p:not(.eyebrow):not(.philosophy-maxim) { font-size: 16px; line-height: 1.75; }
+.philosophy-principle-copy h4 { font: bold 22px/1.3 "Dojo Terminal", monospace; margin: 22px 0 12px; }
+.philosophy-principle-copy ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.philosophy-principle-copy li { display: flex; gap: 12px; font-size: 15px; line-height: 1.6; }
+.philosophy-principle-copy li > span { color: #b80910; }
+.philosophy-maxim { margin-top: 22px; border-left: 3px solid #b80910; padding: 8px 14px; background: #f7edde; color: #8e1115; font: bold 23px/1.25 "Dojo Terminal", monospace; }
+.philosophy-scenario { background: #091d34; color: #fff4df; border: 2px solid #142f4b; padding: 26px; box-shadow: inset 0 0 0 1px #44556a; }
+.philosophy-scenario > .eyebrow { color: #ff9b79; }
+.philosophy-scenario h3 { font: bold 32px/1.15 "Dojo Terminal", monospace; margin: 12px 0; }
+.philosophy-scenario > p:last-of-type { color: #e0e2e5; font-size: 15px; line-height: 1.75; }
+.philosophy-reflection { background: #fff6e6; color: #112137; margin-top: 24px; border: 2px solid #e0ba7b; }
+.philosophy-reflection summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 16px; font: bold 23px/1.2 "Dojo Terminal", monospace; cursor: pointer; list-style: none; }
+.philosophy-reflection summary::-webkit-details-marker { display: none; }
+.philosophy-reflection summary:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.philosophy-disclosure-marker::before { content: "+"; font: 26px/1 monospace; }
+.philosophy-reflection[open] .philosophy-disclosure-marker::before { content: "−"; }
+.philosophy-reflection > div { padding: 16px; border-top: 1px dashed #bca781; }
+.philosophy-reflection h4 { color: #a40e14; font: bold 21px/1.3 "Dojo Terminal", monospace; margin-bottom: 8px; }
+.philosophy-reflection p { font-size: 15px; line-height: 1.7; }
+.philosophy-scenario-reflection { margin-top: 14px; font-weight: 700; }
+.philosophy-code { margin-top: 30px; padding: 28px; scroll-margin-top: 20px; }
+.philosophy-code-heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 22px; }
+.philosophy-code-count { font: bold 21px/1.3 "Dojo Terminal", monospace; color: #a40e14; white-space: nowrap; padding: 10px 14px; background: #f8efdf; border: 1px solid #c7b591; }
+.philosophy-code fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 10px; }
+.philosophy-commitment { display: flex; align-items: center; gap: 18px; min-height: 72px; padding: 14px 18px; border: 1px solid #bfb5a4; background: #fffdf8; cursor: pointer; }
+.philosophy-commitment input { appearance: auto; width: 24px; height: 24px; flex-shrink: 0; accent-color: #af1015; margin: 0; }
+.philosophy-commitment > span { display: grid; gap: 3px; font-size: 15px; line-height: 1.6; }
+.philosophy-commitment strong { color: #a40e14; font: bold 22px/1 "Dojo Terminal", monospace; }
+.philosophy-commitment.chosen { background: #f5ecdb; border-color: #a40e14; box-shadow: inset 3px 0 0 #a40e14; }
+.philosophy-commitment:has(input:focus-visible) { outline: 3px solid #086ad2; outline-offset: 3px; }
+.philosophy-code-action { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 24px; border-top: 1px dashed #c9bca7; padding-top: 22px; }
+.philosophy-code-action > p { font: bold 24px/1.3 "Dojo Terminal", monospace; color: #283346; }
+.philosophy-code-action > .pixel-button { min-height: 46px; }
+.philosophy-learning { margin-top: 32px; display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 28px; background: #f2e8d7; border-block: 2px solid #c0ae92; }
+.philosophy-learning > div { max-width: 670px; }
+.philosophy-learning h2 { font: bold 31px/1.2 "Dojo Terminal", monospace; margin: 6px 0 12px; }
+.philosophy-learning > div > p:last-child { font-size: 16px; line-height: 1.7; }
+.philosophy-reading { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; margin: 22px 0; font-size: 13px; line-height: 1.6; color: #4f4a43; }
+.philosophy-reading > span { font: bold 19px/1.2 "Dojo Terminal", monospace; color: #091d34; }
+.philosophy-reading a { text-decoration: underline; text-underline-offset: 3px; }
+.philosophy-reading a:hover { color: #b80910; }
+.philosophy-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; padding: 20px 24px; background: #091d34; color: #fff4df; border-block: 3px solid #263e58; font: bold 21px/1.3 "Dojo Terminal", monospace; }
+.philosophy-footer > span { color: #e3b66d; }
+.philosophy-footer a:hover { color: #f4c276; }
+@media (max-width: 1000px) {
+  .philosophy-header { flex-wrap: wrap; gap: 16px; }
+  .philosophy-header nav { order: 3; width: 100%; justify-content: space-between; }
+  .philosophy-header > .pixel-button { margin-left: auto; }
+  .philosophy-intro { grid-template-columns: 1fr; gap: 26px; margin-top: 30px; }
+  .philosophy-dojo { width: min(100%, 690px); }
+}
+@media (max-width: 800px) {
+  .philosophy-principle-panel { grid-template-columns: 1fr; gap: 24px; }
+  .philosophy-manifesto { font-size: 18px; padding-block: 14px; }
+  .philosophy-tabs [data-slot="tabs-trigger"] { gap: 12px; padding: 16px; }
+  .philosophy-tabs [data-slot="tabs-trigger"] > .dojo-art { width: 38px; height: 38px; }
+  .philosophy-tabs small { font-size: 12px; }
+  .philosophy-tabs strong { font-size: 25px; }
+  .philosophy-code-heading, .philosophy-code-action, .philosophy-learning { align-items: flex-start; flex-direction: column; gap: 20px; }
+}
+@media (max-width: 580px) {
+  .philosophy-shell { width: calc(100% - 32px); margin-top: 12px; }
+  .philosophy-shell .pixel-button { white-space: normal; line-height: 1.2; text-align: center; }
+  .philosophy-header { padding: 14px; gap: 14px; }
+  .philosophy-header .brand-mark { width: 44px; height: 42px; }
+  .philosophy-header .brand strong { font-size: 14px; }
+  .philosophy-header .brand small { font-size: 12px; }
+  .philosophy-header nav { font-size: 23px; flex-wrap: wrap; gap: 8px 12px; }
+  .philosophy-header > .pixel-button { order: 4; width: 100%; margin-left: 0; }
+  .philosophy-intro h1 { font-size: clamp(14px, 4.4vw, 19px); letter-spacing: -.45px; }
+  .philosophy-intro .eyebrow { font-size: 19px; }
+  .philosophy-lead { font-size: 17px; }
+  .philosophy-intro-copy > .pixel-button { width: 100%; font-size: 22px; }
+  .philosophy-manifesto { grid-template-columns: 1fr; gap: 10px; font-size: 19px; }
+  .philosophy-manifesto > span + span { border-left: 0; }
+  .philosophy-section-title h2 { font-size: 29px; }
+  .philosophy-tabs > [data-slot="tabs-list"] { gap: 10px; }
+  .philosophy-tabs [data-slot="tabs-trigger"] { height: 105px; padding: 12px 8px; flex-direction: column; gap: 8px; justify-content: center; text-align: center; }
+  .philosophy-tabs small { display: none; }
+  .philosophy-tabs strong { font-size: 24px; margin: 0; }
+  .philosophy-principle-panel, .philosophy-code { padding: 22px 18px; }
+  .philosophy-principle-copy h3 { font-size: 31px; }
+  .philosophy-scenario { padding: 22px 18px; }
+  .philosophy-scenario h3 { font-size: 30px; }
+  .philosophy-reflection summary { font-size: 21px; padding-inline: 12px; }
+  .philosophy-reflection > div { padding: 14px 12px; }
+  .philosophy-commitment { gap: 14px; padding: 14px; }
+  .philosophy-code-action > .pixel-button { width: 100%; }
+  .philosophy-learning { padding: 24px 18px; }
+  .philosophy-learning h2 { font-size: 28px; }
+  .philosophy-learning > .pixel-button { width: 100%; font-size: 22px; }
+  .philosophy-footer { padding-inline: 18px; }
 }

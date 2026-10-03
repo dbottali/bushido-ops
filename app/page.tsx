@@ -7,6 +7,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Progress } from "@/components/ui/progress";
 import { DojoArt } from "@/components/dojo-art";
 import { AnimatedFighter } from "@/components/animated-fighter";
+import { PhilosophyPage } from "@/components/philosophy-page";
+import { isPrincipleId, principles, type PrincipleId } from "@/lib/philosophy-content";
 import { belts, earnedXp, finishModule, questions, warmup, type ModuleId } from "@/lib/dojo-content";
 
 type ModelContext = { registerTool: (tool: { name: string; title: string; description: string; inputSchema: object; annotations: object; execute: (input: unknown) => unknown }, options: { signal: AbortSignal }) => unknown };
@@ -29,7 +31,10 @@ function ChoiceGroup({ options, value, onChange, name, disabled = false }: {
 }
 
 export default function Home() {
-  const [view, setView] = useState<"home" | "dojo">("home");
+  const [view, setView] = useState<"home" | "dojo" | "philosophy">("home");
+  const currentView = useRef(view);
+  const [principle, setPrinciple] = useState<PrincipleId>("order");
+  const [commitments, setCommitments] = useState<PrincipleId[]>([]);
   const [tab, setTab] = useState<ModuleId>("warmup");
   const [completed, setCompleted] = useState<ModuleId[]>([]);
   const [selectedBelt, setSelectedBelt] = useState<number | null>(null);
@@ -47,16 +52,38 @@ export default function Home() {
   useEffect(() => {
     const readHash = () => {
       const hash = window.location.hash;
-      const training = hash === "#dojo" || hash.startsWith("#dojo/");
-      setView(training ? "dojo" : "home");
+      const training = hash === "#dojo" || hash.startsWith("#dojo/") || hash === "#training-content";
+      const philosophy = hash === "#philosophy" || hash.startsWith("#philosophy/") || hash === "#philosophy-content";
+      const nextView = training ? "dojo" : philosophy ? "philosophy" : "home";
+      const enteringView = currentView.current !== nextView;
+      currentView.current = nextView;
+      setView(nextView);
       const module = hash.split("/")[1];
-      if (["warmup", "lesson", "quiz"].includes(module)) setTab(module as ModuleId);
-      if (training) { window.scrollTo({ top: 0 }); requestAnimationFrame(() => heading.current?.focus()); }
-      else if (hash && hash !== "#") requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center" }));
+      if (training && ["warmup", "lesson", "quiz"].includes(module)) setTab(module as ModuleId);
+      if (philosophy && isPrincipleId(module)) setPrinciple(module);
+      else if (hash === "#philosophy") setPrinciple("order");
+      if (hash === "#training-content" || hash === "#philosophy-content") requestAnimationFrame(() => {
+        const target = document.getElementById(hash.slice(1));
+        target?.scrollIntoView({ block: "start", behavior: "instant" });
+        target?.focus({ preventScroll: true });
+      });
+      else if (philosophy && module === "code") requestAnimationFrame(() => {
+        document.getElementById("philosophy-code")?.scrollIntoView({ block: "start", behavior: "instant" });
+        document.getElementById("philosophy-code-title")?.focus({ preventScroll: true });
+      });
+      else if (enteringView || training) requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: "instant" });
+        heading.current?.focus({ preventScroll: true });
+      });
+      if (!training && !philosophy && hash && hash !== "#") requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center", behavior: enteringView ? "instant" : "smooth" }));
     };
     readHash(); window.addEventListener("hashchange", readHash);
     return () => window.removeEventListener("hashchange", readHash);
   }, []);
+
+  useEffect(() => {
+    document.title = view === "philosophy" ? "Philosophy | Bushido Ops" : "Bushido Ops | Digital self-defense for everyone";
+  }, [view]);
 
   useEffect(() => {
     const context = (document as Document & { modelContext?: ModelContext }).modelContext;
@@ -77,7 +104,7 @@ export default function Home() {
   function changeTab(value: string) { window.location.hash = `dojo/${value}`; }
 
   return <>
-    <a className="skip-link" href={view === "home" ? "#main" : "#training-content"}>Skip to content</a>
+    <a className="skip-link" href={view === "home" ? "#main" : view === "philosophy" ? "#philosophy-content" : "#training-content"}>Skip to content</a>
     {view === "home" ? <div className="home-shell">
       <div className="header-scene"><DojoArt x={0} y={0} w={1672} h={74} /></div>
       <header className="masthead pixel-frame"><Brand /><nav aria-label="Main navigation"><a href="#about">ABOUT</a><a href="#belts">BELTS</a><a href="#philosophy">PHILOSOPHY</a><a href="#dojo">DOJO</a></nav><PixelButton href="#dojo">ENTER THE DOJO <span aria-hidden="true">➜</span></PixelButton></header>
@@ -97,16 +124,12 @@ export default function Home() {
           <div><DojoArt x={1093} y={556} w={66} h={57} /><article><h3>STEADY, BELT-BASED PROGRESS</h3><p>Clear path. Visible progress.<br />Earn your belt. Keep growing.</p></article></div>
         </div></section>
         <section className="belt-section content-width" id="belts" aria-labelledby="belt-title"><h2 className="section-heading" id="belt-title"><span>THE BELT PATH</span></h2><div className="belt-path">{belts.map((belt, i) => <button key={belt.name} className="belt-step" onClick={() => setSelectedBelt(i)} aria-label={`Explore the ${belt.name.toLowerCase()} belt`} style={{ "--idle-delay": `${i * -0.71}s`, "--idle-period": `${5.2 + (i % 3) * 0.9}s` } as React.CSSProperties}><div className="belt-art"><DojoArt x={belt.x} y={637} w={76} h={73} className="belt-character" /><DojoArt x={belt.x + 76} y={651} w={57} h={44} className="belt-symbol" /></div><strong>{belt.name.toUpperCase()}</strong></button>)}</div></section>
-        <section className="principles content-width" id="philosophy" aria-label="Bushido principles">{[
-          { name: "ORDER", copy: <>A clear mind. A strong system.<br />Build your environment with intention.</>, x: 208, w: 64 },
-          { name: "RESPECT", copy: <>For data. For others. For yourself.<br />Ethics first. Always.</>, x: 645, w: 62 },
-          { name: "HONOR", copy: <>Do what’s right when it counts.<br />Become someone others trust.</>, x: 1117, w: 66 },
-        ].map(p => <div key={p.name}><DojoArt x={p.x} y={738} w={p.w} h={61} /><article><h3>{p.name}</h3><p>{p.copy}</p></article></div>)}</section>
+        <section className="principles content-width" aria-label="Bushido principles">{principles.map(p => <a key={p.id} href={`#philosophy/${p.id}`} aria-label={`Explore ${p.name.toLowerCase()}`}><DojoArt x={p.icon.x} y={738} w={p.icon.w} h={61} /><article><h3>{p.name}</h3><p>{p.homeCopy[0]}<br />{p.homeCopy[1]}</p></article></a>)}</section>
       </main>
       <footer className="journey-footer"><div className="footer-left"><DojoArt x={0} y={810} w={343} h={131} /><DojoArt x={0} y={810} w={343} h={131} source="./art/dojo-background-clean.png" className="footer-clean-scene" /><AnimatedFighter className="footer-fighter" role="footer" /></div><DojoArt x={1415} y={810} w={257} h={131} className="footer-right" /><div className="footer-message"><h2><span className="sr-only">READY TO BEGIN YOUR JOURNEY?</span><DojoArt x={358} y={830} w={563} h={39} className="footer-lettering" /></h2><p>Step onto the path. Train with purpose. Earn your belt.</p><div className="footer-progress"><span>LVL 01</span><Progress value={xp} aria-label="White belt practice progress" /><span>{xp} / 100 XP</span><span className="coins">◉ 000</span></div></div><div className="footer-action"><PixelButton href="#dojo">ENTER THE DOJO <span aria-hidden="true">➜</span></PixelButton><p>No signup. No gatekeeping. Just training.</p></div></footer>
-    </div> : <div className="training-shell">
+    </div> : view === "philosophy" ? <PhilosophyPage brand={<Brand />} headingRef={heading} principle={principle} commitments={commitments} onToggleCommitment={id => setCommitments(previous => previous.includes(id) ? previous.filter(item => item !== id) : [...previous, id])} /> : <div className="training-shell">
       <header className="training-header pixel-frame"><Brand /><a className="back-home" href="#">HOME</a><span className="training-xp" aria-live="polite">WHITE BELT · {xp} XP</span></header>
-      <main className="training-main" id="training-content"><div className="training-intro"><div><p className="eyebrow">WHITE BELT / FIRST PRACTICE</p><h1 ref={heading} tabIndex={-1}>PAUSE. VERIFY. PROTECT.</h1><p>Learn to spot the pressure behind a suspicious message.</p></div><AnimatedFighter className="training-fighter" role="training" /></div><div className="practice-progress"><span>{completed.length} / 3 complete</span><Progress value={xp} aria-label="Training progress" /><strong>{xp} / 100 XP</strong></div>
+      <main className="training-main" id="training-content" tabIndex={-1}><div className="training-intro"><div><p className="eyebrow">WHITE BELT / FIRST PRACTICE</p><h1 ref={heading} tabIndex={-1}>PAUSE. VERIFY. PROTECT.</h1><p>Learn to spot the pressure behind a suspicious message.</p></div><AnimatedFighter className="training-fighter" role="training" /></div><div className="practice-progress"><span>{completed.length} / 3 complete</span><Progress value={xp} aria-label="Training progress" /><strong>{xp} / 100 XP</strong></div>
         <Tabs value={tab} onValueChange={changeTab} className="training-tabs"><TabsList aria-label="Training modules"><TabsTrigger value="warmup">01 WARM-UP {completed.includes("warmup") ? "✓" : ""}</TabsTrigger><TabsTrigger value="lesson">02 LESSON {completed.includes("lesson") ? "✓" : ""}</TabsTrigger><TabsTrigger value="quiz">03 QUIZ {completed.includes("quiz") ? "✓" : ""}</TabsTrigger></TabsList>
           <TabsContent value="warmup"><section className="practice-card pixel-frame"><p className="eyebrow">A QUICK WIN · +20 XP</p><h2>Don’t let urgency choose for you.</h2><div className="sample-message"><span>FROM: Account Security &lt;support@account-help.example&gt;</span><strong>URGENT: Your account will be deleted</strong><p>Confirm your login in the next 30 minutes to avoid losing access.</p><span className="sample-link">[ Confirm account ]</span><small>Training example — no real link.</small></div><h3>{warmup.prompt}</h3><ChoiceGroup options={warmup.options} name="warmup" value={warmupAnswer} onChange={v => { setWarmupAnswer(v); setWarmupChecked(false); }} />{warmupChecked && <div role="status" className={`feedback ${Number(warmupAnswer) === warmup.correct ? "success" : ""}`}><strong>{Number(warmupAnswer) === warmup.correct ? "Good instinct. +20 XP earned." : "Pause and try again."}</strong><p>Urgency is a pressure tactic. Open the official service yourself and check there. An unusual sender is a clue, not proof on its own.</p></div>}<div className="practice-actions"><PixelButton disabled={warmupAnswer === ""} onClick={() => { setWarmupChecked(true); if (Number(warmupAnswer) === warmup.correct) award("warmup"); }}>{completed.includes("warmup") ? "CHECK AGAIN" : "CHECK ANSWER"}</PixelButton>{completed.includes("warmup") && <PixelButton light href="#dojo/lesson">CONTINUE TO LESSON</PixelButton>}</div></section></TabsContent>
           <TabsContent value="lesson"><section className="practice-card pixel-frame"><p className="eyebrow">BITE-SIZED LESSON · +30 XP</p><h2>The three-move defense.</h2><p>Phishing is a deceptive message designed to make you reveal information, send money, or take a harmful action. It can arrive by email, text, social media, or a phone call.</p><div className="lesson-moves"><article><span>01</span><div><h3>Pause</h3><p>Slow down when a message creates urgency, fear, or an unexpected reward. A deadline does not make a request trustworthy.</p></div></article><article><span>02</span><div><h3>Verify</h3><p>Open the official app, type a known website address, or call a number you already trust. Check the request through that independent channel.</p></div></article><article><span>03</span><div><h3>Protect</h3><p>Keep passwords and one-time sign-in codes private. Report suspicious messages using the service’s or your organization’s reporting process.</p></div></article></div><aside className="lesson-note"><strong>A logo is decoration, not verification.</strong><p>A familiar logo, a polished message, or your real name does not prove who sent it.</p></aside><div className="practice-actions"><PixelButton onClick={() => award("lesson")} disabled={completed.includes("lesson")}>{completed.includes("lesson") ? "LESSON COMPLETE ✓" : "MARK LESSON COMPLETE"}</PixelButton><PixelButton light href="#dojo/quiz">TAKE THE QUIZ</PixelButton></div></section></TabsContent>

@@ -1,12 +1,13 @@
 # Bushido Ops
 
-A pixel-art cybersecurity dojo for practical digital self-defense. This is the interactive, animated prototype: the landing page leads into a playable white-belt phishing exercise.
+A pixel-art cybersecurity dojo for practical digital self-defense. This interactive, animated prototype includes a playable white-belt phishing exercise and a dedicated Philosophy page.
 
 ![Bushido Ops home](docs/home-preview.jpg)
 
 ## What works
 
 - Responsive home page, dojo navigation, and eight belt previews.
+- Philosophy: Order, Respect and Honor, with practical habits, expandable scenarios and a personal dojo code that keeps your choices while navigating the open session.
 - 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on mouse entry or keyboard focus, with no automatic punches.
 - Warm-up, short lesson, and three-question quiz with explanations and retries.
 - Session XP: 20 for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module awards once per session.
@@ -57,7 +58,9 @@ React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Worker
 - [Project brief and roadmap](docs/PROJECT.md)
 - [Validation and known limitations](docs/QA.md)
 - [Characters and 8-bit animation](docs/CHARACTERS.md)
+- [Philosophy content and interactions](docs/PHILOSOPHY.md)
+- [Upload the Philosophy update](docs/PHILOSOPHY-UPDATE.md)
 - [Upload this animation update](docs/ANIMATION-UPDATE.md)
 - [Platform and runtime details](docs/PLATFORM.md)
 
-This replacement is committed on top of the previous repository history. Earlier versions remain available through Git.
+The ready-to-upload update preserves the existing project. Committing it to the current branch keeps earlier versions available through Git.
