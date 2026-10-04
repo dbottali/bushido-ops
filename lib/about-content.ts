@@ -29,7 +29,7 @@ export const aboutModules = [
 
 export const aboutQuestions = [
   { question: "Do I need technical experience?", answer: "No. The first practice starts with everyday messages and plain-language explanations. Begin with the Warm-up and work through the lesson and quiz at your own pace." },
-  { question: "Do I need an account?", answer: "The current pilot needs no signup. Training progress, unfinished answers and dojo-code choices are saved on this browser when storage is available. Export a backup from Belts to move them to another device. There is no account or automatic device sync." },
+  { question: "Do I need an account?", answer: "The current pilot needs no signup. Training progress, unfinished answers and dojo-code choices are saved on this browser when storage is available. Export a backup from My Dojo to move them to another device. There is no account or automatic device sync." },
   { question: "What can I practice today?", answer: "The White Belt phishing pilot is available now: one Warm-up, a short lesson and a three-question quiz. The remaining belt curriculum is still in development." },
   { question: "How do XP and retries work?", answer: "The pilot awards 20 XP for the correct Warm-up response, 30 XP for marking the lesson complete and 50 XP for a perfect quiz. Each module awards once in your saved progress. You can retry the Warm-up and Quiz without adding duplicate XP." },
   { question: "Does completing the pilot earn a certification?", answer: "No. The pilot is a practice experience. Its 100 XP marks completion of these three modules; it does not issue an accredited certification or unlock the full belt curriculum." },

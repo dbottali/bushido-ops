@@ -1,6 +1,6 @@
 # Bushido Ops — project brief and delivery plan
 
-Product owner: Damiano. Initial release: 0.1, interactive prototype.
+Product owner: Damiano. Current release: 0.3, modular infrastructure with the existing pilot.
 
 ## Product
 Practical, welcoming cybersecurity training in a pixel-art dojo. A session consists of a warm-up, a short lesson, and a quiz. The eight-belt path describes the learning journey. Copy and visual direction follow the supplied English-language reference.
@@ -29,10 +29,20 @@ This is a working prototype, not a complete course. Pilot progress, unfinished a
 - Explicit ivory background and light theme in both browser-only and framework entry points.
 - Nine meaningful progress-store tests. Full curriculum remains deferred by the product owner.
 
+## Release 0.3 — implemented
+
+- Validated JSON course catalog, generic player and stable course/module/question identities.
+- Available/in-progress/completed/locked/planned states, prerequisites, data-defined quiz thresholds and once-only rewards.
+- My Dojo dashboard with available-only totals, next step, last-answer review, habits and backup management.
+- Automatic v1/v2 migration into version-3 progress under the original storage key.
+- Legacy pilot links preserved; canonical per-course routes, missing-link screens and previous/next steps.
+- Shared six-destination header including My Dojo; approved art, subtle sprite behavior and ivory background retained.
+- 22 meaningful tests and a repeatable Pages release check. New curriculum remains deferred.
+
 ## Next milestones
 1. **Approve the interface and pilot.** Compare desktop with the reference and review mobile, keyboard use, explanations, and XP behavior. Resolve design deviations before expanding.
 2. **Define learners and a complete white belt.** Select independent beginners, UniHackers students, or both. Define learning outcomes, lessons, duration, assessment, and what a belt means. A belt must not imply an accredited certification.
-3. **Extend the infrastructure.** Build a data-driven course engine, define assessment and belt advancement rules, then improve routing, accessibility and release checks. The first browser-local persistence sprint is complete. Account-based learning and synchronization remain a separate future decision.
+3. **Review the new infrastructure.** The data-driven course engine, prerequisite enforcement, local migration, dashboard and release checks are implemented. Define full-belt advancement rules when the curriculum is ready; broader accessibility and physical-device QA remain to be completed. Account-based learning and synchronization remain a separate future decision.
 4. **Test with a small learner group.** Observe comprehension, completion, and whether learners can apply the skill. Fix the difficulties observed.
 5. **Release to learners.** Review all content, finish accessibility and mobile QA, provide essential privacy information, and explicitly select the audience before changing access.
 

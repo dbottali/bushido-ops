@@ -28,9 +28,9 @@ The page keeps the approved 8-bit fighters, original belt miniatures, pixel fram
 - Start/Continue opens the first incomplete module in the order Warm-up, Lesson, Quiz. Once all three are complete, Revisit opens Warm-up.
 - Completing the pilot shows 100 XP, 3/3 and “First practice complete.” It does not unlock unfinished curriculum or issue a certification.
 - Progress, unfinished answers and Philosophy choices save on this browser and survive reload. Storage failures show a temporary-session notice. XP is derived from unique completed modules.
-- Your Progress provides JSON export/import and reset. Import previews the backup and requires confirmation before replacement. Reset also requires confirmation.
+- My Dojo → Manage Backups and Your Progress provide JSON export/import (file or pasted text) and reset. Import previews the backup and requires confirmation before replacement. Reset also requires confirmation.
 
-Home, training, About, Belts and Philosophy use the same header. The three content pages also share its footer. Enter the Dojo resumes the first incomplete module.
+Home, training, My Dojo, About, Belts and Philosophy use the same header. The internal pages also share its footer. Enter the Dojo resumes the first incomplete module.
 
 ## URLs and keyboard behavior
 
@@ -44,8 +44,10 @@ Home, training, About, Belts and Philosophy use the same header. The three conte
 
 ## Source and proof
 
-- `lib/dojo-content.ts`: shared belt identities and actual training rewards.
-- `lib/belts-content.ts`: planned outcomes, missions, pilot-step descriptions and FAQs.
+- `data/courses.json`: actual module content, rewards, grading and prerequisites.
+- `lib/course-engine.ts`: pure progress, availability and prerequisite rules.
+- `lib/dojo-content.ts`: belt identities and catalog-derived availability.
+- `lib/belts-content.ts`: planned outcomes, missions and FAQs.
 - `components/belts-page.tsx`: previews, progress and continuation links.
 - `components/dojo-page-chrome.tsx`: shared page navigation.
 - `lib/dojo-progress.ts`: validated, versioned store and pure progress reducer.

@@ -21,8 +21,8 @@ The copy describes the current product. There are no invented learner statistics
 - `#about-content` is the skip-link target and focuses the main content.
 - About has its own document title and active navigation state.
 - Preview selection and FAQ expansion do not award XP. Rewards remain in the actual training modules.
-- Home, Dojo, About, Belts and Philosophy share the header in `components/dojo-page-chrome.tsx`. The three content pages also share its footer.
-- XP, unfinished answers and Philosophy choices survive reload when browser storage is available. Belts provides backup export/import and confirmed reset.
+- Home, Dojo, My Dojo, About, Belts and Philosophy share the header in `components/dojo-page-chrome.tsx`. The three content pages also share its footer.
+- XP, unfinished answers and Philosophy choices survive reload when browser storage is available. My Dojo and Belts provide backup export/import and confirmed reset.
 
 ## Current scope
 

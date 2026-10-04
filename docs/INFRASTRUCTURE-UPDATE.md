@@ -2,6 +2,8 @@
 
 Il pacchetto `bushido-ops-infrastructure.zip` è cumulativo rispetto all'ultimo aggiornamento: conserva personaggi e grafica 8 bit, About, Belts, Philosophy e il pilot. Si applica al repository esistente `dbottali/bushido-ops`.
 
+Il pacchetto è stato aggiornato anche con la correzione del fondo tablet/mobile: il beige specifico della Home sotto i 1119 pixel è stato rimosso. Vedi `IPAD-BACKGROUND-FIX.md`.
+
 ## Cosa cambia
 
 - Menu superiore identico su Home, Dojo, About, Belts e Philosophy, basato sul design delle pagine informative.

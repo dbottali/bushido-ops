@@ -1,4 +1,4 @@
-import type { BeltId, ModuleId } from "@/lib/dojo-content";
+import type { BeltId } from "@/lib/dojo-content";
 
 type Curriculum = { focus: string; outcomes: readonly string[]; mission: string; situation: string; nextMove: string };
 
@@ -60,12 +60,6 @@ export const beltCurriculum = {
     nextMove: "Make the explanation clear, invite questions and use feedback to improve your own understanding.",
   },
 } as const satisfies Record<BeltId, Curriculum>;
-
-export const pilotSteps = [
-  { id: "warmup", number: "01", name: "WARM-UP", task: "Choose the safer response to an urgent message.", condition: "Correct response" },
-  { id: "lesson", number: "02", name: "LESSON", task: "Learn the three moves: pause, verify, protect.", condition: "Lesson marked complete" },
-  { id: "quiz", number: "03", name: "QUIZ", task: "Apply the habit in three short questions.", condition: "All three answers correct" },
-] as const satisfies readonly { id: ModuleId; number: string; name: string; task: string; condition: string }[];
 
 export const beltQuestions = [
   { question: "Where should I start?", answer: "Start at White Belt. Its phishing-awareness pilot is open now and needs no signup or technical experience. The other belts show the planned learning path." },

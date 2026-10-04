@@ -1,118 +1,133 @@
-import { earnedXp, finishModule, questions, warmup, type ModuleId } from "./dojo-content";
+import { courseCatalog, PILOT_ID } from "./course-catalog";
+import { canTrain, emptyModule, gradeModule, isRecord, learningSummary, moduleProgress, moduleQuestions } from "./course-engine";
+import type { CourseCatalog, CourseProgress, LearningProgress, ModuleProgress } from "./course-types";
 import { principles, type PrincipleId } from "./philosophy-content";
 
+export { PILOT_ID } from "./course-catalog";
 export const PROGRESS_KEY = "bushido-ops.progress";
-export const PILOT_ID = "white-phishing-pilot";
+export const PROGRESS_VERSION = 3;
 export const MAX_BACKUP_BYTES = 256 * 1024;
-const moduleOrder: ModuleId[] = ["warmup", "lesson", "quiz"];
 const habitOrder = principles.map(item => item.id);
-
-export type PilotProgress = {
-  completed: ModuleId[];
-  warmupAnswer: string;
-  warmupChecked: boolean;
-  quizAnswers: string[];
-  quizSubmitted: boolean;
-};
-export type DojoProgress = { courses: Record<typeof PILOT_ID, PilotProgress>; commitments: PrincipleId[] };
-export type ProgressSnapshot = {
-  ready: boolean;
-  data: DojoProgress;
-  mode: "saved" | "temporary" | "protected";
-  notice: string | null;
-  savedRaw: string | null;
-};
+export type DojoProgress = LearningProgress & { commitments: PrincipleId[] };
+export type ProgressSnapshot = { ready: boolean; data: DojoProgress; mode: "saved" | "temporary" | "protected"; notice: string | null; savedRaw: string | null };
 export type ProgressAction =
-  | { type: "warmup-answer"; answer: string }
-  | { type: "check-warmup" }
-  | { type: "complete-lesson" }
-  | { type: "quiz-answer"; index: number; answer: string }
-  | { type: "submit-quiz" }
-  | { type: "retry-quiz" }
+  | { type: "answer"; courseId: string; moduleId: string; questionId: string; answer: string }
+  | { type: "submit" | "complete-lesson" | "retry"; courseId: string; moduleId: string }
   | { type: "toggle-habit"; id: PrincipleId };
 
-export function emptyProgress(): DojoProgress {
-  return { courses: { [PILOT_ID]: { completed: [], warmupAnswer: "", warmupChecked: false, quizAnswers: questions.map(() => ""), quizSubmitted: false } }, commitments: [] };
+export function emptyProgress(catalog: CourseCatalog = courseCatalog): DojoProgress {
+  return { courses: Object.fromEntries(catalog.courses.map(course => [course.id, { modules: Object.fromEntries(course.modules.map(module => [module.id, emptyModule(module)])) }])), commitments: [] };
 }
-export function nextModule(completed: ModuleId[]): ModuleId {
-  return moduleOrder.find(id => !completed.includes(id)) ?? "warmup";
+function validAnswer(value: unknown, choices: number): value is string { return typeof value === "string" && (value === "" || Array.from({ length: choices }, (_, i) => String(i)).includes(value)); }
+function list<T extends string>(value: unknown, allowed: T[]): T[] | null {
+  return Array.isArray(value) && value.length <= 100 && value.every(item => typeof item === "string" && allowed.includes(item as T)) ? allowed.filter(item => value.includes(item)) : null;
 }
-function validAnswer(value: unknown, count: number): value is string {
-  return typeof value === "string" && (value === "" || Array.from({ length: count }, (_, i) => String(i)).includes(value));
-}
-export function reduceProgress(data: DojoProgress, action: ProgressAction): DojoProgress {
-  const course = data.courses[PILOT_ID];
-  let next = course;
-  switch (action.type) {
-    case "warmup-answer":
-      if (!validAnswer(action.answer, warmup.options.length) || action.answer === course.warmupAnswer) return data;
-      next = { ...course, warmupAnswer: action.answer, warmupChecked: false }; break;
-    case "check-warmup":
-      if (course.warmupAnswer === "" || course.warmupChecked) return data;
-      next = { ...course, warmupChecked: true, completed: Number(course.warmupAnswer) === warmup.correct ? finishModule(course.completed, "warmup") : course.completed }; break;
-    case "complete-lesson":
-      if (course.completed.includes("lesson")) return data;
-      next = { ...course, completed: finishModule(course.completed, "lesson") }; break;
-    case "quiz-answer":
-      if (course.quizSubmitted || !Number.isInteger(action.index) || !questions[action.index] || !validAnswer(action.answer, questions[action.index].options.length) || course.quizAnswers[action.index] === action.answer) return data;
-      next = { ...course, quizAnswers: course.quizAnswers.map((answer, i) => i === action.index ? action.answer : answer) }; break;
-    case "submit-quiz":
-      if (course.quizSubmitted || course.quizAnswers.some(answer => answer === "")) return data;
-      next = { ...course, quizSubmitted: true, completed: questions.every((question, i) => Number(course.quizAnswers[i]) === question.correct) ? finishModule(course.completed, "quiz") : course.completed }; break;
-    case "retry-quiz":
-      next = { ...course, quizAnswers: questions.map(() => ""), quizSubmitted: false }; break;
-    case "toggle-habit":
-      if (!habitOrder.includes(action.id)) return data;
-      return { ...data, commitments: data.commitments.includes(action.id) ? data.commitments.filter(id => id !== action.id) : [...data.commitments, action.id] };
+export function reduceProgress(data: DojoProgress, action: ProgressAction, catalog: CourseCatalog = courseCatalog): DojoProgress {
+  if (action.type === "toggle-habit") {
+    if (!habitOrder.includes(action.id)) return data;
+    return { ...data, commitments: data.commitments.includes(action.id) ? data.commitments.filter(id => id !== action.id) : [...data.commitments, action.id] };
   }
-  return { ...data, courses: { ...data.courses, [PILOT_ID]: next } };
+  const course = catalog.courses.find(item => item.id === action.courseId);
+  const module = course?.modules.find(item => item.id === action.moduleId);
+  if (!course || !module || !canTrain(data, course, catalog)) return data;
+  const previous = moduleProgress(data, course, module);
+  let next: ModuleProgress;
+  if (action.type === "answer") {
+    const question = moduleQuestions(module).find(item => item.id === action.questionId);
+    if (!question || !validAnswer(action.answer, question.options.length) || previous.answers[question.id] === action.answer || (module.kind === "quiz" && previous.submitted)) return data;
+    next = { ...previous, answers: { ...previous.answers, [question.id]: action.answer }, submitted: false };
+  } else if (action.type === "submit") {
+    const grade = gradeModule(module, previous);
+    if (module.kind === "lesson" || previous.submitted || grade.answered !== grade.total) return data;
+    next = { ...previous, submitted: true, completed: previous.completed || grade.passed };
+  } else if (action.type === "complete-lesson") {
+    if (module.kind !== "lesson" || previous.completed) return data;
+    next = { ...previous, completed: true };
+  } else {
+    if (module.kind === "lesson") return data;
+    next = { ...emptyModule(module), completed: previous.completed };
+  }
+  return { ...data, courses: { ...data.courses, [course.id]: { modules: { ...data.courses[course.id]?.modules, [module.id]: next } } } };
 }
 
 type DecodeResult = { ok: true; data: DojoProgress; migrated: boolean } | { ok: false; reason: "invalid" | "newer" };
-function object(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
-function list<T extends string>(value: unknown, allowed: T[]): T[] | null {
-  if (!Array.isArray(value) || value.length > 100 || !value.every(item => typeof item === "string" && allowed.includes(item as T))) return null;
-  return allowed.filter(item => value.includes(item));
+function migrateLegacy(envelope: Record<string, unknown>, catalog: CourseCatalog): DojoProgress | null {
+  const course = catalog.courses.find(item => item.id === PILOT_ID);
+  if (!course) return null;
+  let source = envelope;
+  let commitmentsSource: unknown = envelope.commitments ?? [];
+  if (envelope.version === 2) {
+    if (!isRecord(envelope.progress) || !isRecord(envelope.progress.courses) || Object.keys(envelope.progress.courses).some(id => id !== PILOT_ID) || !isRecord(envelope.progress.courses[PILOT_ID])) return null;
+    source = envelope.progress.courses[PILOT_ID]; commitmentsSource = envelope.progress.commitments;
+  }
+  const completed = list(source.completed, ["warmup", "lesson", "quiz"]);
+  const commitments = list(commitmentsSource, habitOrder);
+  if (!completed || !commitments) return null;
+  const data = emptyProgress(catalog);
+  for (const id of completed) {
+    if (!data.courses[PILOT_ID].modules[id]) return null;
+    data.courses[PILOT_ID].modules[id].completed = true;
+  }
+  data.commitments = commitments;
+  if (envelope.version === 1) return data;
+  const warmup = course.modules.find(module => module.id === "warmup");
+  const quiz = course.modules.find(module => module.id === "quiz");
+  if (!warmup || warmup.kind !== "warmup" || !quiz || quiz.kind !== "quiz" || !validAnswer(source.warmupAnswer, warmup.question.options.length) || typeof source.warmupChecked !== "boolean" || (source.warmupChecked && source.warmupAnswer === "") || !Array.isArray(source.quizAnswers) || source.quizAnswers.length !== quiz.questions.length || !source.quizAnswers.every((answer, index) => validAnswer(answer, quiz.questions[index].options.length)) || typeof source.quizSubmitted !== "boolean" || (source.quizSubmitted && source.quizAnswers.some(answer => answer === ""))) return null;
+  data.courses[PILOT_ID].modules.warmup.answers[warmup.question.id] = source.warmupAnswer;
+  data.courses[PILOT_ID].modules.warmup.submitted = source.warmupChecked;
+  data.courses[PILOT_ID].modules.quiz.answers = Object.fromEntries(quiz.questions.map((question, index) => [question.id, (source.quizAnswers as string[])[index]]));
+  data.courses[PILOT_ID].modules.quiz.submitted = source.quizSubmitted;
+  return data;
 }
-export function decodeProgress(raw: string): DecodeResult {
-  if (raw.length > MAX_BACKUP_BYTES) return { ok: false, reason: "invalid" };
+export function decodeProgress(raw: string, catalog: CourseCatalog = courseCatalog): DecodeResult {
+  if (new TextEncoder().encode(raw).byteLength > MAX_BACKUP_BYTES) return { ok: false, reason: "invalid" };
   let envelope: unknown;
   try { envelope = JSON.parse(raw); } catch { return { ok: false, reason: "invalid" }; }
-  if (!object(envelope) || envelope.app !== "bushido-ops" || !Number.isInteger(envelope.version)) return { ok: false, reason: "invalid" };
-  if (Number(envelope.version) > 2) return { ok: false, reason: "newer" };
-  if (envelope.version === 1) {
-    const completed = list(envelope.completed, moduleOrder);
-    const commitments = list(envelope.commitments ?? [], habitOrder);
-    if (!completed || !commitments) return { ok: false, reason: "invalid" };
-    const data = emptyProgress();
-    data.courses[PILOT_ID].completed = completed;
-    data.commitments = commitments;
-    return { ok: true, data, migrated: true };
+  if (!isRecord(envelope) || envelope.app !== "bushido-ops" || !Number.isInteger(envelope.version)) return { ok: false, reason: "invalid" };
+  if (Number(envelope.version) > PROGRESS_VERSION) return { ok: false, reason: "newer" };
+  if (envelope.version === 1 || envelope.version === 2) {
+    const data = migrateLegacy(envelope, catalog);
+    return data ? { ok: true, data, migrated: true } : { ok: false, reason: "invalid" };
   }
-  if (envelope.version !== 2 || !object(envelope.progress) || !object(envelope.progress.courses)) return { ok: false, reason: "invalid" };
+  if (envelope.version !== PROGRESS_VERSION || !isRecord(envelope.progress) || !isRecord(envelope.progress.courses)) return { ok: false, reason: "invalid" };
   const source = envelope.progress;
-  const courses = source.courses as Record<string, unknown>;
-  if (Object.keys(courses).some(id => id !== PILOT_ID)) return { ok: false, reason: "invalid" };
-  const pilot = courses[PILOT_ID];
-  if (!object(pilot)) return { ok: false, reason: "invalid" };
-  const completed = list(pilot.completed, moduleOrder);
+  const sources = source.courses as Record<string, unknown>;
   const commitments = list(source.commitments, habitOrder);
-  if (!completed || !commitments || !validAnswer(pilot.warmupAnswer, warmup.options.length) || typeof pilot.warmupChecked !== "boolean" || (pilot.warmupChecked && pilot.warmupAnswer === "") || !Array.isArray(pilot.quizAnswers) || pilot.quizAnswers.length !== questions.length || !pilot.quizAnswers.every((answer, i) => validAnswer(answer, questions[i].options.length)) || typeof pilot.quizSubmitted !== "boolean" || (pilot.quizSubmitted && pilot.quizAnswers.some(answer => answer === ""))) return { ok: false, reason: "invalid" };
-  return { ok: true, migrated: false, data: { courses: { [PILOT_ID]: { completed, warmupAnswer: pilot.warmupAnswer, warmupChecked: pilot.warmupChecked, quizAnswers: [...pilot.quizAnswers] as string[], quizSubmitted: pilot.quizSubmitted } }, commitments } };
+  if (!commitments || Object.keys(sources).some(id => !catalog.courses.some(course => course.id === id))) return { ok: false, reason: "invalid" };
+  const data = emptyProgress(catalog);
+  for (const course of catalog.courses) {
+    const stored = sources[course.id];
+    if (stored === undefined) continue;
+    if (!isRecord(stored) || !isRecord(stored.modules) || Object.keys(stored.modules).some(id => !course.modules.some(module => module.id === id))) return { ok: false, reason: "invalid" };
+    const normalized: CourseProgress = { modules: {} };
+    for (const module of course.modules) {
+      const progress = stored.modules[module.id];
+      if (progress === undefined) { normalized.modules[module.id] = emptyModule(module); continue; }
+      if (!isRecord(progress) || typeof progress.completed !== "boolean" || typeof progress.submitted !== "boolean" || !isRecord(progress.answers)) return { ok: false, reason: "invalid" };
+      const questions = moduleQuestions(module);
+      const answers = progress.answers;
+      if (Object.keys(answers).some(id => !questions.some(question => question.id === id)) || (module.kind === "lesson" && progress.submitted)) return { ok: false, reason: "invalid" };
+      const entries: [string, string][] = [];
+      for (const question of questions) {
+        const answer = answers[question.id] === undefined ? "" : answers[question.id];
+        if (!validAnswer(answer, question.options.length) || (progress.submitted && answer === "")) return { ok: false, reason: "invalid" };
+        entries.push([question.id, answer]);
+      }
+      normalized.modules[module.id] = { completed: progress.completed, submitted: progress.submitted, answers: Object.fromEntries(entries) };
+    }
+    data.courses[course.id] = normalized;
+  }
+  data.commitments = commitments;
+  return { ok: true, data, migrated: false };
 }
-export function encodeProgress(data: DojoProgress): string {
-  return JSON.stringify({ app: "bushido-ops", version: 2, progress: data }, null, 2);
-}
-export function progressXp(data: DojoProgress) { return earnedXp(data.courses[PILOT_ID].completed); }
+export function encodeProgress(data: DojoProgress): string { return JSON.stringify({ app: "bushido-ops", version: PROGRESS_VERSION, progress: data }, null, 2); }
+export function progressXp(data: DojoProgress, catalog: CourseCatalog = courseCatalog) { return learningSummary(data, catalog).xp; }
 
 const temporaryNotice = "This browser couldn't save your progress. Keep this page open and export a backup before leaving.";
-const protectedNotice = (reason: "invalid" | "newer") => reason === "newer"
-  ? "Update Bushido Ops to open your saved progress. Your saved copy has been kept; this practice session is temporary."
-  : "Your saved progress couldn't be opened. Your saved copy has been kept; import a backup or reset progress to save again.";
+const protectedNotice = (reason: "invalid" | "newer") => reason === "newer" ? "Update Bushido Ops to open your saved progress. Your saved copy has been kept; this practice session is temporary." : "Your saved progress couldn't be opened. Your saved copy has been kept; import a backup or reset progress to save again.";
 type StorageAdapter = Pick<Storage, "getItem" | "setItem">;
-
-export function createProgressStore() {
-  const initial: ProgressSnapshot = { ready: false, data: emptyProgress(), mode: "temporary", notice: null, savedRaw: null };
+export function createProgressStore(catalog: CourseCatalog = courseCatalog) {
+  const initial: ProgressSnapshot = { ready: false, data: emptyProgress(catalog), mode: "temporary", notice: null, savedRaw: null };
   let snapshot = initial;
   let storage: StorageAdapter | undefined;
   const listeners = new Set<() => void>();
@@ -123,12 +138,8 @@ export function createProgressStore() {
     try {
       if (!storage) throw new Error("No storage adapter");
       storage.setItem(PROGRESS_KEY, raw);
-      publish({ ready: true, data, mode: "saved", notice: null, savedRaw: raw });
-      return true;
-    } catch {
-      publish({ ready: true, data, mode: "temporary", notice: temporaryNotice, savedRaw: snapshot.savedRaw });
-      return false;
-    }
+      publish({ ready: true, data, mode: "saved", notice: null, savedRaw: raw }); return true;
+    } catch { publish({ ready: true, data, mode: "temporary", notice: temporaryNotice, savedRaw: snapshot.savedRaw }); return false; }
   };
   return {
     getSnapshot: () => snapshot,
@@ -139,22 +150,22 @@ export function createProgressStore() {
       storage = adapter;
       let raw: string | null;
       try { raw = adapter.getItem(PROGRESS_KEY); } catch { publish({ ...snapshot, ready: true, mode: "temporary", notice: temporaryNotice }); return; }
-      if (raw === null) { persist(emptyProgress()); return; }
-      const parsed = decodeProgress(raw);
+      if (raw === null) { persist(emptyProgress(catalog)); return; }
+      const parsed = decodeProgress(raw, catalog);
       if (!parsed.ok) { publish({ ...snapshot, ready: true, mode: "protected", notice: protectedNotice(parsed.reason), savedRaw: raw }); return; }
       publish({ ready: true, data: parsed.data, mode: "saved", notice: null, savedRaw: raw });
       if (parsed.migrated) persist(parsed.data);
     },
     dispatch(action: ProgressAction) {
       if (!snapshot.ready) return;
-      const next = reduceProgress(snapshot.data, action);
+      const next = reduceProgress(snapshot.data, action, catalog);
       if (next !== snapshot.data) persist(next);
     },
-    replace(data: DojoProgress) { return persist(data, true); },
-    reset() { return persist(emptyProgress(), true); },
+    replace(data: DojoProgress) { const parsed = decodeProgress(encodeProgress(data), catalog); return parsed.ok ? persist(parsed.data, true) : false; },
+    reset() { return persist(emptyProgress(catalog), true); },
     receiveExternal(raw: string | null) {
-      if (raw === null) { publish({ ready: true, data: emptyProgress(), mode: "saved", notice: null, savedRaw: null }); return; }
-      const parsed = decodeProgress(raw);
+      if (raw === null) { publish({ ready: true, data: emptyProgress(catalog), mode: "saved", notice: null, savedRaw: null }); return; }
+      const parsed = decodeProgress(raw, catalog);
       if (!parsed.ok) { publish({ ...snapshot, mode: "protected", notice: protectedNotice(parsed.reason), savedRaw: raw }); return; }
       publish({ ready: true, data: parsed.data, mode: "saved", notice: null, savedRaw: raw });
     },
