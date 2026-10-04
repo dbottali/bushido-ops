@@ -11,6 +11,7 @@ A pixel-art cybersecurity dojo for practical digital self-defense. This interact
 - About: the mission, who the dojo is for, an interactive training overview, belt availability and expandable FAQs. Every training preview links to its playable pilot module.
 - Philosophy: Order, Respect and Honor, with practical habits, expandable scenarios and a personal dojo code that keeps your choices while navigating the open session.
 - 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on mouse entry or keyboard focus, with no automatic punches.
+- Warm-up and Quiz start with the clean scene while their fighters load, preventing a brief flash of the original Ryu illustration on Home and About.
 - Warm-up, short lesson, and three-question quiz with explanations and retries.
 - Session XP: 20 for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module awards once per session.
 - Keyboard-accessible controls and support for reduced-motion preferences.
@@ -63,7 +64,8 @@ React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Worker
 - [Philosophy content and interactions](docs/PHILOSOPHY.md)
 - [About content and navigation](docs/ABOUT.md)
 - [Belts curriculum and session progress](docs/BELTS.md)
-- [Upload the latest Belts update](docs/BELTS-UPDATE.md)
+- [Upload the latest loading fix](docs/LOADING-FIX.md)
+- [Upload the Belts update](docs/BELTS-UPDATE.md)
 - [Upload the About update](docs/ABOUT-UPDATE.md)
 - [Upload the Philosophy update](docs/PHILOSOPHY-UPDATE.md)
 - [Upload this animation update](docs/ANIMATION-UPDATE.md)

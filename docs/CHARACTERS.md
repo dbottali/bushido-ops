@@ -24,6 +24,6 @@ Each transparent PNG has eight complete poses in a 4 × 2 sheet. The top row con
 
 `public/art/dojo-background-clean.png` has the same 1672 × 941 dimensions as the original reference. Only hero, Warm-up, Quiz and footer-left scene crops use it. Lesson art, lettering, belt characters, icons and other regions still use `dojo-reference.png`.
 
-The clean scene is a fixed layer rather than stretched rectangles following the character. The old illustration remains visible until both the sprite and background have loaded. Sprite frames contain no floor, wall or shadow pixels.
+The clean scene is fixed rather than stretched rectangles following the character. Warm-up and Quiz use the clean crop as their only scene image from the first render, on Home and About. Their canvases appear only after the matching sprite and clean background have loaded. Pending or failed sprite loads cannot reveal the original Ryu illustration in those cards. The hero and footer retain their matching Ryu illustration until ready. Sprite frames contain no floor, wall or shadow pixels.
 
 Generation prompts are recorded in `ART-GENERATION.md`; validation is in `QA.md`.

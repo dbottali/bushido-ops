@@ -97,9 +97,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .arcade-fighter { position: relative; overflow: visible; width: 192px; height: 168px; }
 .arcade-fighter canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
 .arcade-fighter[data-ready="false"] { visibility: hidden; }
-.hero-clean-scene, .card-clean-scene, .footer-clean-scene { position: absolute; inset: 0; width: 100%; height: 100%; visibility: hidden; }
+.hero-clean-scene, .footer-clean-scene { position: absolute; inset: 0; width: 100%; height: 100%; visibility: hidden; }
 .hero-scene:has(.arcade-fighter[data-ready="true"]) .hero-clean-scene,
-.card-art:has(.arcade-fighter[data-ready="true"]) .card-clean-scene,
 .footer-left:has(.arcade-fighter[data-ready="true"]) .footer-clean-scene { visibility: visible; }
 .hero-fighter { position: absolute; left: 8.68%; top: 29.45%; width: 20.084%; height: 57.534%; }
 .card-art > .dojo-art { height: 100%; }

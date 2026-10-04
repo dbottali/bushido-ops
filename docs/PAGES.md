@@ -4,7 +4,7 @@ La webapp animata funziona interamente nel browser. La build dedicata include gl
 
 ## Prima installazione del pacchetto pronto
 
-1. Estrai il pacchetto aggiornato `bushido-ops-belts.zip`. Per i dettagli dell’ultimo aggiornamento, vedi `BELTS-UPDATE.md`.
+1. Estrai il pacchetto aggiornato `bushido-ops-loading-fix.zip`. Per i dettagli dell’ultimo aggiornamento, vedi `LOADING-FIX.md`.
 2. Apri il repository `dbottali/bushido-ops`, sulla branch `main`.
 3. Usa **Add file → Upload files** e carica il contenuto interno della cartella estratta nella radice del repository. I file sorgenti aggiornati accompagnano i file già compilati.
 4. Conferma la sostituzione di `index.html`, `README.md` e degli altri file esistenti. Questo pacchetto non richiede file nascosti.

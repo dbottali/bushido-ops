@@ -1,5 +1,14 @@
 # Bushido Ops validation — 4 October 2026
 
+## Fighter loading fix
+
+- Root cause: Home and About rendered the original Ryu card artwork until the fighter became ready. Warm-up and Quiz now render only the clean scene from the first render. The obsolete readiness-gated card overlay was removed.
+- A temporary fixture held the actual application’s sprite image loads indefinitely. Home Warm-up and Quiz stayed on the clean scene with hidden canvases and the correct boxer/quiz character roles. About’s two matching previews did the same.
+- Releasing the held images loaded the correct 8-bit fighters. A separate run failed sprite loads deliberately: Home and About retained the clean scene, with `data-load-error="sprite"` and no original Ryu card image in the DOM. Lesson retains its original illustration.
+- Normal Home was visually checked with both correct fighters ready; inspected browser warning/error logs contained no application messages. Proof: `loading-fix-preview.jpg`.
+- Animation logic, atlas files, timing, interaction, palette and responsive geometry were unchanged. The loading fixture and temporary preview package change were removed before packaging.
+- TypeScript and the GitHub Pages production build passed. The cumulative archive retains About, Belts, Philosophy and the pilot, and includes the new compiled entry point and its referenced assets. This is prepared for manual upload and is not claimed to be live.
+
 ## Belts update
 
 - Desktop introduction, original 8-bit belt miniatures, ready Ryu-style fighter and navy mission panels were visually checked. All eight selections showed the matching topic, outcomes and mission, with a selected-tab URL. Only White is available; the other seven remain planned.
