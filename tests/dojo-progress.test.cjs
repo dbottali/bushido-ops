@@ -1,101 +1,47 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { createProgressStore, emptyProgress, decodeProgress, encodeProgress, progressXp, nextModule, PROGRESS_KEY, PILOT_ID, MAX_BACKUP_BYTES } = require(process.env.BUSHIDO_PROGRESS_TEST_MODULE);
-
-function disk(initial = null) {
-  let raw = initial;
-  let blocked = false;
-  let writes = 0;
-  return {
-    getItem: key => { assert.equal(key, PROGRESS_KEY); if (blocked) throw Error('denied'); return raw; },
-    setItem: (key, value) => { assert.equal(key, PROGRESS_KEY); if (blocked) throw Error('quota'); writes++; raw = value; },
-    raw: () => raw,
-    writes: () => writes,
-    block: value => { blocked = value; },
-  };
+const { createProgressStore, emptyProgress, decodeProgress, encodeProgress, progressXp, PROGRESS_KEY, PILOT_ID, MAX_BACKUP_BYTES, PROGRESS_VERSION } = require(process.env.BUSHIDO_PROGRESS_TEST_MODULE);
+const engine = require(process.env.BUSHIDO_ENGINE_TEST_MODULE);
+const { courseCatalog, pilotCourse } = require(process.env.BUSHIDO_CATALOG_TEST_MODULE);
+const { resolveTrainingRoute } = require(process.env.BUSHIDO_ROUTES_TEST_MODULE);
+function disk(initial=null) { let raw=initial, blocked=false, writes=0; return { getItem:key=>{assert.equal(key,PROGRESS_KEY);if(blocked)throw Error('denied');return raw;},setItem:(key,value)=>{assert.equal(key,PROGRESS_KEY);if(blocked)throw Error('quota');writes++;raw=value;},raw:()=>raw,writes:()=>writes,block:value=>blocked=value }; }
+function action(store,type,moduleId,extras={},courseId=PILOT_ID) { store.dispatch({type,moduleId,courseId,...extras}); }
+function answer(store,moduleId,questionId,value,courseId=PILOT_ID) { action(store,'answer',moduleId,{questionId,answer:value},courseId); }
+function correctWarmup(store) { answer(store,'warmup','pressure','1'); action(store,'submit','warmup'); }
+function correctQuiz(store) { ['logos','official-channel','private-code'].forEach((id,i)=>answer(store,'quiz',id,['1','2','0'][i]));action(store,'submit','quiz'); }
+function completePilot(store) { correctWarmup(store);action(store,'complete-lesson','lesson');correctQuiz(store); }
+function ready(catalog=courseCatalog,storage=disk()) { const store=createProgressStore(catalog);store.hydrate(storage);return store; }
+function legacy2(overrides={}) { return JSON.stringify({app:'bushido-ops',version:2,progress:{courses:{[PILOT_ID]:{completed:['warmup'],warmupAnswer:'1',warmupChecked:true,quizAnswers:['1','',''],quizSubmitted:false,...overrides}},commitments:['respect']}}); }
+function secondCatalog() {
+  const raw=structuredClone(courseCatalog);
+  raw.courses.push({id:'test-follow-up',belt:'yellow',title:'TEST FIXTURE ONLY',summary:'Not published learning content.',availability:'available',prerequisites:[PILOT_ID],modules:[
+    {id:'start',kind:'warmup',title:'CHECK',intro:'Fixture only',reward:7,scenario:{from:'Fixture',title:'Fixture',body:'Fixture',action:'Fixture'},question:{id:'first-choice',prompt:'Fixture?',options:['No','Yes'],correct:1,explanation:'Fixture'}},
+    {id:'read',kind:'lesson',title:'READ',intro:'Fixture only',reward:11,sections:[{title:'Fixture',body:'Fixture'}]},
+    {id:'practice',kind:'lesson',title:'PRACTICE',intro:'Fixture only',reward:13,sections:[{title:'Fixture',body:'Fixture'}]},
+    {id:'check',kind:'quiz',title:'CHECK',intro:'Fixture only',reward:17,passingScore:1,questions:[{id:'choice-a',prompt:'Fixture?',options:['No','Yes'],correct:1,explanation:'Fixture'},{id:'choice-b',prompt:'Fixture?',options:['Yes','No'],correct:0,explanation:'Fixture'}]}
+  ]});
+  return engine.validateCatalog(raw);
 }
-function correctWarmup(store) { store.dispatch({ type: 'warmup-answer', answer: '1' }); store.dispatch({ type: 'check-warmup' }); }
-function correctQuiz(store) { ['1', '2', '0'].forEach((answer, index) => store.dispatch({ type: 'quiz-answer', answer, index })); store.dispatch({ type: 'submit-quiz' }); }
-
-test('reload restores progress, unfinished answers and habits without overwriting the saved profile', () => {
-  const storage = disk(); const first = createProgressStore(); first.hydrate(storage);
-  correctWarmup(first);
-  first.dispatch({ type: 'quiz-answer', index: 0, answer: '1' });
-  first.dispatch({ type: 'toggle-habit', id: 'respect' });
-  const raw = storage.raw(); const writes = storage.writes();
-  const reloaded = createProgressStore(); reloaded.hydrate(storage);
-  assert.equal(storage.raw(), raw); assert.equal(storage.writes(), writes);
-  assert.equal(progressXp(reloaded.getSnapshot().data), 20);
-  assert.equal(nextModule(reloaded.getSnapshot().data.courses[PILOT_ID].completed), 'lesson');
-  assert.deepEqual(reloaded.getSnapshot().data.courses[PILOT_ID].quizAnswers, ['1', '', '']);
-  assert.deepEqual(reloaded.getSnapshot().data.commitments, ['respect']);
-});
-test('wrong and incomplete answers award no XP; retries and reloads never award a module twice', () => {
-  const storage = disk(); let store = createProgressStore(); store.hydrate(storage);
-  store.dispatch({ type: 'warmup-answer', answer: '0' }); store.dispatch({ type: 'check-warmup' });
-  store.dispatch({ type: 'submit-quiz' }); assert.equal(progressXp(store.getSnapshot().data), 0);
-  correctWarmup(store); store.dispatch({ type: 'complete-lesson' });
-  ['0', '2', '0'].forEach((answer, index) => store.dispatch({ type: 'quiz-answer', index, answer }));
-  store.dispatch({ type: 'submit-quiz' }); assert.equal(progressXp(store.getSnapshot().data), 50);
-  store.dispatch({ type: 'retry-quiz' }); correctQuiz(store); assert.equal(progressXp(store.getSnapshot().data), 100);
-  store = createProgressStore(); store.hydrate(storage);
-  correctWarmup(store); store.dispatch({ type: 'complete-lesson' }); store.dispatch({ type: 'retry-quiz' }); correctQuiz(store);
-  assert.equal(progressXp(store.getSnapshot().data), 100);
-  assert.equal(store.getSnapshot().data.courses[PILOT_ID].completed.length, 3);
-});
-test('JSON round trip preserves a partially completed practice and ignores supplied XP fields', () => {
-  const storage = disk(); const store = createProgressStore(); store.hydrate(storage); correctWarmup(store);
-  const backup = JSON.parse(encodeProgress(store.getSnapshot().data));
-  backup.xp = 999999; backup.progress.xp = 999999; backup.progress.courses[PILOT_ID].completed.push('warmup');
-  const decoded = decodeProgress(JSON.stringify(backup));
-  assert.equal(decoded.ok, true); assert.equal(progressXp(decoded.data), 20);
-  assert.deepEqual(decoded.data.courses[PILOT_ID].completed, ['warmup']);
-});
-test('explicit import and reset persist the whole profile, including drafts and habits', () => {
-  const storage = disk(); const store = createProgressStore(); store.hydrate(storage); correctWarmup(store);
-  store.dispatch({ type: 'toggle-habit', id: 'honor' });
-  const backup = decodeProgress(encodeProgress(store.getSnapshot().data)).data;
-  assert.equal(store.reset(), true); assert.equal(progressXp(store.getSnapshot().data), 0);
-  assert.deepEqual(store.getSnapshot().data.commitments, []);
-  assert.equal(store.replace(backup), true);
-  const reloaded = createProgressStore(); reloaded.hydrate(storage);
-  assert.equal(progressXp(reloaded.getSnapshot().data), 20); assert.deepEqual(reloaded.getSnapshot().data.commitments, ['honor']);
-});
-test('known version 1 migrates completions and habits and writes the current format', () => {
-  const storage = disk(JSON.stringify({ app: 'bushido-ops', version: 1, completed: ['lesson', 'warmup', 'warmup'], commitments: ['order'] }));
-  const store = createProgressStore(); store.hydrate(storage);
-  assert.equal(progressXp(store.getSnapshot().data), 50); assert.deepEqual(store.getSnapshot().data.commitments, ['order']);
-  assert.equal(JSON.parse(storage.raw()).version, 2); assert.equal(store.getSnapshot().mode, 'saved');
-});
-test('corrupt and newer stored data is retained during temporary practice until explicit replacement', () => {
-  for (const raw of ['{broken', JSON.stringify({ app: 'bushido-ops', version: 99, future: 'retain me' })]) {
-    const storage = disk(raw); const store = createProgressStore(); store.hydrate(storage);
-    assert.equal(store.getSnapshot().ready, true); assert.equal(store.getSnapshot().mode, 'protected');
-    correctWarmup(store); assert.equal(progressXp(store.getSnapshot().data), 20);
-    assert.equal(storage.raw(), raw); assert.equal(storage.writes(), 0); assert.equal(store.getSnapshot().savedRaw, raw);
-    store.reset(); assert.equal(decodeProgress(storage.raw()).ok, true); assert.equal(store.getSnapshot().mode, 'saved');
-  }
-});
-test('denied reads and failed writes allow practice, export and later saving', () => {
-  const storage = disk(); storage.block(true); const store = createProgressStore(); store.hydrate(storage);
-  correctWarmup(store); assert.equal(progressXp(store.getSnapshot().data), 20);
-  assert.equal(store.getSnapshot().mode, 'temporary'); assert.equal(decodeProgress(encodeProgress(store.getSnapshot().data)).ok, true);
-  storage.block(false); store.dispatch({ type: 'complete-lesson' });
-  assert.equal(store.getSnapshot().mode, 'saved'); assert.equal(progressXp(decodeProgress(storage.raw()).data), 50);
-  storage.block(true); store.dispatch({ type: 'toggle-habit', id: 'order' });
-  assert.equal(store.getSnapshot().mode, 'temporary'); assert.deepEqual(store.getSnapshot().data.commitments, ['order']);
-});
-test('malformed, foreign and unsupported backups are rejected without touching an existing profile', () => {
-  const valid = JSON.parse(encodeProgress(emptyProgress()));
-  const bad = [null, [], { app: 'other', version: 2 }, { app: 'bushido-ops', version: 0 }, { ...valid, progress: {} }, { ...valid, progress: { ...valid.progress, commitments: ['unknown'] } }];
-  for (const input of bad) assert.equal(decodeProgress(JSON.stringify(input)).ok, false);
-  valid.progress.courses[PILOT_ID].completed = ['unknown']; assert.equal(decodeProgress(JSON.stringify(valid)).ok, false);
-  assert.equal(decodeProgress(' '.repeat(MAX_BACKUP_BYTES + 1)).ok, false);
-  assert.deepEqual(decodeProgress(JSON.stringify({ app: 'bushido-ops', version: 99 })), { ok: false, reason: 'newer' });
-});
-test('external tab changes update all derived progress and explicit removal resets it', () => {
-  const storage = disk(); const first = createProgressStore(); const second = createProgressStore(); first.hydrate(storage); second.hydrate(storage);
-  correctWarmup(first); second.receiveExternal(storage.raw()); assert.equal(progressXp(second.getSnapshot().data), 20);
-  first.reset(); second.receiveExternal(storage.raw()); assert.equal(progressXp(second.getSnapshot().data), 0);
-  second.receiveExternal(null); assert.deepEqual(second.getSnapshot().data, emptyProgress());
-});
+test('published catalog contains only the existing pilot; planned belts cannot be trained',()=>{assert.equal(courseCatalog.courses.filter(c=>c.availability==='available').length,1);const data=emptyProgress();for(const c of courseCatalog.courses.filter(c=>c.availability==='planned')){assert.equal(engine.canTrain(data,c,courseCatalog),false);assert.equal(engine.courseStatus(data,c,courseCatalog),'unavailable');}});
+test('reload preserves drafts, XP and habits without overwriting a current-format profile',()=>{const storage=disk(),store=ready(courseCatalog,storage);correctWarmup(store);answer(store,'quiz','logos','1');store.dispatch({type:'toggle-habit',id:'respect'});const raw=storage.raw(),writes=storage.writes();const reloaded=ready(courseCatalog,storage);assert.equal(storage.raw(),raw);assert.equal(storage.writes(),writes);assert.equal(progressXp(reloaded.getSnapshot().data),20);assert.equal(engine.nextCourseModule(reloaded.getSnapshot().data,pilotCourse).id,'lesson');assert.equal(reloaded.getSnapshot().data.courses[PILOT_ID].modules.quiz.answers.logos,'1');assert.deepEqual(reloaded.getSnapshot().data.commitments,['respect']);});
+test('wrong and incomplete answers award no XP; completion counts once across retries and reloads',()=>{const storage=disk();let store=ready(courseCatalog,storage);answer(store,'warmup','pressure','0');action(store,'submit','warmup');action(store,'submit','quiz');assert.equal(progressXp(store.getSnapshot().data),0);correctWarmup(store);action(store,'complete-lesson','lesson');['0','2','0'].forEach((v,i)=>answer(store,'quiz',['logos','official-channel','private-code'][i],v));action(store,'submit','quiz');assert.equal(progressXp(store.getSnapshot().data),50);action(store,'retry','quiz');correctQuiz(store);assert.equal(progressXp(store.getSnapshot().data),100);store=ready(courseCatalog,storage);correctWarmup(store);action(store,'complete-lesson','lesson');action(store,'retry','quiz');correctQuiz(store);assert.equal(progressXp(store.getSnapshot().data),100);assert.equal(engine.completedModules(store.getSnapshot().data,pilotCourse).length,3);});
+test('quiz answers are locked after submission until retry, and earned completion remains',()=>{const store=ready();correctQuiz(store);const before=store.getSnapshot().data;answer(store,'quiz','logos','0');assert.equal(store.getSnapshot().data,before);action(store,'retry','quiz');assert.equal(store.getSnapshot().data.courses[PILOT_ID].modules.quiz.submitted,false);assert.equal(progressXp(store.getSnapshot().data),50);});
+test('XP is derived from catalog rewards, ignoring totals or rewards supplied in a backup',()=>{const store=ready();correctWarmup(store);const raw=JSON.parse(encodeProgress(store.getSnapshot().data));raw.xp=999999;raw.progress.xp=999999;raw.progress.courses[PILOT_ID].modules.warmup.reward=999999;const parsed=decodeProgress(JSON.stringify(raw));assert.equal(parsed.ok,true);assert.equal(progressXp(parsed.data),20);});
+test('explicit import and reset persist all courses, answers and commitments',()=>{const storage=disk(),store=ready(courseCatalog,storage);completePilot(store);store.dispatch({type:'toggle-habit',id:'honor'});const backup=decodeProgress(encodeProgress(store.getSnapshot().data)).data;assert.equal(store.reset(),true);assert.equal(progressXp(store.getSnapshot().data),0);assert.deepEqual(store.getSnapshot().data.commitments,[]);assert.equal(store.replace(backup),true);const reloaded=ready(courseCatalog,storage);assert.equal(progressXp(reloaded.getSnapshot().data),100);assert.deepEqual(reloaded.getSnapshot().data.commitments,['honor']);});
+test('version 2 migration retains completed modules, unfinished answers and habits and saves version 3',()=>{const storage=disk(legacy2()),store=ready(courseCatalog,storage),data=store.getSnapshot().data;assert.equal(progressXp(data),20);assert.equal(data.courses[PILOT_ID].modules.warmup.answers.pressure,'1');assert.equal(data.courses[PILOT_ID].modules.warmup.submitted,true);assert.equal(data.courses[PILOT_ID].modules.quiz.answers.logos,'1');assert.deepEqual(data.commitments,['respect']);assert.equal(JSON.parse(storage.raw()).version,PROGRESS_VERSION);assert.equal(storage.writes(),1);});
+test('version 2 migration retains a submitted quiz and full 100 XP',()=>{const parsed=decodeProgress(legacy2({completed:['warmup','lesson','quiz'],quizAnswers:['1','2','0'],quizSubmitted:true}));assert.equal(parsed.ok,true);assert.equal(progressXp(parsed.data),100);assert.equal(parsed.data.courses[PILOT_ID].modules.quiz.submitted,true);});
+test('known version 1 normalizes duplicate completions and migrates habits',()=>{const storage=disk(JSON.stringify({app:'bushido-ops',version:1,completed:['lesson','warmup','warmup'],commitments:['order']}));const store=ready(courseCatalog,storage);assert.equal(progressXp(store.getSnapshot().data),50);assert.deepEqual(store.getSnapshot().data.commitments,['order']);assert.equal(JSON.parse(storage.raw()).version,3);});
+test('corrupt, newer and incompatible saved copies stay intact until explicit replacement',()=>{const incompatible=JSON.parse(encodeProgress(emptyProgress()));incompatible.progress.courses['unknown-course']={modules:{}};for(const raw of ['{broken',JSON.stringify({app:'bushido-ops',version:99}),JSON.stringify(incompatible)]){const storage=disk(raw),store=ready(courseCatalog,storage);assert.equal(store.getSnapshot().mode,'protected');correctWarmup(store);assert.equal(progressXp(store.getSnapshot().data),20);assert.equal(storage.raw(),raw);assert.equal(storage.writes(),0);assert.equal(store.getSnapshot().savedRaw,raw);store.reset();assert.equal(decodeProgress(storage.raw()).ok,true);}});
+test('denied reads and failed writes keep practice usable and recover on a later save',()=>{const storage=disk();storage.block(true);const store=ready(courseCatalog,storage);correctWarmup(store);assert.equal(store.getSnapshot().mode,'temporary');assert.equal(progressXp(store.getSnapshot().data),20);assert.equal(decodeProgress(encodeProgress(store.getSnapshot().data)).ok,true);storage.block(false);action(store,'complete-lesson','lesson');assert.equal(store.getSnapshot().mode,'saved');assert.equal(progressXp(decodeProgress(storage.raw()).data),50);storage.block(true);store.dispatch({type:'toggle-habit',id:'order'});assert.equal(store.getSnapshot().mode,'temporary');});
+test('foreign, invalid and oversized UTF-8 backups are rejected',()=>{for(const value of [null,[],{app:'other',version:3},{app:'bushido-ops',version:0},{app:'bushido-ops',version:3,progress:{}},JSON.parse(legacy2({warmupChecked:true,warmupAnswer:''}))])assert.equal(decodeProgress(JSON.stringify(value)).ok,false);assert.equal(decodeProgress('é'.repeat(MAX_BACKUP_BYTES/2+1)).ok,false);assert.deepEqual(decodeProgress(JSON.stringify({app:'bushido-ops',version:99})),{ok:false,reason:'newer'});});
+test('invalid answer IDs, ranges, booleans and submitted partial answers are rejected',()=>{const base=JSON.parse(encodeProgress(emptyProgress()));const changes=[p=>p.answers.pressure='9',p=>p.answers.pressure=null,p=>p.answers.unknown='0',p=>p.completed='yes',p=>p.submitted=true];for(const change of changes){const raw=structuredClone(base);change(raw.progress.courses[PILOT_ID].modules.warmup);assert.equal(decodeProgress(JSON.stringify(raw)).ok,false);}});
+test('cross-tab changes and removal update derived progress',()=>{const storage=disk(),first=ready(courseCatalog,storage),second=ready(courseCatalog,storage);correctWarmup(first);second.receiveExternal(storage.raw());assert.equal(progressXp(second.getSnapshot().data),20);first.reset();second.receiveExternal(storage.raw());assert.equal(progressXp(second.getSnapshot().data),0);second.receiveExternal(null);assert.deepEqual(second.getSnapshot().data,emptyProgress());});
+test('course state changes from not-started to in-progress to complete; planned courses stay unavailable',()=>{const store=ready();assert.equal(engine.courseStatus(store.getSnapshot().data,pilotCourse,courseCatalog),'not-started');answer(store,'warmup','pressure','0');assert.equal(engine.courseStatus(store.getSnapshot().data,pilotCourse,courseCatalog),'in-progress');completePilot(store);assert.equal(engine.courseStatus(store.getSnapshot().data,pilotCourse,courseCatalog),'completed');assert.equal(engine.courseStatus(store.getSnapshot().data,courseCatalog.courses[1],courseCatalog),'unavailable');});
+test('a second course with four modules works from data only and cannot bypass prerequisites',()=>{const catalog=secondCatalog(),second=catalog.courses.at(-1),store=ready(catalog);assert.equal(engine.courseStatus(store.getSnapshot().data,second,catalog),'locked');action(store,'complete-lesson','read',{},second.id);assert.equal(progressXp(store.getSnapshot().data,catalog),0);completePilot(store);assert.equal(engine.canTrain(store.getSnapshot().data,second,catalog),true);assert.deepEqual(engine.resumeTarget(store.getSnapshot().data,catalog),{courseId:second.id,moduleId:'start'});answer(store,'start','first-choice','1',second.id);action(store,'submit','start',{},second.id);action(store,'complete-lesson','read',{},second.id);action(store,'complete-lesson','practice',{},second.id);answer(store,'check','choice-a','1',second.id);answer(store,'check','choice-b','1',second.id);action(store,'submit','check',{},second.id);assert.equal(engine.courseStatus(store.getSnapshot().data,second,catalog),'completed');assert.equal(progressXp(store.getSnapshot().data,catalog),148);assert.equal(learningSummarySafe(store,catalog).completedModules,7);});
+function learningSummarySafe(store,catalog){return engine.learningSummary(store.getSnapshot().data,catalog);}
+test('adding a catalog course or module initializes it without losing earlier saved progress',()=>{const store=ready();correctWarmup(store);const catalog=secondCatalog();catalog.courses[0].modules.push({id:'extra-read',kind:'lesson',title:'FIXTURE',intro:'Fixture',reward:5,sections:[{title:'Fixture',body:'Fixture'}]});const parsed=decodeProgress(encodeProgress(store.getSnapshot().data),catalog);assert.equal(parsed.ok,true);assert.equal(progressXp(parsed.data,catalog),20);assert.equal(parsed.data.courses[PILOT_ID].modules['extra-read'].completed,false);assert.equal(parsed.data.courses['test-follow-up'].modules.read.completed,false);});
+test('stable question IDs retain answer mapping when questions are reordered',()=>{const store=ready();answer(store,'quiz','logos','1');const catalog=structuredClone(courseCatalog);catalog.courses[0].modules[2].questions.reverse();const parsed=decodeProgress(encodeProgress(store.getSnapshot().data),catalog);assert.equal(parsed.ok,true);assert.equal(parsed.data.courses[PILOT_ID].modules.quiz.answers.logos,'1');assert.equal(parsed.data.courses[PILOT_ID].modules.quiz.answers['private-code'],'');});
+test('catalog validation rejects duplicate IDs, empty available courses and invalid grading rules',()=>{const changes=[c=>c.courses.push(structuredClone(c.courses[0])),c=>c.courses[0].modules=[],c=>c.courses[0].modules.push(structuredClone(c.courses[0].modules[0])),c=>c.courses[0].modules[2].passingScore=4,c=>c.courses[0].modules[0].question.correct=9,c=>c.courses[0].modules[2].questions.push(structuredClone(c.courses[0].modules[2].questions[0]))];for(const change of changes){const raw=structuredClone(courseCatalog);change(raw);assert.throws(()=>engine.validateCatalog(raw),/Invalid course catalog/);}});
+test('catalog validation rejects cyclic, self-referencing and unknown prerequisites',()=>{for(const prerequisite of [PILOT_ID,'unknown-course','yellow-accounts']){const raw=structuredClone(courseCatalog);raw.courses[0].prerequisites=[prerequisite];assert.throws(()=>engine.validateCatalog(raw),/Invalid course catalog/);}});
+test('legacy and canonical course routes resolve correctly without awarding progress',()=>{const data=emptyProgress(),raw=encodeProgress(data);assert.deepEqual(resolveTrainingRoute('#dojo/warmup',data),{courseId:PILOT_ID,moduleId:'warmup'});assert.deepEqual(resolveTrainingRoute('#dojo/'+PILOT_ID+'/quiz',data),{courseId:PILOT_ID,moduleId:'quiz'});assert.deepEqual(resolveTrainingRoute('#dojo',data),{courseId:PILOT_ID,moduleId:'warmup'});assert.equal(encodeProgress(data),raw);});
+test('invalid training links and planned courses never silently open a different exercise',()=>{const data=emptyProgress();assert.ok(resolveTrainingRoute('#dojo/missing',data).error);assert.ok(resolveTrainingRoute('#dojo/'+PILOT_ID+'/missing',data).error);assert.ok(resolveTrainingRoute('#dojo/'+PILOT_ID+'/quiz/extra',data).error);assert.deepEqual(resolveTrainingRoute('#dojo/yellow-accounts',data),{courseId:'yellow-accounts',moduleId:undefined});});
