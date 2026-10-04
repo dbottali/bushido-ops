@@ -8,7 +8,7 @@ The home’s About navigation now opens a dedicated page at `#about`. The existi
 - The dojo’s mission: welcoming questions, clear explanations and steady practice.
 - Three learner cards: new to security, everyday digital life and curious learners.
 - A selectable Warm-up, Lesson and Quiz overview. Each preview explains the task and reward condition, then links to the corresponding playable module.
-- The eight-belt path, with White marked as a ready pilot and the remaining belts marked planned.
+- The eight-belt path, with White marked as a ready pilot and the remaining belts marked planned. Every belt card links to its dedicated Belts preview.
 - A link to Philosophy and the shared dojo code.
 - Five expandable FAQs covering experience, accounts, available practice, XP/retries and certification.
 
@@ -21,7 +21,7 @@ The copy describes the current product. There are no invented learner statistics
 - `#about-content` is the skip-link target and focuses the main content.
 - About has its own document title and active navigation state.
 - Preview selection and FAQ expansion do not award XP. Rewards remain in the actual training modules.
-- About and Philosophy share the header and footer in `components/dojo-page-chrome.tsx`, with links between both pages.
+- About, Belts and Philosophy share the header and footer in `components/dojo-page-chrome.tsx`, with links between the three pages.
 - XP and Philosophy choices survive navigation during the currently open page. Reloading resets those session values.
 
 ## Current scope

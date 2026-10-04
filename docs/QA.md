@@ -1,4 +1,16 @@
-# Bushido Ops validation — 3 October 2026
+# Bushido Ops validation — 4 October 2026
+
+## Belts update
+
+- Desktop introduction, original 8-bit belt miniatures, ready Ryu-style fighter and navy mission panels were visually checked. All eight selections showed the matching topic, outcomes and mission, with a selected-tab URL. Only White is available; the other seven remain planned.
+- Home’s Green link opened its preview, focused the Green tab and placed the path at a 20-pixel top margin. About’s Black link opened and focused Black. Shared page navigation opened About and Philosophy and returned to Belts while retaining 100 XP.
+- Left/right arrow navigation retained tab focus. Tab from the path heading reached White. Skip focused `belts-content`. The path jump worked again at the same hash. The training header’s Belts link focused the current-practice heading.
+- Browser back/forward restored Yellow and Black while preserving 100 XP and planned availability. Native mission disclosures and the FAQ about Yellow Belt opened with Enter.
+- The actual pilot was completed through Belts continuation links. Correct Warm-up showed 20 XP and resumed Lesson; completing Lesson showed 50 XP and resumed Quiz; a perfect Quiz showed 100 XP, 3/3 and three completed module cards. Revisit opened Warm-up, and checking it again retained 100 XP. Selecting previews did not award XP.
+- Responsive review used same-origin iframes with measured usable CSS widths of 390 and 320 pixels. Client and scroll widths matched. The two-column path, narrow navigation, Yellow mission and expanded approach were visually checked. Tab navigation also changed the mobile selection. These are browser responsive checks, not physical-device tests.
+- Proof: `belts-preview.jpg`, `belts-path-preview.jpg`, `belts-progress-preview.jpg`, `belts-mobile-preview.jpg`. Inspected browser error logs contained extension metadata messages and no application errors. One screenshot export timed out; the normal viewport capture succeeded.
+- Fighter timing, palette and reduced-motion behavior are inherited unchanged. OS motion preferences were not emulated. The temporary responsive fixture and preview package change were removed before packaging.
+- Final TypeScript check and GitHub Pages production build passed. Package CRC and compiled asset references were checked. This update is prepared for manual GitHub upload and is not claimed to be live.
 
 ## About update
 
@@ -8,7 +20,7 @@
 - The “See how it works” jump focused the overview heading; Tab reached the selected tab and ArrowRight switched steps. Repeating the jump at the same hash worked. The skip link focused `about-content`.
 - Native FAQs opened with Enter on desktop and mobile. The account answer correctly describes current-session behavior.
 - Warm-up awarded 20 XP for the correct answer. The 20 XP and a chosen Philosophy habit survived About, Philosophy, training and home navigation.
-- “Explore the belts” returned to the existing home belt path. About marks only White as pilot ready and the remaining seven belts planned.
+- At the About release, “Explore the belts” returned to the existing home belt path; the Belts release replaces that destination with the dedicated page. About marks only White as pilot ready and the remaining seven belts planned.
 - Responsive review used same-origin iframes with 390 and 320 usable CSS pixels. Document client width and scroll width matched at both widths. The intro, training controls, fighter previews and expanded FAQ were visually checked. Shared Philosophy navigation also fit at 320 pixels. This was a browser responsive review, not a physical-device test.
 - Screenshots: `about-preview.jpg`, `about-training-preview.jpg`, `about-mobile-preview.jpg`. Inspected browser logs contained no application warnings or errors.
 - No fighter timing or palette changes were made. Existing reduced-motion behavior remains; OS motion preferences were not emulated.

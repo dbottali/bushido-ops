@@ -11,10 +11,10 @@ Practical, welcoming cybersecurity training in a pixel-art dojo. A session consi
 ## Release 0.1 — implemented
 - Home navigation, hero, warm-up/lesson/quiz cards, why, eight belts, three principles, and final CTA.
 - Dedicated Philosophy page: three principle tabs, practical habits, expandable examples, an optional three-habit dojo code and direct entry to white-belt practice. Home principle cards link to the corresponding tab.
-- Dedicated About page: mission, learner audiences, a three-step training overview, belt availability, five FAQs and links to the playable pilot. About and Philosophy share a consistent header and footer with links between both pages.
+- Dedicated About page: mission, learner audiences, a three-step training overview, belt availability, five FAQs and links to the playable pilot. About, Belts and Philosophy share a consistent header and footer.
 - White-belt phishing practice: interactive warm-up, three-part lesson, three-question quiz, and feedback.
 - XP: 20 + 30 + 50. A module awards once per session. Repeated completions cannot inflate XP.
-- Eight belt previews; only the white-belt pilot is playable. Future content is explicitly marked.
+- Dedicated Belts page: eight selectable curricula with outcomes and mission previews, actual pilot progress, per-module completion and continuation to the first incomplete module. Home and About belt cards open the corresponding preview. Only the white-belt pilot is playable; future content is explicitly marked.
 - Responsive layout, keyboard-accessible controls, local fonts, and custom favicon.
 - Optional page-scoped agent actions: read session progress and open a training module.
 - Three animated fighters rendered on a 64 × 56 grid with sixteen opaque colors and nearest-neighbor scaling. Each cached frame is a complete redrawn body. Calm idle uses small breathing and bobbing movements, distinct periods and pauses. Mouse entry or card keyboard focus triggers one brief punch without repeating while the pointer remains in place. The footer is still at rest and briefly changes guard on interaction. Belts retain small breathing or weight shifts. Motion honors reduced-motion preferences and pauses offscreen or in hidden tabs.

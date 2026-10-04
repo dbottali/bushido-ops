@@ -666,3 +666,163 @@ html:has(.dojo-page-shell) { scroll-behavior: auto; }
 @media (max-width: 380px) {
   .dojo-page-header nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Belts keeps the established 8-bit art, ivory frames and navy mission panels. */
+.about-path li { padding: 0; }
+.about-path li > a { display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; padding: 10px 4px; }
+.about-path li > a:hover { background: #f1e5d0; }
+.training-header > nav { display: flex; gap: 24px; margin-left: auto; }
+.training-header nav .back-home { margin-left: 0; }
+.belts-main, .belts-intro h1 { outline: none; }
+.belts-intro { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 48px; align-items: center; margin: 42px 0 32px; }
+.belts-intro h1 { font: 32px/1.65 "Dojo Pixel", monospace; letter-spacing: -.8px; margin: 14px 0; }
+.belts-intro h1 span { display: block; }
+.belts-lead { font-size: 19px; line-height: 1.55; font-weight: 700; color: #a40e14; }
+.belts-intro-copy > p:last-of-type { font-size: 16px; line-height: 1.75; max-width: 590px; margin-top: 12px; }
+.belts-intro-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 20px 24px; margin-top: 26px; }
+.belts-intro-actions > .pixel-button { min-height: 46px; }
+.belts-current { background: #091d34; color: #fff4df; padding: 24px; }
+.belts-current::before { border-color: #44556a; }
+.belts-current-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.belts-current-heading .eyebrow { color: #ffb27d; font-size: 18px; }
+.belts-current-heading h2 { font: bold 37px/1.2 "Dojo Terminal", monospace; margin: 4px 0; }
+.belts-current-heading p:last-child { font-size: 13px; color: #d8dce1; line-height: 1.5; }
+.belts-current-symbol { width: 62px; height: 48px; flex-shrink: 0; filter: invert(1); mix-blend-mode: screen; }
+.belts-current-body { display: flex; align-items: center; justify-content: center; gap: 24px; padding: 14px 0; }
+.belts-current-fighter { width: 168px; height: 147px; flex-shrink: 0; }
+.belts-current-body strong { display: block; font: bold 30px/1.1 "Dojo Terminal", monospace; color: #e3b66d; }
+.belts-current-body p { font-size: 13px; line-height: 1.6; color: #d8dce1; margin-top: 10px; }
+.belts-current-progress { border-top: 1px dashed #44556a; padding-top: 16px; }
+.belts-current-progress > div:first-child { display: flex; justify-content: space-between; gap: 16px; font: bold 18px/1.3 "Dojo Terminal", monospace; }
+.belts-current-progress > div:first-child strong { color: #e3b66d; white-space: nowrap; }
+.belts-current-progress [data-slot="progress"] { height: 11px; background: #22384e; border: 1px solid #668096; border-radius: 0; margin-top: 10px; }
+.belts-current-progress [data-slot="progress-indicator"] { background: #e3b66d; }
+.belts-current-progress > a { display: inline-flex; align-items: center; gap: 12px; margin-top: 14px; font: bold 21px/1.3 "Dojo Terminal", monospace; text-decoration: underline; text-underline-offset: 4px; }
+.belts-current-progress > a:hover { color: #e3b66d; }
+.belts-path-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 2px solid #c6bba8; padding: 16px 0; text-align: center; gap: 16px; }
+.belts-path-summary > span { font: bold 20px/1.3 "Dojo Terminal", monospace; }
+.belts-path-summary > span + span { border-left: 1px dashed #bdae98; }
+.belts-path-summary strong { font-size: 26px; color: #a40e14; margin-right: 8px; }
+.belts-path-section, .belts-progress { scroll-margin-top: 20px; }
+.belts-section-title { margin: 34px 0 20px; }
+.belts-section-title h2, .belts-progress h2, .belts-code h2, .belts-start h2 { font: bold 34px/1.2 "Dojo Terminal", monospace; margin: 5px 0 10px; }
+.belts-section-title > p:last-child { font-size: 15px; line-height: 1.65; color: #565047; }
+.belts-tabs > [data-slot="tabs-list"] { display: grid; width: 100%; height: auto; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; padding: 0; background: transparent; border-radius: 0; margin-bottom: 14px; }
+.belts-tabs [data-slot="tabs-trigger"] { position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: 1fr auto; min-width: 0; height: auto; min-height: 142px; gap: 8px; border: 2px solid #152237; border-radius: 0; padding: 14px 18px; background: #fffdf9; color: #132136; box-shadow: 2px 2px 0 #98a0a8; white-space: normal; transition: none; }
+.belts-tabs [data-slot="tabs-trigger"]::before { content: ""; position: absolute; inset: 4px; border: 1px solid #c5beaf; pointer-events: none; }
+.belts-tabs [data-slot="tabs-trigger"][data-state="active"] { border-color: #a40e14; background: #f8ecd8; color: #a40e14; box-shadow: 2px 2px 0 #a40e14; }
+.belts-tabs [data-slot="tabs-trigger"]:hover { background: #f5ecdb; }
+.belts-tabs [data-slot="tabs-trigger"]:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.belts-tab-number { align-self: start; font: bold 21px/1.2 "Dojo Terminal", monospace; color: #756755; }
+.belts-tabs [data-slot="tabs-trigger"] > .belts-tab-art { display: flex; align-items: center; grid-column: 2; grid-row: 1; justify-self: center; width: 133px; height: 73px; max-width: 100%; }
+.belts-tab-art > .dojo-art { mix-blend-mode: multiply; }
+.belts-tab-art > .dojo-art:first-child { width: 57.14%; height: 100%; }
+.belts-tab-art > .dojo-art:last-child { width: 42.86%; height: 60.27%; }
+.belts-tab-copy { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 12px; }
+.belts-tab-copy strong { font: bold 28px/1 "Dojo Terminal", monospace; }
+.belts-tab-copy small { font: 17px/1.2 "Dojo Terminal", monospace; color: #62584b; }
+.belts-detail { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 32px; padding: 28px; }
+.belts-detail-label { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; }
+.belts-availability { border: 1px solid #b6ad9e; background: #eee8dd; padding: 4px 7px; font: bold 16px/1.2 "Dojo Terminal", monospace; color: #5c554c; }
+.belts-availability.available { background: #f8ecd8; border-color: #b78955; color: #a40e14; }
+.belts-detail-copy h3 { font: bold 36px/1.15 "Dojo Terminal", monospace; margin: 14px 0 10px; }
+.belts-focus { color: #a40e14; font-weight: 700; font-size: 16px; line-height: 1.55; }
+.belts-detail-copy > p:last-of-type { font-size: 15px; line-height: 1.7; margin-top: 10px; }
+.belts-detail-copy h4 { font: bold 23px/1.3 "Dojo Terminal", monospace; margin: 22px 0 12px; }
+.belts-detail-copy ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.belts-detail-copy li { display: flex; gap: 12px; font-size: 15px; line-height: 1.65; }
+.belts-detail-copy li > span { color: #b80910; }
+.belts-detail-action { margin-top: 24px; }
+.belts-detail-action > .pixel-button { min-height: 46px; }
+.belts-detail-action > p { color: #62584b; font-size: 13px; line-height: 1.65; margin-top: 14px; }
+.belts-mission { display: flex; flex-direction: column; align-self: stretch; background: #091d34; color: #fff4df; border: 2px solid #142f4b; padding: 24px; box-shadow: inset 0 0 0 1px #44556a; }
+.belts-mission-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.belts-mission-top .eyebrow { color: #ffb27d; font-size: 19px; }
+.belts-mission-top .dojo-art { width: 64px; height: 49px; flex-shrink: 0; padding: 4px; background: #fff6e6; border: 1px solid #e0ba7b; }
+.belts-mission h4 { font: bold 31px/1.15 "Dojo Terminal", monospace; margin: 16px 0; }
+.belts-mission > p { font-size: 15px; line-height: 1.75; color: #e0e2e5; }
+.belts-next-move { margin-top: 24px; background: #fff6e6; color: #112137; border: 2px solid #e0ba7b; }
+.belts-next-move summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; font: bold 23px/1.25 "Dojo Terminal", monospace; list-style: none; cursor: pointer; }
+.belts-next-move summary::-webkit-details-marker { display: none; }
+.belts-next-move summary:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.belts-next-move[open] .philosophy-disclosure-marker::before { content: "−"; }
+.belts-next-move > p { border-top: 1px dashed #bca781; padding: 16px 14px; font-size: 14px; line-height: 1.7; }
+.belts-mission-note { display: block; margin-top: auto; padding-top: 22px; color: #e3b66d; font: 19px/1.4 "Dojo Terminal", monospace; }
+.belts-progress { margin-top: 32px; padding: 28px; }
+.belts-progress-heading { display: flex; justify-content: space-between; align-items: center; gap: 32px; }
+.belts-progress-heading > div:first-child { max-width: 740px; }
+.belts-progress-heading p:last-child { font-size: 15px; line-height: 1.7; }
+.belts-progress-total { display: grid; gap: 4px; flex-shrink: 0; text-align: right; font: 23px/1.3 "Dojo Terminal", monospace; }
+.belts-progress-total strong { font-size: 31px; color: #a40e14; }
+.belts-progress > [data-slot="progress"] { height: 12px; border: 1px solid #1b2839; border-radius: 0; margin: 20px 0; background: #e7e2d7; }
+.belts-pilot-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.belts-pilot-steps li { min-width: 0; }
+.belts-pilot-steps a { display: flex; flex-direction: column; height: 100%; background: #faf6ee; padding: 18px; border: 1px solid #bfb5a4; }
+.belts-pilot-steps a:hover { background: #f1e5d0; border-color: #a40e14; }
+.belts-pilot-steps a.complete { background: #edf2e9; border-color: #739170; }
+.belts-pilot-steps a > div { display: flex; align-items: center; justify-content: space-between; gap: 10px; font: bold 18px/1.2 "Dojo Terminal", monospace; }
+.belts-step-number { font-size: 23px; color: #a40e14; }
+.belts-step-status { color: #62584b; }
+.complete .belts-step-status { color: #32552c; }
+.belts-pilot-steps h3 { font: bold 30px/1.2 "Dojo Terminal", monospace; margin: 12px 0 8px; }
+.belts-pilot-steps p { font-size: 14px; line-height: 1.7; margin-bottom: 14px; }
+.belts-pilot-steps small { display: block; font-size: 12px; line-height: 1.5; color: #62584b; margin-bottom: 20px; }
+.belts-step-reward { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px dashed #bfb5a4; padding-top: 14px; margin-top: auto; font: bold 21px/1.2 "Dojo Terminal", monospace; color: #a40e14; }
+.complete .belts-step-reward { color: #32552c; }
+.belts-progress-note { font-size: 13px; line-height: 1.7; margin-top: 18px; color: #62584b; }
+.belts-code { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin-top: 32px; padding: 28px; background: #091d34; color: #fff4df; border-block: 3px solid #263e58; }
+.belts-code .eyebrow { color: #ffb27d; }
+.belts-code h2 { color: #e3b66d; }
+.belts-code > div { max-width: 720px; }
+.belts-code p:last-child { font-size: 15px; line-height: 1.7; color: #e0e2e5; }
+.belts-start { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin: 32px 0; padding: 28px; background: #f5ecdb; }
+.belts-start p:last-child { font-size: 15px; line-height: 1.7; }
+@media (max-width: 1000px) {
+  .belts-intro { grid-template-columns: 1fr; gap: 28px; margin-top: 30px; }
+  .belts-current { width: min(100%, 580px); }
+  .belts-tabs [data-slot="tabs-trigger"] { padding-inline: 14px; }
+  .belts-tab-copy { flex-direction: column; }
+}
+@media (max-width: 800px) {
+  .belts-detail { grid-template-columns: 1fr; gap: 24px; }
+  .belts-path-summary { gap: 8px; }
+  .belts-path-summary strong { display: block; margin: 0 0 4px; }
+  .belts-tab-copy strong { font-size: 25px; }
+  .belts-code, .belts-start { flex-direction: column; align-items: flex-start; gap: 22px; }
+  .belts-progress-heading { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .belts-progress-total { text-align: left; }
+}
+@media (max-width: 580px) {
+  .training-header > nav { gap: 18px; }
+  .belts-intro h1 { font-size: clamp(17px, 5.4vw, 25px); letter-spacing: -.5px; }
+  .belts-intro .eyebrow { font-size: 19px; }
+  .belts-intro-actions { flex-direction: column; align-items: flex-start; }
+  .belts-intro-actions > .pixel-button { width: 100%; }
+  .belts-current { padding: 22px 18px; }
+  .belts-current-heading { gap: 12px; }
+  .belts-current-heading h2 { font-size: 33px; }
+  .belts-current-symbol { width: 50px; height: 39px; }
+  .belts-current-body { gap: 14px; }
+  .belts-current-fighter { width: 138px; height: 121px; }
+  .belts-current-body strong { font-size: 28px; }
+  .belts-current-body p { font-size: 12px; }
+  .belts-current-progress > div:first-child { flex-wrap: wrap; gap: 4px 12px; }
+  .belts-path-summary > span { font-size: 17px; }
+  .belts-tabs > [data-slot="tabs-list"] { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .belts-tabs [data-slot="tabs-trigger"] { display: flex; flex-direction: column; justify-content: center; gap: 8px; min-height: 155px; padding: 28px 12px 16px; }
+  .belts-tab-number { position: absolute; left: 12px; top: 10px; font-size: 18px; }
+  .belts-tabs [data-slot="tabs-trigger"] > .belts-tab-art { width: 110px; height: 60px; }
+  .belts-tab-copy { gap: 4px; }
+  .belts-detail, .belts-progress { padding: 22px 18px; }
+  .belts-detail-copy h3 { font-size: 32px; }
+  .belts-detail-action > .pixel-button { width: 100%; font-size: 22px; }
+  .belts-mission { padding: 20px 18px; }
+  .belts-mission h4 { font-size: 29px; }
+  .belts-mission-top .eyebrow { font-size: 18px; }
+  .belts-mission-top .dojo-art { width: 52px; height: 40px; }
+  .belts-next-move summary { font-size: 21px; padding-inline: 12px; }
+  .belts-section-title h2, .belts-progress h2, .belts-code h2, .belts-start h2 { font-size: 29px; }
+  .belts-pilot-steps { grid-template-columns: 1fr; gap: 12px; }
+  .belts-code, .belts-start { padding: 24px 18px; }
+  .belts-code > .pixel-button, .belts-start > .pixel-button { width: 100%; font-size: 22px; }
+}

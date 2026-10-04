@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Progress } from "@/components/ui/progress";
@@ -9,8 +8,9 @@ import { DojoArt } from "@/components/dojo-art";
 import { AnimatedFighter } from "@/components/animated-fighter";
 import { PhilosophyPage } from "@/components/philosophy-page";
 import { AboutPage } from "@/components/about-page";
+import { BeltsPage } from "@/components/belts-page";
 import { isPrincipleId, principles, type PrincipleId } from "@/lib/philosophy-content";
-import { belts, earnedXp, finishModule, questions, warmup, type ModuleId } from "@/lib/dojo-content";
+import { belts, earnedXp, finishModule, isBeltId, questions, warmup, type BeltId, type ModuleId } from "@/lib/dojo-content";
 
 type ModelContext = { registerTool: (tool: { name: string; title: string; description: string; inputSchema: object; annotations: object; execute: (input: unknown) => unknown }, options: { signal: AbortSignal }) => unknown };
 
@@ -32,14 +32,14 @@ function ChoiceGroup({ options, value, onChange, name, disabled = false }: {
 }
 
 export default function Home() {
-  const [view, setView] = useState<"home" | "dojo" | "philosophy" | "about">("home");
+  const [view, setView] = useState<"home" | "dojo" | "philosophy" | "about" | "belts">("home");
   const currentView = useRef(view);
   const [principle, setPrinciple] = useState<PrincipleId>("order");
   const [commitments, setCommitments] = useState<PrincipleId[]>([]);
   const [aboutModule, setAboutModule] = useState<ModuleId>("warmup");
   const [tab, setTab] = useState<ModuleId>("warmup");
   const [completed, setCompleted] = useState<ModuleId[]>([]);
-  const [selectedBelt, setSelectedBelt] = useState<number | null>(null);
+  const [activeBelt, setActiveBelt] = useState<BeltId>("white");
   const [warmupAnswer, setWarmupAnswer] = useState("");
   const [warmupChecked, setWarmupChecked] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState<string[]>(["", "", ""]);
@@ -57,7 +57,8 @@ export default function Home() {
       const training = hash === "#dojo" || hash.startsWith("#dojo/") || hash === "#training-content";
       const philosophy = hash === "#philosophy" || hash.startsWith("#philosophy/") || hash === "#philosophy-content";
       const about = hash === "#about" || hash.startsWith("#about/") || hash === "#about-content";
-      const nextView = training ? "dojo" : philosophy ? "philosophy" : about ? "about" : "home";
+      const beltPage = hash === "#belts" || hash.startsWith("#belts/") || hash === "#belts-content";
+      const nextView = training ? "dojo" : philosophy ? "philosophy" : about ? "about" : beltPage ? "belts" : "home";
       const enteringView = currentView.current !== nextView;
       const afterViewChange = (action: () => void) => enteringView ? requestAnimationFrame(action) : action();
       currentView.current = nextView;
@@ -68,7 +69,9 @@ export default function Home() {
       else if (hash === "#philosophy") setPrinciple("order");
       if (about && ["warmup", "lesson", "quiz"].includes(module)) setAboutModule(module as ModuleId);
       else if (hash === "#about") setAboutModule("warmup");
-      if (hash === "#training-content" || hash === "#philosophy-content" || hash === "#about-content") afterViewChange(() => {
+      if (beltPage && isBeltId(module)) setActiveBelt(module);
+      else if (beltPage && module !== "path" && module !== "progress" && hash !== "#belts-content") setActiveBelt("white");
+      if (hash === "#training-content" || hash === "#philosophy-content" || hash === "#about-content" || hash === "#belts-content") afterViewChange(() => {
         const target = document.getElementById(hash.slice(1));
         target?.scrollIntoView({ block: "start", behavior: "instant" });
         target?.focus({ preventScroll: true });
@@ -81,18 +84,26 @@ export default function Home() {
         document.getElementById("about-how")?.scrollIntoView({ block: "start", behavior: "instant" });
         document.getElementById("about-how-title")?.focus({ preventScroll: true });
       });
+      else if (beltPage && (module === "path" || module === "progress")) afterViewChange(() => {
+        document.getElementById(`belts-${module}`)?.scrollIntoView({ block: "start", behavior: "instant" });
+        document.getElementById(`belts-${module}-title`)?.focus({ preventScroll: true });
+      });
+      else if (beltPage && isBeltId(module) && enteringView) afterViewChange(() => {
+        document.getElementById("belts-path")?.scrollIntoView({ block: "start", behavior: "instant" });
+        document.querySelector<HTMLElement>(`[data-belt-id="${module}"]`)?.focus({ preventScroll: true });
+      });
       else if (enteringView || training) afterViewChange(() => {
         window.scrollTo({ top: 0, behavior: "instant" });
         heading.current?.focus({ preventScroll: true });
       });
-      if (!training && !philosophy && !about && hash && hash !== "#") afterViewChange(() => document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center", behavior: enteringView ? "instant" : "smooth" }));
+      if (!training && !philosophy && !about && !beltPage && hash && hash !== "#") afterViewChange(() => document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center", behavior: enteringView ? "instant" : "smooth" }));
     };
     readHash(); window.addEventListener("hashchange", readHash);
     return () => window.removeEventListener("hashchange", readHash);
   }, []);
 
   useEffect(() => {
-    document.title = view === "about" ? "About | Bushido Ops" : view === "philosophy" ? "Philosophy | Bushido Ops" : "Bushido Ops | Digital self-defense for everyone";
+    document.title = view === "belts" ? "Belts | Bushido Ops" : view === "about" ? "About | Bushido Ops" : view === "philosophy" ? "Philosophy | Bushido Ops" : "Bushido Ops | Digital self-defense for everyone";
   }, [view]);
 
   useEffect(() => {
@@ -114,7 +125,7 @@ export default function Home() {
   function changeTab(value: string) { window.location.hash = `dojo/${value}`; }
 
   return <>
-    <a className="skip-link" href={view === "home" ? "#main" : view === "about" ? "#about-content" : view === "philosophy" ? "#philosophy-content" : "#training-content"}>Skip to content</a>
+    <a className="skip-link" href={view === "home" ? "#main" : view === "belts" ? "#belts-content" : view === "about" ? "#about-content" : view === "philosophy" ? "#philosophy-content" : "#training-content"}>Skip to content</a>
     {view === "home" ? <div className="home-shell">
       <div className="header-scene"><DojoArt x={0} y={0} w={1672} h={74} /></div>
       <header className="masthead pixel-frame"><Brand /><nav aria-label="Main navigation"><a href="#about">ABOUT</a><a href="#belts">BELTS</a><a href="#philosophy">PHILOSOPHY</a><a href="#dojo">DOJO</a></nav><PixelButton href="#dojo">ENTER THE DOJO <span aria-hidden="true">➜</span></PixelButton></header>
@@ -133,12 +144,12 @@ export default function Home() {
           <div><DojoArt x={629} y={550} w={57} h={61} /><article><h3>PRACTICAL DIGITAL SELF-DEFENSE</h3><p>Real skills for real threats.<br />Use it. Apply it. Defend yourself.</p></article></div>
           <div><DojoArt x={1093} y={556} w={66} h={57} /><article><h3>STEADY, BELT-BASED PROGRESS</h3><p>Clear path. Visible progress.<br />Earn your belt. Keep growing.</p></article></div>
         </div></section>
-        <section className="belt-section content-width" id="belts" aria-labelledby="belt-title"><h2 className="section-heading" id="belt-title"><span>THE BELT PATH</span></h2><div className="belt-path">{belts.map((belt, i) => <button key={belt.name} className="belt-step" onClick={() => setSelectedBelt(i)} aria-label={`Explore the ${belt.name.toLowerCase()} belt`} style={{ "--idle-delay": `${i * -0.71}s`, "--idle-period": `${5.2 + (i % 3) * 0.9}s` } as React.CSSProperties}><div className="belt-art"><DojoArt x={belt.x} y={637} w={76} h={73} className="belt-character" /><DojoArt x={belt.x + 76} y={651} w={57} h={44} className="belt-symbol" /></div><strong>{belt.name.toUpperCase()}</strong></button>)}</div></section>
+        <section className="belt-section content-width" id="home-belt-path" aria-labelledby="belt-title"><h2 className="section-heading" id="belt-title"><span>THE BELT PATH</span></h2><div className="belt-path">{belts.map((belt, i) => <a key={belt.id} className="belt-step" href={`#belts/${belt.id}`} aria-label={`Explore the ${belt.name.toLowerCase()} belt`} style={{ "--idle-delay": `${i * -0.71}s`, "--idle-period": `${5.2 + (i % 3) * 0.9}s` } as React.CSSProperties}><div className="belt-art"><DojoArt x={belt.x} y={637} w={76} h={73} className="belt-character" /><DojoArt x={belt.x + 76} y={651} w={57} h={44} className="belt-symbol" /></div><strong>{belt.name.toUpperCase()}</strong></a>)}</div></section>
         <section className="principles content-width" aria-label="Bushido principles">{principles.map(p => <a key={p.id} href={`#philosophy/${p.id}`} aria-label={`Explore ${p.name.toLowerCase()}`}><DojoArt x={p.icon.x} y={738} w={p.icon.w} h={61} /><article><h3>{p.name}</h3><p>{p.homeCopy[0]}<br />{p.homeCopy[1]}</p></article></a>)}</section>
       </main>
       <footer className="journey-footer"><div className="footer-left"><DojoArt x={0} y={810} w={343} h={131} /><DojoArt x={0} y={810} w={343} h={131} source="./art/dojo-background-clean.png" className="footer-clean-scene" /><AnimatedFighter className="footer-fighter" role="footer" /></div><DojoArt x={1415} y={810} w={257} h={131} className="footer-right" /><div className="footer-message"><h2><span className="sr-only">READY TO BEGIN YOUR JOURNEY?</span><DojoArt x={358} y={830} w={563} h={39} className="footer-lettering" /></h2><p>Step onto the path. Train with purpose. Earn your belt.</p><div className="footer-progress"><span>LVL 01</span><Progress value={xp} aria-label="White belt practice progress" /><span>{xp} / 100 XP</span><span className="coins">◉ 000</span></div></div><div className="footer-action"><PixelButton href="#dojo">ENTER THE DOJO <span aria-hidden="true">➜</span></PixelButton><p>No signup. No gatekeeping. Just training.</p></div></footer>
-    </div> : view === "about" ? <AboutPage brand={<Brand />} headingRef={heading} module={aboutModule} /> : view === "philosophy" ? <PhilosophyPage brand={<Brand />} headingRef={heading} principle={principle} commitments={commitments} onToggleCommitment={id => setCommitments(previous => previous.includes(id) ? previous.filter(item => item !== id) : [...previous, id])} /> : <div className="training-shell">
-      <header className="training-header pixel-frame"><Brand /><a className="back-home" href="#">HOME</a><span className="training-xp" aria-live="polite">WHITE BELT · {xp} XP</span></header>
+    </div> : view === "belts" ? <BeltsPage brand={<Brand />} headingRef={heading} belt={activeBelt} completed={completed} /> : view === "about" ? <AboutPage brand={<Brand />} headingRef={heading} module={aboutModule} /> : view === "philosophy" ? <PhilosophyPage brand={<Brand />} headingRef={heading} principle={principle} commitments={commitments} onToggleCommitment={id => setCommitments(previous => previous.includes(id) ? previous.filter(item => item !== id) : [...previous, id])} /> : <div className="training-shell">
+      <header className="training-header pixel-frame"><Brand /><nav aria-label="Training navigation"><a className="back-home" href="#">HOME</a><a className="back-home" href="#belts/progress">BELTS</a></nav><span className="training-xp" aria-live="polite">WHITE BELT · {xp} XP</span></header>
       <main className="training-main" id="training-content" tabIndex={-1}><div className="training-intro"><div><p className="eyebrow">WHITE BELT / FIRST PRACTICE</p><h1 ref={heading} tabIndex={-1}>PAUSE. VERIFY. PROTECT.</h1><p>Learn to spot the pressure behind a suspicious message.</p></div><AnimatedFighter className="training-fighter" role="training" /></div><div className="practice-progress"><span>{completed.length} / 3 complete</span><Progress value={xp} aria-label="Training progress" /><strong>{xp} / 100 XP</strong></div>
         <Tabs value={tab} onValueChange={changeTab} className="training-tabs"><TabsList aria-label="Training modules"><TabsTrigger value="warmup">01 WARM-UP {completed.includes("warmup") ? "✓" : ""}</TabsTrigger><TabsTrigger value="lesson">02 LESSON {completed.includes("lesson") ? "✓" : ""}</TabsTrigger><TabsTrigger value="quiz">03 QUIZ {completed.includes("quiz") ? "✓" : ""}</TabsTrigger></TabsList>
           <TabsContent value="warmup"><section className="practice-card pixel-frame"><p className="eyebrow">A QUICK WIN · +20 XP</p><h2>Don’t let urgency choose for you.</h2><div className="sample-message"><span>FROM: Account Security &lt;support@account-help.example&gt;</span><strong>URGENT: Your account will be deleted</strong><p>Confirm your login in the next 30 minutes to avoid losing access.</p><span className="sample-link">[ Confirm account ]</span><small>Training example — no real link.</small></div><h3>{warmup.prompt}</h3><ChoiceGroup options={warmup.options} name="warmup" value={warmupAnswer} onChange={v => { setWarmupAnswer(v); setWarmupChecked(false); }} />{warmupChecked && <div role="status" className={`feedback ${Number(warmupAnswer) === warmup.correct ? "success" : ""}`}><strong>{Number(warmupAnswer) === warmup.correct ? "Good instinct. +20 XP earned." : "Pause and try again."}</strong><p>Urgency is a pressure tactic. Open the official service yourself and check there. An unusual sender is a clue, not proof on its own.</p></div>}<div className="practice-actions"><PixelButton disabled={warmupAnswer === ""} onClick={() => { setWarmupChecked(true); if (Number(warmupAnswer) === warmup.correct) award("warmup"); }}>{completed.includes("warmup") ? "CHECK AGAIN" : "CHECK ANSWER"}</PixelButton>{completed.includes("warmup") && <PixelButton light href="#dojo/lesson">CONTINUE TO LESSON</PixelButton>}</div></section></TabsContent>
@@ -147,6 +158,5 @@ export default function Home() {
         </Tabs>{xp === 100 && <div className="practice-complete" role="status"><strong>WHITE BELT PRACTICE COMPLETE</strong><p>100 XP. One useful habit you can use today.</p></div>}<p className="session-note">Pilot practice. Progress is kept for this open session. The full belt curriculum is in development.</p>
       </main><footer className="training-footer">BUSHIDO OPS <span>Order. Respect. Honor.</span></footer>
     </div>}
-    <Dialog open={selectedBelt !== null} onOpenChange={open => { if (!open) setSelectedBelt(null); }}><DialogContent className="belt-dialog pixel-frame">{selectedBelt !== null && <><DojoArt x={belts[selectedBelt].x} y={637} w={133} h={73} className="dialog-character" /><p className="eyebrow">THE BELT PATH</p><DialogTitle>{belts[selectedBelt].name.toUpperCase()} BELT</DialogTitle><h3>{belts[selectedBelt].topic}</h3><DialogDescription>{belts[selectedBelt].description}</DialogDescription><p className="belt-availability">{belts[selectedBelt].available ? "First practice available · 3 modules · 100 XP" : "Curriculum preview · training coming later"}</p>{belts[selectedBelt].available && <PixelButton onClick={() => { setSelectedBelt(null); window.location.hash = "dojo/warmup"; }}>START WHITE BELT PRACTICE</PixelButton>}</>}</DialogContent></Dialog>
   </>;
 }

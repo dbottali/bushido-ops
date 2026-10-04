@@ -1,12 +1,13 @@
 # Bushido Ops
 
-A pixel-art cybersecurity dojo for practical digital self-defense. This interactive, animated prototype includes a playable white-belt phishing exercise and dedicated About and Philosophy pages.
+A pixel-art cybersecurity dojo for practical digital self-defense. This interactive, animated prototype includes a playable white-belt phishing exercise and dedicated About, Belts and Philosophy pages.
 
 ![Bushido Ops home](docs/home-preview.jpg)
 
 ## What works
 
-- Responsive home page, dojo navigation, and eight belt previews.
+- Responsive home page and dojo navigation.
+- Belts: eight selectable curriculum previews, practical missions, live White Belt progress and a Continue action that opens the first incomplete pilot module.
 - About: the mission, who the dojo is for, an interactive training overview, belt availability and expandable FAQs. Every training preview links to its playable pilot module.
 - Philosophy: Order, Respect and Honor, with practical habits, expandable scenarios and a personal dojo code that keeps your choices while navigating the open session.
 - 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on mouse entry or keyboard focus, with no automatic punches.
@@ -61,6 +62,8 @@ React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Worker
 - [Characters and 8-bit animation](docs/CHARACTERS.md)
 - [Philosophy content and interactions](docs/PHILOSOPHY.md)
 - [About content and navigation](docs/ABOUT.md)
+- [Belts curriculum and session progress](docs/BELTS.md)
+- [Upload the latest Belts update](docs/BELTS-UPDATE.md)
 - [Upload the About update](docs/ABOUT-UPDATE.md)
 - [Upload the Philosophy update](docs/PHILOSOPHY-UPDATE.md)
 - [Upload this animation update](docs/ANIMATION-UPDATE.md)
