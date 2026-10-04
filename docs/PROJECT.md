@@ -11,6 +11,7 @@ Practical, welcoming cybersecurity training in a pixel-art dojo. A session consi
 ## Release 0.1 — implemented
 - Home navigation, hero, warm-up/lesson/quiz cards, why, eight belts, three principles, and final CTA.
 - Dedicated Philosophy page: three principle tabs, practical habits, expandable examples, an optional three-habit dojo code and direct entry to white-belt practice. Home principle cards link to the corresponding tab.
+- Dedicated About page: mission, learner audiences, a three-step training overview, belt availability, five FAQs and links to the playable pilot. About and Philosophy share a consistent header and footer with links between both pages.
 - White-belt phishing practice: interactive warm-up, three-part lesson, three-question quiz, and feedback.
 - XP: 20 + 30 + 50. A module awards once per session. Repeated completions cannot inflate XP.
 - Eight belt previews; only the white-belt pilot is playable. Future content is explicitly marked.

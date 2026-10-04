@@ -413,16 +413,16 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Philosophy uses the existing dojo palette, pixel artwork and readable text scale. */
-html:has(.philosophy-shell) { scroll-behavior: auto; }
+/* Shared content-page frame and Philosophy layout. */
+html:has(.dojo-page-shell) { scroll-behavior: auto; }
 .principles > a:hover { background: #f6eddd; }
-.philosophy-shell { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 20px auto 0; }
-.philosophy-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 22px; }
-.philosophy-header nav { display: flex; align-items: center; gap: 28px; font: bold 24px/1 "Dojo Terminal", monospace; }
-.philosophy-header nav a { padding-block: 8px; }
-.philosophy-header nav a[aria-current="page"] { color: #b80910; box-shadow: 0 3px 0 #b80910; }
-.philosophy-header nav a:hover, .philosophy-footer a:hover { color: #ba1316; }
-.philosophy-header > .pixel-button { min-height: 44px; }
+.dojo-page-shell { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 20px auto 0; }
+.dojo-page-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 22px; }
+.dojo-page-header nav { display: flex; align-items: center; gap: 28px; font: bold 24px/1 "Dojo Terminal", monospace; }
+.dojo-page-header nav a { padding-block: 8px; }
+.dojo-page-header nav a[aria-current="page"] { color: #b80910; box-shadow: 0 3px 0 #b80910; }
+.dojo-page-header nav a:hover, .dojo-page-footer a:hover { color: #ba1316; }
+.dojo-page-header > .pixel-button { min-height: 44px; }
 .philosophy-main, .philosophy-intro h1, .training-main { outline: none; }
 .philosophy-intro { display: grid; grid-template-columns: minmax(0, 1.17fr) minmax(0, 1fr); gap: 36px; align-items: center; margin: 40px 0 32px; }
 .philosophy-intro h1 { font: 25px/1.7 "Dojo Pixel", monospace; margin: 14px 0; letter-spacing: -.7px; }
@@ -491,13 +491,14 @@ html:has(.philosophy-shell) { scroll-behavior: auto; }
 .philosophy-reading > span { font: bold 19px/1.2 "Dojo Terminal", monospace; color: #091d34; }
 .philosophy-reading a { text-decoration: underline; text-underline-offset: 3px; }
 .philosophy-reading a:hover { color: #b80910; }
-.philosophy-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; padding: 20px 24px; background: #091d34; color: #fff4df; border-block: 3px solid #263e58; font: bold 21px/1.3 "Dojo Terminal", monospace; }
-.philosophy-footer > span { color: #e3b66d; }
-.philosophy-footer a:hover { color: #f4c276; }
+.dojo-page-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; padding: 20px 24px; background: #091d34; color: #fff4df; border-block: 3px solid #263e58; font: bold 21px/1.3 "Dojo Terminal", monospace; }
+.dojo-page-footer > span { color: #e3b66d; }
+.dojo-page-footer a:hover { color: #f4c276; }
+.dojo-page-footer nav { display: flex; flex-wrap: wrap; gap: 16px 24px; }
 @media (max-width: 1000px) {
-  .philosophy-header { flex-wrap: wrap; gap: 16px; }
-  .philosophy-header nav { order: 3; width: 100%; justify-content: space-between; }
-  .philosophy-header > .pixel-button { margin-left: auto; }
+  .dojo-page-header { flex-wrap: wrap; gap: 16px; }
+  .dojo-page-header nav { order: 3; width: 100%; justify-content: space-between; }
+  .dojo-page-header > .pixel-button { margin-left: auto; }
   .philosophy-intro { grid-template-columns: 1fr; gap: 26px; margin-top: 30px; }
   .philosophy-dojo { width: min(100%, 690px); }
 }
@@ -511,14 +512,14 @@ html:has(.philosophy-shell) { scroll-behavior: auto; }
   .philosophy-code-heading, .philosophy-code-action, .philosophy-learning { align-items: flex-start; flex-direction: column; gap: 20px; }
 }
 @media (max-width: 580px) {
-  .philosophy-shell { width: calc(100% - 32px); margin-top: 12px; }
-  .philosophy-shell .pixel-button { white-space: normal; line-height: 1.2; text-align: center; }
-  .philosophy-header { padding: 14px; gap: 14px; }
-  .philosophy-header .brand-mark { width: 44px; height: 42px; }
-  .philosophy-header .brand strong { font-size: 14px; }
-  .philosophy-header .brand small { font-size: 12px; }
-  .philosophy-header nav { font-size: 23px; flex-wrap: wrap; gap: 8px 12px; }
-  .philosophy-header > .pixel-button { order: 4; width: 100%; margin-left: 0; }
+  .dojo-page-shell { width: calc(100% - 32px); margin-top: 12px; }
+  .dojo-page-shell .pixel-button { white-space: normal; line-height: 1.2; text-align: center; }
+  .dojo-page-header { padding: 14px; gap: 14px; }
+  .dojo-page-header .brand-mark { width: 44px; height: 42px; }
+  .dojo-page-header .brand strong { font-size: 14px; }
+  .dojo-page-header .brand small { font-size: 12px; }
+  .dojo-page-header nav { font-size: 23px; flex-wrap: wrap; gap: 8px 12px; }
+  .dojo-page-header > .pixel-button { order: 4; width: 100%; margin-left: 0; }
   .philosophy-intro h1 { font-size: clamp(14px, 4.4vw, 19px); letter-spacing: -.45px; }
   .philosophy-intro .eyebrow { font-size: 19px; }
   .philosophy-lead { font-size: 17px; }
@@ -541,5 +542,127 @@ html:has(.philosophy-shell) { scroll-behavior: auto; }
   .philosophy-learning { padding: 24px 18px; }
   .philosophy-learning h2 { font-size: 28px; }
   .philosophy-learning > .pixel-button { width: 100%; font-size: 22px; }
-  .philosophy-footer { padding-inline: 18px; }
+  .dojo-page-footer { padding-inline: 18px; }
+}
+
+/* About follows the dojo's established pixel-art direction. */
+.about-main { outline: none; }
+.about-intro { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: 40px; margin: 42px 0 34px; }
+.about-intro h1 { font: 30px/1.65 "Dojo Pixel", monospace; letter-spacing: -.6px; margin: 14px 0; }
+.about-intro h1 span { display: block; }
+.about-lead { color: #a40e14; font-size: 19px; line-height: 1.5; font-weight: 700; }
+.about-intro > div > p:last-of-type { font-size: 16px; line-height: 1.75; margin-top: 12px; max-width: 600px; }
+.about-intro-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 24px; margin-top: 26px; }
+.about-intro-actions .pixel-button { min-height: 46px; }
+.about-text-link { font: bold 23px/1.25 "Dojo Terminal", monospace; text-decoration: underline; text-underline-offset: 4px; }
+.about-text-link:hover { color: #a40e14; }
+.about-dojo { padding: 6px; }
+.about-stage { position: relative; aspect-ratio: 956 / 292; overflow: hidden; background: #f2e6d6; }
+.about-stage:has(.arcade-fighter[data-ready="true"]) .hero-clean-scene { visibility: visible; }
+.about-dojo-caption { background: #091d34; color: #fff4df; padding: 22px 26px; display: grid; gap: 8px; }
+.about-dojo-caption .eyebrow { color: #ffb27d; font-size: 18px; }
+.about-dojo-caption strong { font: bold 30px/1.15 "Dojo Terminal", monospace; }
+.about-dojo-caption > span:last-child { color: #e2e2df; font-size: 14px; line-height: 1.6; }
+.about-mission { display: grid; grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); gap: 40px; align-items: center; padding: 28px 0; border-block: 2px solid #c6bba8; }
+.about-mission h2 { font: bold 35px/1.1 "Dojo Terminal", monospace; margin-top: 8px; }
+.about-mission > p { font-size: 16px; line-height: 1.75; max-width: 690px; }
+.about-audience { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 28px 0 34px; }
+.about-audience article { padding: 24px; }
+.about-audience .dojo-art { width: 56px; height: 59px; margin-bottom: 18px; }
+.about-audience h3 { font: bold 25px/1.15 "Dojo Terminal", monospace; margin-bottom: 12px; }
+.about-audience p { font-size: 15px; line-height: 1.7; }
+.about-section-title { margin-bottom: 20px; }
+.about-section-title h2, .about-path h2, .about-code h2, .about-start h2 { font: bold 34px/1.2 "Dojo Terminal", monospace; margin: 6px 0 8px; }
+.about-section-title > p:last-child { color: #565047; font-size: 15px; line-height: 1.65; }
+.about-how { scroll-margin-top: 20px; }
+.about-tabs > [data-slot="tabs-list"] { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; height: auto; padding: 0; gap: 14px; background: transparent; border-radius: 0; }
+.about-tabs [data-slot="tabs-trigger"] { min-height: 78px; height: auto; display: flex; flex-wrap: wrap; padding: 16px 20px; gap: 8px 14px; justify-content: flex-start; border-radius: 0; border: 2px solid #152237; box-shadow: 2px 2px 0 #98a0a8; background: #fffdf9; color: #132136; white-space: normal; transition: none; }
+.about-tabs [data-slot="tabs-trigger"]::before { content: ""; position: absolute; inset: 4px; border: 1px solid #bfc0b8; pointer-events: none; }
+.about-tabs [data-slot="tabs-trigger"][data-state="active"] { background: #f8ecd8; color: #a40e14; border-color: #a40e14; box-shadow: 2px 2px 0 #a40e14; }
+.about-tabs [data-slot="tabs-trigger"] > span { font: bold 27px/1 "Dojo Terminal", monospace; color: #81705a; }
+.about-tabs [data-slot="tabs-trigger"] > strong { font: bold 28px/1 "Dojo Terminal", monospace; }
+.about-tabs [data-slot="tabs-trigger"] > small { font: bold 20px/1 "Dojo Terminal", monospace; margin-left: auto; }
+.about-module-panel { margin-top: 12px; padding: 28px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 34px; align-items: center; }
+.about-module-panel h3 { font: bold 35px/1.15 "Dojo Terminal", monospace; margin: 8px 0 14px; }
+.about-module-panel article > p:not(.eyebrow) { font-size: 16px; line-height: 1.75; margin-bottom: 14px; }
+.about-module-panel .pixel-button { margin-top: 8px; min-height: 46px; }
+.about-module-preview { border: 2px solid #142f4b; padding: 18px; background: #f2e8d7; }
+.about-preview-scene.card-art { position: relative; inset: auto; width: 100%; height: auto; aspect-ratio: 247 / 135; overflow: hidden; }
+.about-preview-quiz .card-fighter { left: 2.45%; top: calc(50% - 22.56cqw); width: 52.25%; }
+.about-reward { background: #091d34; color: #fff4df; padding: 20px; display: grid; gap: 8px; }
+.about-reward strong { color: #e3b66d; font: bold 35px/1 "Dojo Terminal", monospace; }
+.about-reward > span { font: bold 24px/1.2 "Dojo Terminal", monospace; }
+.about-reward small { color: #d9dfdf; font-size: 13px; line-height: 1.6; }
+.about-path { margin-top: 32px; padding: 28px; }
+.about-path > div > p:last-child { font-size: 16px; line-height: 1.7; }
+.about-path ol { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px; }
+.about-path li { min-width: 0; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid #c5beaf; background: #f9f5ed; }
+.about-path li.available { border-color: #a40e14; background: #f6ecd9; }
+.about-path li .dojo-art { width: 64px; height: 62px; }
+.about-path li strong { font: bold 23px/1.15 "Dojo Terminal", monospace; margin-top: 7px; }
+.about-path li small { font: 15px/1.3 "Dojo Terminal", monospace; color: #655b4c; margin-top: 5px; }
+.about-path li.available small { color: #a40e14; }
+.about-path-note { display: flex; justify-content: space-between; align-items: center; gap: 24px; border-top: 1px dashed #c9bca7; padding-top: 20px; }
+.about-path-note > p { font-size: 14px; line-height: 1.7; }
+.about-path-note > p > strong { display: block; font: bold 21px/1.2 "Dojo Terminal", monospace; color: #a40e14; margin-bottom: 5px; }
+.about-code { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin-top: 32px; padding: 28px; background: #091d34; color: #fff4df; border-block: 3px solid #263e58; }
+.about-code .eyebrow { color: #ffb27d; }
+.about-code h2 { color: #e3b66d; }
+.about-code > div { max-width: 690px; }
+.about-code p:last-child { font-size: 16px; line-height: 1.7; color: #e0e2e5; }
+.about-faq { margin-top: 34px; }
+.about-question { background: #fffdf8; border: 1px solid #bfb5a4; margin-top: 10px; }
+.about-question summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 18px 22px; font: bold 26px/1.25 "Dojo Terminal", monospace; cursor: pointer; list-style: none; }
+.about-question summary::-webkit-details-marker { display: none; }
+.about-question summary:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.about-question[open] .philosophy-disclosure-marker::before { content: "−"; }
+.about-question > p { border-top: 1px dashed #c9bca7; padding: 20px 22px; font-size: 15px; line-height: 1.75; }
+.about-start { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin: 32px 0; padding: 28px; background: #f5ecdb; }
+.about-start p:last-child { font-size: 15px; line-height: 1.7; }
+@media (max-width: 1000px) {
+  .about-intro { grid-template-columns: 1fr; gap: 28px; margin-top: 30px; }
+  .about-dojo { width: min(100%, 690px); }
+  .about-mission { grid-template-columns: 1fr 1.3fr; gap: 28px; }
+  .about-path ol { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .about-tabs [data-slot="tabs-trigger"] { padding-inline: 16px; }
+  .about-tabs [data-slot="tabs-trigger"] > strong { font-size: 26px; }
+}
+@media (max-width: 800px) {
+  .about-mission, .about-audience, .about-module-panel { grid-template-columns: 1fr; }
+  .about-audience article { display: grid; grid-template-columns: 54px minmax(0, 1fr); column-gap: 20px; }
+  .about-audience .dojo-art { grid-row: span 2; width: 54px; height: 56px; margin: 0; }
+  .about-audience h3 { margin-bottom: 6px; }
+  .about-module-preview { width: min(100%, 420px); }
+  .about-path-note, .about-code, .about-start { flex-direction: column; align-items: flex-start; gap: 22px; }
+}
+@media (max-width: 580px) {
+  .about-intro h1 { font-size: clamp(15px, 4.7vw, 22px); letter-spacing: -.5px; }
+  .about-intro .eyebrow { font-size: 19px; }
+  .about-intro-actions { align-items: flex-start; flex-direction: column; }
+  .about-intro-actions .pixel-button { width: 100%; }
+  .about-lead { font-size: 18px; }
+  .about-dojo-caption { padding: 20px; }
+  .about-dojo-caption strong { font-size: 28px; }
+  .about-mission { gap: 18px; padding-block: 24px; }
+  .about-mission h2 { font-size: 32px; }
+  .about-audience { gap: 14px; }
+  .about-audience article { padding: 20px 18px; column-gap: 16px; }
+  .about-audience h3 { font-size: 24px; }
+  .about-section-title h2, .about-path h2, .about-code h2, .about-start h2 { font-size: 29px; }
+  .about-tabs > [data-slot="tabs-list"] { gap: 10px; }
+  .about-tabs [data-slot="tabs-trigger"] { min-height: 116px; padding: 14px 6px; flex-direction: column; justify-content: center; gap: 8px; }
+  .about-tabs [data-slot="tabs-trigger"] > strong { font-size: 23px; }
+  .about-tabs [data-slot="tabs-trigger"] > small { margin: 0; font-size: 19px; }
+  .about-module-panel, .about-path { padding: 22px 18px; }
+  .about-module-panel h3 { font-size: 31px; }
+  .about-module-panel .pixel-button { width: 100%; }
+  .about-module-preview { padding: 12px; }
+  .about-path ol { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .about-code, .about-start { padding: 24px 18px; }
+  .about-code .pixel-button, .about-start .pixel-button { width: 100%; font-size: 22px; }
+  .about-question summary { font-size: 24px; padding: 16px 18px; }
+  .about-question > p { padding: 18px; }
+}
+@media (max-width: 380px) {
+  .dojo-page-header nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

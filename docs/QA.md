@@ -1,5 +1,19 @@
 # Bushido Ops validation — 3 October 2026
 
+## About update
+
+- About opens as a dedicated page from the home navigation, with its own document title and active header link. The mission, learner cards, original dojo artwork and ready Ryu-style fighter were visually checked on desktop.
+- Warm-up, Lesson and Quiz previews changed their content and selected-tab URL. Each preview CTA opened the corresponding live pilot module. About interactions left XP at zero before training.
+- Browser back/forward restored the previews encoded in `#about/lesson` and `#about/warmup`.
+- The “See how it works” jump focused the overview heading; Tab reached the selected tab and ArrowRight switched steps. Repeating the jump at the same hash worked. The skip link focused `about-content`.
+- Native FAQs opened with Enter on desktop and mobile. The account answer correctly describes current-session behavior.
+- Warm-up awarded 20 XP for the correct answer. The 20 XP and a chosen Philosophy habit survived About, Philosophy, training and home navigation.
+- “Explore the belts” returned to the existing home belt path. About marks only White as pilot ready and the remaining seven belts planned.
+- Responsive review used same-origin iframes with 390 and 320 usable CSS pixels. Document client width and scroll width matched at both widths. The intro, training controls, fighter previews and expanded FAQ were visually checked. Shared Philosophy navigation also fit at 320 pixels. This was a browser responsive review, not a physical-device test.
+- Screenshots: `about-preview.jpg`, `about-training-preview.jpg`, `about-mobile-preview.jpg`. Inspected browser logs contained no application warnings or errors.
+- No fighter timing or palette changes were made. Existing reduced-motion behavior remains; OS motion preferences were not emulated.
+- TypeScript and the final GitHub Pages production build passed. The responsive review fixture and temporary preview package change were removed before packaging.
+
 ## Philosophy update
 
 - Dedicated page visually checked on desktop, including original dojo artwork, the clean background and the ready 8-bit Ryu-style fighter. Proof: `philosophy-preview.jpg`.

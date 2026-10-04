@@ -3,6 +3,7 @@
 import type { ReactNode, RefObject } from "react";
 import { AnimatedFighter } from "@/components/animated-fighter";
 import { DojoArt } from "@/components/dojo-art";
+import { DojoPageFooter, DojoPageHeader } from "@/components/dojo-page-chrome";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { principles, type PrincipleId } from "@/lib/philosophy-content";
 
@@ -17,12 +18,8 @@ type Props = {
 export function PhilosophyPage({ brand, headingRef, principle, commitments, onToggleCommitment }: Props) {
   const allChosen = commitments.length === principles.length;
 
-  return <div className="philosophy-shell">
-    <header className="philosophy-header pixel-frame">
-      {brand}
-      <nav aria-label="Main navigation"><a href="#">HOME</a><a href="#belts">BELTS</a><a href="#philosophy" aria-current="page">PHILOSOPHY</a></nav>
-      <a className="pixel-button" href="#dojo/warmup">ENTER THE DOJO <span aria-hidden="true">➜</span></a>
-    </header>
+  return <div className="dojo-page-shell philosophy-shell">
+    <DojoPageHeader brand={brand} currentPage="philosophy" />
 
     <main id="philosophy-content" tabIndex={-1} className="philosophy-main">
       <section className="philosophy-intro" aria-labelledby="philosophy-title">
@@ -85,6 +82,6 @@ export function PhilosophyPage({ brand, headingRef, principle, commitments, onTo
       <section className="philosophy-learning" aria-labelledby="philosophy-learning-title"><div><p className="eyebrow">NO GATEKEEPING</p><h2 id="philosophy-learning-title">YOU DON’T HAVE TO KNOW EVERYTHING TO BEGIN.</h2><p>Ask the question. Make the attempt. Learn from the result. Every belt begins with basics, and everyone deserves a place to practice them.</p></div><a href="#belts" className="pixel-button pixel-button-light">EXPLORE THE BELT PATH <span aria-hidden="true">➜</span></a></section>
       <div className="philosophy-reading"><span>KEEP LEARNING</span><a href="https://consumer.ftc.gov/articles/how-recognize-avoid-phishing-scams" target="_blank" rel="noopener noreferrer">FTC: spotting phishing <span className="sr-only">(opens in a new tab)</span>↗</a><a href="https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP: responsible research <span className="sr-only">(opens in a new tab)</span>↗</a></div>
     </main>
-    <footer className="philosophy-footer"><a href="#">BUSHIDO OPS / HOME</a><span>ORDER. RESPECT. HONOR.</span><a href="#dojo">ENTER THE DOJO ➜</a></footer>
+    <DojoPageFooter />
   </div>;
 }

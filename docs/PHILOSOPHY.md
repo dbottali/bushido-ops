@@ -27,6 +27,7 @@ The scene reuses the clean dojo background and the approved 8-bit Ryu-style figh
 
 - `lib/philosophy-content.ts`: shared principle copy and IDs.
 - `components/philosophy-page.tsx`: dedicated page and interactions.
+- `components/dojo-page-chrome.tsx`: shared header and footer for About and Philosophy.
 - `app/page.tsx`: navigation and shared session state.
 - `app/globals.css`: Philosophy layout and responsive styling.
 
