@@ -6,7 +6,7 @@
 @font-face { font-family: "Dojo Terminal"; src: url("/fonts/vt323.ttf") format("truetype"); font-display: swap; }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; color-scheme: only light; background-color: #fcfaf5; min-height: 100%; }
 body { margin: 0; background: #fcfaf5; color: #091222; font-family: "Courier New", monospace; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
 button, a { touch-action: manipulation; }
@@ -18,7 +18,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .skip-link { position: fixed; left: 16px; top: -100px; z-index: 100; padding: 12px 18px; background: #fff; border: 3px solid #091222; }
 .skip-link:focus { top: 16px; }
 .dojo-art { display: block; width: 100%; overflow: hidden; }
-.home-shell { --s: calc(1cqw / 16.72); container-type: inline-size; width: min(100%, 1672px); margin: 0 auto; position: relative; background: linear-gradient(100deg, #fffdf9, #fdfbf6 38%, #fffdf9); }
+.home-shell { --s: calc(100vw / 1672); container-type: inline-size; width: min(100%, 1672px); margin: 0 auto; position: relative; background: #fcfaf5; }
+@supports (width: 1cqw) { .home-shell { --s: calc(1cqw / 16.72); } }
+@media (min-width: 1672px) { .home-shell { --s: 1px; } }
+.home-header-wrap { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 20px auto; position: relative; z-index: 1; }
 .content-width { width: calc(1366 * var(--s)); margin-inline: auto; }
 .pixel-frame { position: relative; background: #fffdf9; border: 2px solid #111a2b; box-shadow: 2px 2px 0 #98a0a8; border-radius: 0; }
 .pixel-frame::before { content: ""; position: absolute; inset: 4px; border: 1px solid #bac0c2; pointer-events: none; }
@@ -92,6 +95,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .footer-lettering { width: calc(563 * var(--s)); height: calc(39 * var(--s)); margin-bottom: calc(7 * var(--s)); }
 .footer-message p { font-size: calc(14 * var(--s)); line-height: 1.4; font-weight: 600; }
 .footer-progress { display: flex; align-items: center; gap: calc(12 * var(--s)); font: calc(21 * var(--s))/1 "Dojo Terminal", monospace; margin-top: calc(9 * var(--s)); }
+.footer-progress-link { display: inline-block; margin-top: calc(8 * var(--s)); color: #ead3ac; font: bold calc(19 * var(--s))/1.2 "Dojo Terminal", monospace; text-decoration: underline; text-underline-offset: 3px; }
 .footer-progress [data-slot="progress"] { width: calc(150 * var(--s)); height: calc(13 * var(--s)); border: 2px solid #d7e2e9; background: repeating-linear-gradient(90deg, transparent 0,transparent 20px,#e7edf0 21px,transparent 22px); border-radius: 0; }
 .coins { margin-left: calc(22 * var(--s)); color: #ffd56d; }
 .arcade-fighter { position: relative; overflow: visible; width: 192px; height: 168px; }
@@ -129,7 +133,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .footer-action p { font-size: calc(13 * var(--s)); color: #b9bec9; font-weight: 600; margin-top: calc(13 * var(--s)); }
 
 /* The playable dojo uses the same art and materials at a readable working scale. */
-.training-shell { --s: 1px; width: min(1180px, calc(100% - 40px)); margin: 20px auto 0; }
+.training-shell { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 20px auto 0; }
 .training-header { display: flex; align-items: center; gap: 32px; padding: 10px 26px; min-height: 84px; }
 .back-home { margin-left: auto; font: bold 24px "Dojo Terminal", monospace; }
 .training-xp { font: bold 21px "Dojo Terminal", monospace; border-left: 1px solid #c2bcae; padding-left: 26px; }
@@ -282,7 +286,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
   .principles p { font-size: 13px; }
   .footer-progress { gap: 8px; font-size: 19px; }
   .footer-action .pixel-button { font-size: 28px; gap: 25px; }
-  .training-shell { width: calc(100% - 24px); margin-top: 12px; }
   .training-header { padding: 12px; gap: 14px; flex-wrap: wrap; }
   .training-xp { width: 100%; border-left: 0; border-top: 1px dashed #b5ac9e; padding: 10px 0 0; font-size: 20px; }
   .training-main { margin-top: 24px; }
@@ -407,8 +410,9 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #fcfaf5;
+  color: #091222;
+  min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -416,7 +420,7 @@ body {
 html:has(.dojo-page-shell) { scroll-behavior: auto; }
 .principles > a:hover { background: #f6eddd; }
 .dojo-page-shell { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 20px auto 0; }
-.dojo-page-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 22px; }
+.dojo-page-header { --s: 1px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 22px; }
 .dojo-page-header nav { display: flex; align-items: center; gap: 28px; font: bold 24px/1 "Dojo Terminal", monospace; }
 .dojo-page-header nav a { padding-block: 8px; }
 .dojo-page-header nav a[aria-current="page"] { color: #b80910; box-shadow: 0 3px 0 #b80910; }
@@ -512,6 +516,8 @@ html:has(.dojo-page-shell) { scroll-behavior: auto; }
 }
 @media (max-width: 580px) {
   .dojo-page-shell { width: calc(100% - 32px); margin-top: 12px; }
+  .home-header-wrap { width: calc(100% - 32px); margin: 12px auto; }
+  .training-shell { width: calc(100% - 32px); margin-top: 12px; }
   .dojo-page-shell .pixel-button { white-space: normal; line-height: 1.2; text-align: center; }
   .dojo-page-header { padding: 14px; gap: 14px; }
   .dojo-page-header .brand-mark { width: 44px; height: 42px; }
@@ -769,6 +775,38 @@ html:has(.dojo-page-shell) { scroll-behavior: auto; }
 .belts-step-reward { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px dashed #bfb5a4; padding-top: 14px; margin-top: auto; font: bold 21px/1.2 "Dojo Terminal", monospace; color: #a40e14; }
 .complete .belts-step-reward { color: #32552c; }
 .belts-progress-note { font-size: 13px; line-height: 1.7; margin-top: 18px; color: #62584b; }
+.progress-loading { display: grid; justify-items: center; gap: 24px; padding: 80px 20px; }
+.progress-loading > p { font: bold 28px/1.3 "Dojo Terminal", monospace; }
+.progress-notice { width: min(1180px, calc(100% - 32px)); margin: 16px auto; padding: 16px 20px; border: 2px solid #a87935; background: #faf0d9; font-size: 14px; line-height: 1.6; }
+.progress-notice > a { display: inline-block; margin-top: 8px; font: bold 21px/1.3 "Dojo Terminal", monospace; text-decoration: underline; text-underline-offset: 4px; }
+.progress-manager { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 280px); gap: 24px 40px; border-top: 1px dashed #bfb5a4; margin-top: 24px; padding-top: 28px; }
+.progress-manager-copy h3 { font: bold 29px/1.2 "Dojo Terminal", monospace; margin: 5px 0 12px; }
+.progress-manager-copy > p:last-of-type { font-size: 14px; line-height: 1.7; max-width: 650px; }
+.progress-save-state { display: inline-flex; align-items: center; gap: 9px; margin-top: 16px; border: 1px solid #a87935; background: #faf0d9; padding: 6px 12px; font: bold 20px/1.2 "Dojo Terminal", monospace; color: #75531f; }
+.progress-save-state.saved { background: #edf2e9; border-color: #6b8254; color: #32552c; }
+.progress-manager-actions { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.progress-manager-actions .pixel-button, .progress-dialog-actions .pixel-button { --s: 1px; min-height: 44px; white-space: normal; }
+.progress-reset-button { align-self: center; min-height: 44px; padding: 8px 12px; font: bold 20px/1.2 "Dojo Terminal", monospace; color: #a40e14; text-decoration: underline; text-underline-offset: 4px; }
+.progress-manager-message, .progress-manager-error, .progress-protected-copy { grid-column: 1 / -1; font-size: 14px; line-height: 1.7; }
+.progress-manager-message { color: #32552c; }
+.progress-manager-error { border-left: 3px solid #a40e14; padding: 10px 14px; background: #fae8e4; color: #87151b; }
+.progress-protected-copy { background: #faf0d9; padding: 16px; border: 1px solid #b59766; }
+.progress-protected-copy > a { margin-top: 10px; }
+.progress-dialog-overlay { position: fixed; inset: 0; z-index: 80; background: #091d34cc; }
+.progress-dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 90; width: min(560px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 30px; display: grid; gap: 18px; }
+.progress-dialog h2 { font: bold 32px/1.2 "Dojo Terminal", monospace; }
+.progress-dialog [id][data-radix-dialog-description] { font-size: 15px; line-height: 1.7; }
+.progress-dialog > p:not(.eyebrow) { font-size: 15px; line-height: 1.7; }
+.progress-dialog-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.progress-import-summary { display: grid; gap: 4px; padding: 16px; background: #091d34; color: #fff4df; }
+.progress-import-summary strong { color: #e3b66d; font: bold 28px/1.2 "Dojo Terminal", monospace; }
+.progress-import-summary span { font-size: 14px; }
+@media (max-width: 680px) {
+  .footer-progress-link { font-size: 20px; margin-top: 10px; }
+  .progress-manager { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .progress-manager-actions { align-items: stretch; }
+  .progress-dialog { padding: 24px 20px; }
+}
 .belts-code { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin-top: 32px; padding: 28px; background: #091d34; color: #fff4df; border-block: 3px solid #263e58; }
 .belts-code .eyebrow { color: #ffb27d; }
 .belts-code h2 { color: #e3b66d; }

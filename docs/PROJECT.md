@@ -13,19 +13,26 @@ Practical, welcoming cybersecurity training in a pixel-art dojo. A session consi
 - Dedicated Philosophy page: three principle tabs, practical habits, expandable examples, an optional three-habit dojo code and direct entry to white-belt practice. Home principle cards link to the corresponding tab.
 - Dedicated About page: mission, learner audiences, a three-step training overview, belt availability, five FAQs and links to the playable pilot. About, Belts and Philosophy share a consistent header and footer.
 - White-belt phishing practice: interactive warm-up, three-part lesson, three-question quiz, and feedback.
-- XP: 20 + 30 + 50. A module awards once per session. Repeated completions cannot inflate XP.
+- XP: 20 + 30 + 50. A module counts once, including after reload and retry. XP is derived from unique completed modules.
 - Dedicated Belts page: eight selectable curricula with outcomes and mission previews, actual pilot progress, per-module completion and continuation to the first incomplete module. Home and About belt cards open the corresponding preview. Only the white-belt pilot is playable; future content is explicitly marked.
 - Responsive layout, keyboard-accessible controls, local fonts, and custom favicon.
-- Optional page-scoped agent actions: read session progress and open a training module.
+- Optional page-scoped agent actions: read browser-local progress and open a training module.
 - Three animated fighters rendered on a 64 × 56 grid with sixteen opaque colors and nearest-neighbor scaling. Each cached frame is a complete redrawn body. Calm idle uses small breathing and bobbing movements, distinct periods and pauses. Mouse entry or card keyboard focus triggers one brief punch without repeating while the pointer remains in place. The footer is still at rest and briefly changes guard on interaction. Belts retain small breathing or weight shifts. Motion honors reduced-motion preferences and pauses offscreen or in hidden tabs.
 
 ## Prototype boundaries
-This is a working prototype, not a complete course. Progress and dojo-code choices live in React state for the currently open page; reloading resets them. No learner accounts, database, analytics, payments, certifications, or external integrations. Belt advancement beyond the pilot is not implemented. “No signup” describes the learning interface. Dedicated generated sprite sheets use complete-body poses, a fixed per-character scale and a shared 8-bit palette; the head and arm are never animated as separate cutouts.
+This is a working prototype, not a complete course. Pilot progress, unfinished answers and dojo-code choices save in browser-local storage. Backup export/import supports a manual device transfer. Unavailable storage uses a clearly labeled temporary session; unreadable or newer saved data is preserved until an explicit import or reset. No learner accounts, cloud synchronization, analytics, payments or certifications. Belt advancement beyond the pilot is not implemented. “No signup” describes the learning interface. Dedicated generated sprite sheets use complete-body poses, a fixed per-character scale and a shared 8-bit palette; the head and arm are never animated as separate cutouts.
+
+## First infrastructure sprint — implemented
+- Versioned progress store, stable pilot identity, saved drafts, resume and cross-tab updates.
+- Validated JSON export/import and confirmed reset, with no duplicate XP.
+- Shared header for Home, Dojo, About, Belts and Philosophy, using the established content-page design.
+- Explicit ivory background and light theme in both browser-only and framework entry points.
+- Nine meaningful progress-store tests. Full curriculum remains deferred by the product owner.
 
 ## Next milestones
 1. **Approve the interface and pilot.** Compare desktop with the reference and review mobile, keyboard use, explanations, and XP behavior. Resolve design deviations before expanding.
 2. **Define learners and a complete white belt.** Select independent beginners, UniHackers students, or both. Define learning outcomes, lessons, duration, assessment, and what a belt means. A belt must not imply an accredited certification.
-3. **Save learner progress.** Decide guest versus account-based learning and privacy/retention expectations. Add durable persistence; test reloads, repeated completions, and independent learners.
+3. **Extend the infrastructure.** Build a data-driven course engine, define assessment and belt advancement rules, then improve routing, accessibility and release checks. The first browser-local persistence sprint is complete. Account-based learning and synchronization remain a separate future decision.
 4. **Test with a small learner group.** Observe comprehension, completion, and whether learners can apply the skill. Fix the difficulties observed.
 5. **Release to learners.** Review all content, finish accessibility and mobile QA, provide essential privacy information, and explicitly select the audience before changing access.
 
@@ -38,7 +45,7 @@ This is a working prototype, not a complete course. Progress and dojo-code choic
 - Prototype limitations are visible, and unfinished content is not presented as available.
 
 ## Decisions still open
-Primary learner audience; full white-belt curriculum; persistent progress; belt advancement rules; when and whether to make the review site public.
+Primary learner audience; full white-belt curriculum; optional accounts and synchronization; belt advancement rules; when and whether to make the review site public.
 
 ## Approved character direction — 3 October 2026
 

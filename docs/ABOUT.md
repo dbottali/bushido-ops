@@ -21,8 +21,8 @@ The copy describes the current product. There are no invented learner statistics
 - `#about-content` is the skip-link target and focuses the main content.
 - About has its own document title and active navigation state.
 - Preview selection and FAQ expansion do not award XP. Rewards remain in the actual training modules.
-- About, Belts and Philosophy share the header and footer in `components/dojo-page-chrome.tsx`, with links between the three pages.
-- XP and Philosophy choices survive navigation during the currently open page. Reloading resets those session values.
+- Home, Dojo, About, Belts and Philosophy share the header in `components/dojo-page-chrome.tsx`. The three content pages also share its footer.
+- XP, unfinished answers and Philosophy choices survive reload when browser storage is available. Belts provides backup export/import and confirmed reset.
 
 ## Current scope
 
@@ -35,7 +35,7 @@ The intro and previews reuse existing artwork and fighters: Ryu-style main hero,
 - `lib/about-content.ts`: learner cards, module previews and FAQs.
 - `components/about-page.tsx`: the dedicated page.
 - `components/dojo-page-chrome.tsx`: shared content-page navigation.
-- `app/page.tsx`: routes, focus and existing session state.
+- `app/page.tsx`: routes, focus and shared progress-store integration.
 - `app/globals.css`: About layout and shared frame styles.
 
 Preview screenshots: `about-preview.jpg`, `about-training-preview.jpg` and `about-mobile-preview.jpg`.

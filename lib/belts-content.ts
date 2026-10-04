@@ -70,5 +70,5 @@ export const pilotSteps = [
 export const beltQuestions = [
   { question: "Where should I start?", answer: "Start at White Belt. Its phishing-awareness pilot is open now and needs no signup or technical experience. The other belts show the planned learning path." },
   { question: "Does 100 XP unlock Yellow Belt?", answer: "100 XP marks completion of the three White Belt pilot modules. The remaining curriculum and full belt advancement are still in development. The pilot does not issue an accredited certification." },
-  { question: "Can I retry or change modules?", answer: "Yes. You can move between Warm-up, Lesson and Quiz and retry the exercises. Each module awards XP once in the open session. Reloading the page resets this progress." },
+  { question: "Can I retry or change modules?", answer: "Yes. You can move between Warm-up, Lesson and Quiz and retry the exercises. Each module awards XP once in your saved progress. Reloading keeps it when this browser allows saving. Export or import a backup and manage resets in Your Progress." },
 ] as const;

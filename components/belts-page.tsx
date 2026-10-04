@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { beltCurriculum, beltQuestions, pilotSteps } from "@/lib/belts-content";
 import { belts, earnedXp, rewards, type BeltId, type ModuleId } from "@/lib/dojo-content";
 
-type Props = { brand: ReactNode; headingRef: RefObject<HTMLHeadingElement | null>; belt: BeltId; completed: ModuleId[] };
+type Props = { brand: ReactNode; headingRef: RefObject<HTMLHeadingElement | null>; belt: BeltId; completed: ModuleId[]; hasStarted: boolean; progressManagement: ReactNode };
 
 function repeatJump(event: MouseEvent<HTMLAnchorElement>, section: "path" | "progress") {
   if (window.location.hash !== `#belts/${section}`) return;
@@ -18,14 +18,14 @@ function repeatJump(event: MouseEvent<HTMLAnchorElement>, section: "path" | "pro
   document.getElementById(`belts-${section}-title`)?.focus({ preventScroll: true });
 }
 
-export function BeltsPage({ brand, headingRef, belt, completed }: Props) {
+export function BeltsPage({ brand, headingRef, belt, completed, hasStarted, progressManagement }: Props) {
   const xp = earnedXp(completed);
   const totalXp = pilotSteps.reduce((total, step) => total + rewards[step.id], 0);
   const completedCount = pilotSteps.filter(step => completed.includes(step.id)).length;
   const pilotComplete = completedCount === pilotSteps.length;
   const nextStep = pilotSteps.find(step => !completed.includes(step.id));
   const practiceHref = `#dojo/${nextStep?.id ?? "warmup"}`;
-  const practiceLabel = pilotComplete ? "REVISIT WHITE BELT" : completedCount > 0 ? "CONTINUE YOUR PRACTICE" : "START WHITE BELT";
+  const practiceLabel = pilotComplete ? "REVISIT WHITE BELT" : hasStarted ? "CONTINUE YOUR PRACTICE" : "START WHITE BELT";
 
   return <div className="dojo-page-shell belts-shell">
     <DojoPageHeader brand={brand} currentPage="belts" />
@@ -62,13 +62,14 @@ export function BeltsPage({ brand, headingRef, belt, completed }: Props) {
       </section>
 
       <section id="belts-progress" className="belts-progress pixel-frame" aria-labelledby="belts-progress-title">
-        <div className="belts-progress-heading"><div><p className="eyebrow">WHITE BELT / YOUR OPEN SESSION</p><h2 id="belts-progress-title" tabIndex={-1}>{pilotComplete ? "FIRST PRACTICE COMPLETE." : "THREE STEPS. ONE USEFUL HABIT."}</h2><p>{pilotComplete ? "You practiced pausing, verifying and protecting. Revisit any step when you want another round." : "Work through the first practice at your own pace. Your progress follows you around the dojo in this open session."}</p></div><div className="belts-progress-total"><strong>{xp} / {totalXp} XP</strong><span>{completedCount} / {pilotSteps.length} complete</span></div></div>
-        <Progress value={xp / totalXp * 100} aria-label="White Belt session XP" aria-valuetext={`${xp} of ${totalXp} XP`} />
+        <div className="belts-progress-heading"><div><p className="eyebrow">WHITE BELT / YOUR PROGRESS</p><h2 id="belts-progress-title" tabIndex={-1}>{pilotComplete ? "FIRST PRACTICE COMPLETE." : "THREE STEPS. ONE USEFUL HABIT."}</h2><p>{pilotComplete ? "You practiced pausing, verifying and protecting. Revisit any step when you want another round." : "Work through the first practice at your own pace. Your progress follows you around the dojo and is saved on this browser when storage is available."}</p></div><div className="belts-progress-total"><strong>{xp} / {totalXp} XP</strong><span>{completedCount} / {pilotSteps.length} complete</span></div></div>
+        <Progress value={xp / totalXp * 100} aria-label="White Belt saved progress XP" aria-valuetext={`${xp} of ${totalXp} XP`} />
         <ol className="belts-pilot-steps">{pilotSteps.map(step => {
           const done = completed.includes(step.id);
           return <li key={step.id}><a href={`#dojo/${step.id}`} className={done ? "complete" : ""}><div><span className="belts-step-number">{step.number}</span><span className="belts-step-status">{done ? "COMPLETE ✓" : "READY TO PRACTICE"}</span></div><h3>{step.name}</h3><p>{step.task}</p><small>{step.condition}</small><span className="belts-step-reward"><strong>{done ? "EARNED" : "REWARD"} / {rewards[step.id]} XP</strong><span aria-hidden="true">➜</span></span></a></li>;
         })}</ol>
-        <p className="belts-progress-note">Rewards count once per module. Reloading resets this session. {totalXp} XP completes the pilot; the full belt curriculum is still in development.</p>
+        <p className="belts-progress-note">Rewards count once per module. Your progress survives reloads when this browser allows saving. {totalXp} XP completes the pilot; the full belt curriculum is still in development.</p>
+        {progressManagement}
       </section>
 
       <section className="belts-code" aria-labelledby="belts-code-title"><div><p className="eyebrow">THE WAY YOU TRAIN MATTERS</p><h2 id="belts-code-title">ORDER. RESPECT. HONOR.</h2><p>Progress starts with a clear mind, care for others and the patience to try again. Carry the dojo code into every belt.</p></div><a href="#philosophy" className="pixel-button pixel-button-light">READ THE DOJO CODE <span aria-hidden="true">➜</span></a></section>

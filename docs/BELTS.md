@@ -19,7 +19,7 @@ Each selected preview includes the belt’s focus, three learning outcomes and a
 
 The page keeps the approved 8-bit fighters, original belt miniatures, pixel frames and local fonts. A Ryu-style fighter appears in the current-practice panel with the existing quiet animation profile. No new sprites or fighter timing changes are introduced.
 
-## Actual session progress
+## Actual saved progress
 
 - Warm-up: a correct response earns 20 XP.
 - Lesson: marking the lesson complete earns 30 XP.
@@ -27,9 +27,10 @@ The page keeps the approved 8-bit fighters, original belt miniatures, pixel fram
 - Belts shows earned XP and completion for each module. Preview selection and mission disclosures award no XP.
 - Start/Continue opens the first incomplete module in the order Warm-up, Lesson, Quiz. Once all three are complete, Revisit opens Warm-up.
 - Completing the pilot shows 100 XP, 3/3 and “First practice complete.” It does not unlock unfinished curriculum or issue a certification.
-- Progress remains in the open page’s existing React state and resets on reload.
+- Progress, unfinished answers and Philosophy choices save on this browser and survive reload. Storage failures show a temporary-session notice. XP is derived from unique completed modules.
+- Your Progress provides JSON export/import and reset. Import previews the backup and requires confirmation before replacement. Reset also requires confirmation.
 
-The training header provides a Belts link back to the current-practice section. About, Belts and Philosophy share the same header and footer.
+Home, training, About, Belts and Philosophy use the same header. The three content pages also share its footer. Enter the Dojo resumes the first incomplete module.
 
 ## URLs and keyboard behavior
 
@@ -47,7 +48,10 @@ The training header provides a Belts link back to the current-practice section. 
 - `lib/belts-content.ts`: planned outcomes, missions, pilot-step descriptions and FAQs.
 - `components/belts-page.tsx`: previews, progress and continuation links.
 - `components/dojo-page-chrome.tsx`: shared page navigation.
-- `app/page.tsx`: routes, focus and existing session state.
+- `lib/dojo-progress.ts`: validated, versioned store and pure progress reducer.
+- `components/use-dojo-progress.ts`: hydration, external-store subscription and browser-tab updates.
+- `components/progress-manager.tsx`: backup controls and replacement confirmations.
+- `app/page.tsx`: routes, focus and shared progress-store integration.
 - `app/globals.css`: responsive page layout.
 
 Screenshots: `belts-preview.jpg`, `belts-path-preview.jpg`, `belts-progress-preview.jpg`, `belts-mobile-preview.jpg`.

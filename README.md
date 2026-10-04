@@ -2,21 +2,24 @@
 
 A pixel-art cybersecurity dojo for practical digital self-defense. This interactive, animated prototype includes a playable white-belt phishing exercise and dedicated About, Belts and Philosophy pages.
 
-![Bushido Ops home](docs/home-preview.jpg)
+![Bushido Ops home](docs/navigation-preview.jpg)
 
 ## What works
 
-- Responsive home page and dojo navigation.
+- Responsive home page and shared navigation: Home, About, Belts, Philosophy and Enter the Dojo use the same header on every page.
+- Explicit ivory page background and light color scheme, with a viewport-unit fallback for browsers without container query units.
 - Belts: eight selectable curriculum previews, practical missions, live White Belt progress and a Continue action that opens the first incomplete pilot module.
 - About: the mission, who the dojo is for, an interactive training overview, belt availability and expandable FAQs. Every training preview links to its playable pilot module.
-- Philosophy: Order, Respect and Honor, with practical habits, expandable scenarios and a personal dojo code that keeps your choices while navigating the open session.
+- Philosophy: Order, Respect and Honor, with practical habits, expandable scenarios and a personal dojo code with browser-local saved choices.
 - 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on mouse entry or keyboard focus, with no automatic punches.
 - Warm-up and Quiz start with the clean scene while their fighters load, preventing a brief flash of the original Ryu illustration on Home and About.
 - Warm-up, short lesson, and three-question quiz with explanations and retries.
-- Session XP: 20 for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module awards once per session.
+- Saved pilot progress: 20 XP for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module counts once, including after reload or retry.
+- Resume the first incomplete module. Unfinished answers and submitted feedback survive reloads.
+- Export, validate and import a JSON backup, or reset progress with confirmation, from Belts → Your Progress.
 - Keyboard-accessible controls and support for reduced-motion preferences.
 
-Only the white-belt pilot is playable. Progress is held in memory and resets when the page reloads. Learner accounts, persistent progress, and the remaining curriculum are future work.
+Only the white-belt pilot is playable. Progress saves on this browser when local storage is available. Export/import transfers it between devices; there is no account or automatic cloud synchronization. If storage fails, training remains usable with a visible temporary-session notice. The remaining curriculum and belt advancement are future work.
 
 ## Run locally
 
@@ -35,6 +38,7 @@ Open the local URL printed by the development server. A clean clone uses the por
 
 ```sh
 pnpm exec tsc --noEmit
+pnpm test:progress
 pnpm build
 pnpm start
 ```
@@ -63,7 +67,9 @@ React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Worker
 - [Characters and 8-bit animation](docs/CHARACTERS.md)
 - [Philosophy content and interactions](docs/PHILOSOPHY.md)
 - [About content and navigation](docs/ABOUT.md)
-- [Belts curriculum and session progress](docs/BELTS.md)
+- [Belts curriculum and saved progress](docs/BELTS.md)
+- [Progress model, backups and storage](docs/PROGRESS.md)
+- [Upload the latest infrastructure update](docs/INFRASTRUCTURE-UPDATE.md)
 - [Upload the latest loading fix](docs/LOADING-FIX.md)
 - [Upload the Belts update](docs/BELTS-UPDATE.md)
 - [Upload the About update](docs/ABOUT-UPDATE.md)

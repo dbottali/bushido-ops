@@ -1,5 +1,17 @@
 # Bushido Ops validation — 4 October 2026
 
+## Infrastructure and shared navigation
+
+- Nine progress-store tests pass: hydration without overwriting saved state, answer/reward rules, no duplicate XP after retry/reload, JSON round-trip and derived XP, import/reset, version migration, protected malformed/newer storage, denied/quota-failed storage, invalid/foreign/oversized backups and cross-tab updates. Test command: `pnpm test:progress`.
+- Browser checks retained the correct warm-up answer and 20 XP after reload. Continue opened Lesson. Lesson and perfect Quiz reached 100 XP and 3/3, retained on reload; repeated completion did not inflate XP. The Respect commitment also survived reload.
+- Reset cancellation retained progress; Escape closed the dialog and restored focus to its initiating button. Confirmed reset saved zero progress, retained on reload.
+- The rendered export anchor's JSON payload was inspected and matched the completed profile, answers and Respect commitment. Import validation and replacement are unit-tested. Cloud-browser download and file-picker events did not complete, so a real downloaded-file round trip is not claimed.
+- Home, Dojo, About, Belts and Philosophy render the same shared menu. Desktop headers measured 1180 × 91 CSS pixels with matching links. The old baked Home masthead was removed; the final Home screenshot shows one header. Proof: `navigation-preview.jpg`.
+- Root and body computed background are `rgb(252, 250, 245)` and the color scheme is `light only`. The background is explicit in CSS and both entry points. A viewport-unit fallback covers browsers without container query units. This addresses device-dependent theme rendering without claiming the reported brown background was reproduced on a physical iPad.
+- Responsive About at 320 usable CSS pixels measured client width and scroll width both 320, with a 288-pixel shared header and the same ivory background. Broader device coverage remains to be checked; physical iPad testing was not performed.
+- TypeScript and the GitHub Pages production build passed. Temporary review fixtures and the preview-only package change are excluded from the package. This update is prepared for manual GitHub upload and is not claimed to be live.
+- Progress-panel proof: `progress-preview.jpg`. Earlier screenshots below describe their release's behavior and may show the former menu or session-only progress.
+
 ## Fighter loading fix
 
 - Root cause: Home and About rendered the original Ryu card artwork until the fighter became ready. Warm-up and Quiz now render only the clean scene from the first render. The obsolete readiness-gated card overlay was removed.
@@ -70,7 +82,7 @@ Previously verified, with learning logic unchanged by this visual update:
 - Incorrect Warm-up earns no XP; correct answer earns 20; repeat completion does not award twice.
 - Lesson completion brings XP to 50.
 - A 2/3 quiz earns no quiz XP. A retry with 3/3 brings the total to 100 and displays practice-complete feedback.
-- Home reflects earned XP during the open session. Reloading resets the session.
+- At the original pilot release, Home reflected session XP and reload reset it. The infrastructure release above now saves progress across reloads.
 - Local Pages URLs work under `/bushido-ops/`, including hash navigation, artwork and fonts.
 
-The desktop is a faithful reconstruction of the design, not a claim of pixel-for-pixel identity. Full curriculum, durable progress, comprehensive accessibility review and broader device testing remain future work.
+The desktop is a faithful reconstruction of the design, not a claim of pixel-for-pixel identity. Full curriculum, optional accounts and synchronization, comprehensive accessibility review and broader physical-device testing remain future work.
