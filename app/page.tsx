@@ -1,121 +1,122 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Progress } from "@/components/ui/progress";
 import { DojoArt } from "@/components/dojo-art";
 import { AnimatedFighter } from "@/components/animated-fighter";
 import { PhilosophyPage } from "@/components/philosophy-page";
 import { AboutPage } from "@/components/about-page";
 import { BeltsPage } from "@/components/belts-page";
+import { MyDojoPage } from "@/components/my-dojo-page";
+import { CoursePlayer } from "@/components/course-player";
 import { DojoPageHeader } from "@/components/dojo-page-chrome";
 import { ProgressManager } from "@/components/progress-manager";
 import { useDojoProgress } from "@/components/use-dojo-progress";
-import { nextModule, PILOT_ID } from "@/lib/dojo-progress";
+import { courseCatalog, pilotCourse, PILOT_ID } from "@/lib/course-catalog";
+import { completedModules, courseStarted, courseStatus, learningSummary, trainingHref } from "@/lib/course-engine";
+import { resolveTrainingRoute, type TrainingRoute } from "@/lib/dojo-routes";
 import { isPrincipleId, principles, type PrincipleId } from "@/lib/philosophy-content";
-import { belts, earnedXp, isBeltId, questions, warmup, type BeltId, type ModuleId } from "@/lib/dojo-content";
+import { belts, isBeltId, type BeltId, type ModuleId } from "@/lib/dojo-content";
 
 type ModelContext = { registerTool: (tool: { name: string; title: string; description: string; inputSchema: object; annotations: object; execute: (input: unknown) => unknown }, options: { signal: AbortSignal }) => unknown };
 
-function PixelButton({ children, href, light = false, onClick, disabled = false, className = "" }: {
-  children: React.ReactNode; href?: string; light?: boolean; onClick?: () => void; disabled?: boolean; className?: string;
+function PixelButton({ children, href, light = false, className = "" }: {
+  children: React.ReactNode; href: string; light?: boolean; className?: string;
 }) {
-  const styles = `pixel-button ${light ? "pixel-button-light" : ""} ${className}`;
-  return href ? <a className={styles} href={href}>{children}</a> : <button className={styles} onClick={onClick} disabled={disabled}>{children}</button>;
+  return <a className={`pixel-button ${light ? "pixel-button-light" : ""} ${className}`} href={href}>{children}</a>;
 }
-
 function Brand() {
   return <a href="#" className="brand" aria-label="Bushido Ops home"><DojoArt x={197} y={10} w={58} h={55} className="brand-mark" /><span><strong>BUSHIDO OPS</strong><small lang="ja">デジタル道場</small></span></a>;
 }
-
-function ChoiceGroup({ options, value, onChange, name, disabled = false }: {
-  options: readonly string[]; value: string; onChange: (value: string) => void; name: string; disabled?: boolean;
-}) {
-  return <RadioGroup className="answer-group" value={value} onValueChange={onChange} aria-label="Answer options" disabled={disabled}>{options.map((answer, i) => <label key={i} className={`answer-option ${value === String(i) ? "selected" : ""}`} htmlFor={`${name}-${i}`}><RadioGroupItem id={`${name}-${i}`} value={String(i)} /><span>{answer}</span></label>)}</RadioGroup>;
-}
-
+type View = "home" | "dojo" | "my-dojo" | "philosophy" | "about" | "belts";
 export default function Home() {
   const { store, snapshot } = useDojoProgress();
-  const { completed, warmupAnswer, warmupChecked, quizAnswers, quizSubmitted } = snapshot.data.courses[PILOT_ID];
   const { commitments } = snapshot.data;
-  const [view, setView] = useState<"home" | "dojo" | "philosophy" | "about" | "belts">("home");
+  const [view, setView] = useState<View>("home");
   const currentView = useRef(view);
   const [principle, setPrinciple] = useState<PrincipleId>("order");
   const [aboutModule, setAboutModule] = useState<ModuleId>("warmup");
-  const [tab, setTab] = useState<ModuleId>("warmup");
+  const [trainingRoute, setTrainingRoute] = useState<TrainingRoute>({ courseId: PILOT_ID, moduleId: "warmup" });
   const [activeBelt, setActiveBelt] = useState<BeltId>("white");
   const heading = useRef<HTMLHeadingElement>(null);
-  const xp = earnedXp(completed);
-  const quizCorrect = questions.reduce((total, q, i) => total + (quizAnswers[i] === String(q.correct) ? 1 : 0), 0);
-  const hasStarted = completed.length > 0 || warmupAnswer !== "" || quizAnswers.some(answer => answer !== "");
-  const dojoLabel = completed.length === 3 ? "REVISIT THE DOJO" : hasStarted ? "CONTINUE TRAINING" : "ENTER THE DOJO";
+  const summary = learningSummary(snapshot.data, courseCatalog);
+  const hasStarted = courseCatalog.courses.some(course => courseStarted(snapshot.data, course));
+  const allComplete = summary.availableCourses > 0 && summary.completedCourses === summary.availableCourses;
+  const dojoLabel = allComplete ? "REVISIT THE DOJO" : hasStarted ? "CONTINUE TRAINING" : "ENTER THE DOJO";
 
   useEffect(() => {
     const readHash = () => {
       const hash = window.location.hash;
       const training = hash === "#dojo" || hash.startsWith("#dojo/") || hash === "#training-content";
+      const myDojo = hash === "#my-dojo" || hash.startsWith("#my-dojo/") || hash === "#my-dojo-content" || hash === "#progress";
       const philosophy = hash === "#philosophy" || hash.startsWith("#philosophy/") || hash === "#philosophy-content";
       const about = hash === "#about" || hash.startsWith("#about/") || hash === "#about-content";
       const beltPage = hash === "#belts" || hash.startsWith("#belts/") || hash === "#belts-content";
-      const nextView = training ? "dojo" : philosophy ? "philosophy" : about ? "about" : beltPage ? "belts" : "home";
+      const nextView: View = training ? "dojo" : myDojo ? "my-dojo" : philosophy ? "philosophy" : about ? "about" : beltPage ? "belts" : "home";
       const enteringView = currentView.current !== nextView;
-      const afterViewChange = (action: () => void) => enteringView ? requestAnimationFrame(action) : action();
+      const keepTabFocus = !enteringView && document.activeElement?.getAttribute("role") === "tab";
       currentView.current = nextView;
       setView(nextView);
       const module = hash.split("/")[1];
-      if (training && ["warmup", "lesson", "quiz"].includes(module)) setTab(module as ModuleId);
-      else if (hash === "#dojo") setTab(nextModule(store.getSnapshot().data.courses[PILOT_ID].completed));
+      if (training && (hash !== "#training-content" || enteringView)) setTrainingRoute(resolveTrainingRoute(hash, store.getSnapshot().data));
       if (philosophy && isPrincipleId(module)) setPrinciple(module);
       else if (hash === "#philosophy") setPrinciple("order");
       if (about && ["warmup", "lesson", "quiz"].includes(module)) setAboutModule(module as ModuleId);
       else if (hash === "#about") setAboutModule("warmup");
       if (beltPage && isBeltId(module)) setActiveBelt(module);
       else if (beltPage && module !== "path" && module !== "progress" && hash !== "#belts-content") setActiveBelt("white");
-      if (hash === "#training-content" || hash === "#philosophy-content" || hash === "#about-content" || hash === "#belts-content") afterViewChange(() => {
-        const target = document.getElementById(hash.slice(1));
-        target?.scrollIntoView({ block: "start", behavior: "instant" });
-        target?.focus({ preventScroll: true });
+      // Wait for React to mount a different view before moving focus or scrolling.
+      requestAnimationFrame(() => {
+        if (["#training-content", "#philosophy-content", "#about-content", "#belts-content", "#my-dojo-content"].includes(hash)) {
+          const target = document.getElementById(hash.slice(1));
+          target?.scrollIntoView({ block: "start", behavior: "instant" }); target?.focus({ preventScroll: true });
+        } else if (myDojo && (module === "backups" || hash === "#progress")) {
+          document.getElementById("my-dojo-backups")?.scrollIntoView({ block: "start", behavior: "instant" });
+          document.getElementById("my-dojo-backups-title")?.focus({ preventScroll: true });
+        } else if (philosophy && module === "code") {
+          document.getElementById("philosophy-code")?.scrollIntoView({ block: "start", behavior: "instant" });
+          document.getElementById("philosophy-code-title")?.focus({ preventScroll: true });
+        } else if (about && module === "how") {
+          document.getElementById("about-how")?.scrollIntoView({ block: "start", behavior: "instant" });
+          document.getElementById("about-how-title")?.focus({ preventScroll: true });
+        } else if (beltPage && (module === "path" || module === "progress")) {
+          document.getElementById(`belts-${module}`)?.scrollIntoView({ block: "start", behavior: "instant" });
+          document.getElementById(`belts-${module}-title`)?.focus({ preventScroll: true });
+        } else if (beltPage && isBeltId(module) && enteringView) {
+          document.getElementById("belts-path")?.scrollIntoView({ block: "start", behavior: "instant" });
+          document.querySelector<HTMLElement>(`[data-belt-id="${module}"]`)?.focus({ preventScroll: true });
+        } else if (enteringView || (training && !keepTabFocus)) {
+          window.scrollTo({ top: 0, behavior: "instant" }); heading.current?.focus({ preventScroll: true });
+        }
+        if (!training && !myDojo && !philosophy && !about && !beltPage && hash && hash !== "#") document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center", behavior: enteringView ? "instant" : "smooth" });
       });
-      else if (philosophy && module === "code") afterViewChange(() => {
-        document.getElementById("philosophy-code")?.scrollIntoView({ block: "start", behavior: "instant" });
-        document.getElementById("philosophy-code-title")?.focus({ preventScroll: true });
-      });
-      else if (about && module === "how") afterViewChange(() => {
-        document.getElementById("about-how")?.scrollIntoView({ block: "start", behavior: "instant" });
-        document.getElementById("about-how-title")?.focus({ preventScroll: true });
-      });
-      else if (beltPage && (module === "path" || module === "progress")) afterViewChange(() => {
-        document.getElementById(`belts-${module}`)?.scrollIntoView({ block: "start", behavior: "instant" });
-        document.getElementById(`belts-${module}-title`)?.focus({ preventScroll: true });
-      });
-      else if (beltPage && isBeltId(module) && enteringView) afterViewChange(() => {
-        document.getElementById("belts-path")?.scrollIntoView({ block: "start", behavior: "instant" });
-        document.querySelector<HTMLElement>(`[data-belt-id="${module}"]`)?.focus({ preventScroll: true });
-      });
-      else if (enteringView || training) afterViewChange(() => {
-        window.scrollTo({ top: 0, behavior: "instant" });
-        heading.current?.focus({ preventScroll: true });
-      });
-      if (!training && !philosophy && !about && !beltPage && hash && hash !== "#") afterViewChange(() => document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center", behavior: enteringView ? "instant" : "smooth" }));
     };
     readHash(); window.addEventListener("hashchange", readHash);
-    return () => window.removeEventListener("hashchange", readHash);
+    // Clicking an already-current hash does not emit hashchange.
+    const repeatHash = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+      const anchor = event.target instanceof Element ? event.target.closest("a") : null;
+      if (!anchor || anchor.getAttribute("href") !== window.location.hash) return;
+      event.preventDefault(); readHash();
+    };
+    document.addEventListener("click", repeatHash);
+    return () => { window.removeEventListener("hashchange", readHash); document.removeEventListener("click", repeatHash); };
   }, [store]);
 
   useEffect(() => {
-    document.title = view === "belts" ? "Belts | Bushido Ops" : view === "about" ? "About | Bushido Ops" : view === "philosophy" ? "Philosophy | Bushido Ops" : "Bushido Ops | Digital self-defense for everyone";
-  }, [view]);
+    const name = view === "my-dojo" ? "My Dojo" : view === "belts" ? "Belts" : view === "about" ? "About" : view === "philosophy" ? "Philosophy" : view === "dojo" ? courseCatalog.courses.find(course => course.id === trainingRoute.courseId)?.title ?? "Training" : "";
+    document.title = name ? `${name} | Bushido Ops` : "Bushido Ops | Digital self-defense for everyone";
+  }, [view, trainingRoute.courseId]);
 
   useEffect(() => {
     const context = (document as Document & { modelContext?: ModelContext }).modelContext;
     if (!context?.registerTool) return;
     const controller = new AbortController();
     const agentTools = [
-      { name: "read_training_progress", title: "Read dojo progress", description: "Read completed training modules, XP and whether progress is saved on this browser.", inputSchema: { type: "object", properties: {}, additionalProperties: false }, annotations: { readOnlyHint: true, untrustedContentHint: false }, execute: () => { const current = store.getSnapshot(); const modules = current.data.courses[PILOT_ID].completed; return { completed: modules, xp: earnedXp(modules), belt: "white", persistence: current.mode === "saved" ? "browser-local" : "temporary-session" }; } },
-      { name: "open_training_module", title: "Open a training module", description: "Navigate to a white-belt warm-up, lesson, or quiz. This does not complete training or award XP.", inputSchema: { type: "object", properties: { module: { type: "string", enum: ["warmup", "lesson", "quiz"] } }, required: ["module"], additionalProperties: false }, annotations: { readOnlyHint: false, untrustedContentHint: false }, execute: (input: unknown) => {
+      { name: "read_training_progress", title: "Read dojo progress", description: "Read course states, completed steps, XP and browser-local saving status.", inputSchema: { type: "object", properties: {}, additionalProperties: false }, annotations: { readOnlyHint: true, untrustedContentHint: false }, execute: () => { const current = store.getSnapshot(); return { ...learningSummary(current.data, courseCatalog), courses: courseCatalog.courses.map(course => ({ id: course.id, status: courseStatus(current.data, course, courseCatalog), completed: completedModules(current.data, course) })), persistence: current.mode === "saved" ? "browser-local" : current.mode === "protected" ? "protected-copy" : "temporary-session" }; } },
+      { name: "open_training_module", title: "Open a training module", description: "Navigate to a pilot warm-up, lesson, or quiz. This does not complete training or award XP.", inputSchema: { type: "object", properties: { module: { type: "string", enum: ["warmup", "lesson", "quiz"] } }, required: ["module"], additionalProperties: false }, annotations: { readOnlyHint: false, untrustedContentHint: false }, execute: (input: unknown) => {
         if (!input || typeof input !== "object" || !("module" in input) || !["warmup", "lesson", "quiz"].includes(String(input.module))) throw new Error("Choose warmup, lesson, or quiz.");
-        window.location.hash = `dojo/${String(input.module)}`;
+        window.location.hash = trainingHref(pilotCourse.id, String(input.module));
         return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve({ opened: input.module }))));
       } },
     ];
@@ -123,19 +124,17 @@ export default function Home() {
     return () => controller.abort();
   }, [store]);
 
-  function changeTab(value: string) { window.location.hash = `dojo/${value}`; }
-
   if (!snapshot.ready) return <main className="progress-loading" aria-busy="true"><Brand /><p role="status">OPENING YOUR DOJO…</p></main>;
-
+  const skipTarget = view === "home" ? "#main" : view === "my-dojo" ? "#my-dojo-content" : view === "belts" ? "#belts-content" : view === "about" ? "#about-content" : view === "philosophy" ? "#philosophy-content" : "#training-content";
   return <>
-    <a className="skip-link" href={view === "home" ? "#main" : view === "belts" ? "#belts-content" : view === "about" ? "#about-content" : view === "philosophy" ? "#philosophy-content" : "#training-content"}>Skip to content</a>
-    {snapshot.notice && <div className="progress-notice" role="status"><p>{snapshot.notice}</p><a href="#belts/progress">MANAGE YOUR PROGRESS <span aria-hidden="true">➜</span></a></div>}
+    <a className="skip-link" href={skipTarget}>Skip to content</a>
+    {snapshot.notice && <div className="progress-notice" role="status"><p>{snapshot.notice}</p><a href="#my-dojo/backups">MANAGE YOUR PROGRESS <span aria-hidden="true">➜</span></a></div>}
     {view === "home" ? <div className="home-shell">
       <div className="home-header-wrap"><DojoPageHeader brand={<Brand />} currentPage="home" /></div>
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
           <DojoArt x={0} y={74} w={199} h={292} className="hero-lantern" /><DojoArt x={199} y={91} w={49} h={101} className="hero-seal" /><div className="hero-scene"><DojoArt x={716} y={74} w={956} h={292} /><DojoArt x={716} y={74} w={956} h={292} source="./art/dojo-background-clean.png" className="hero-clean-scene" /><AnimatedFighter className="hero-fighter" role="hero" /></div>
-          <div className="hero-copy"><h1 id="hero-title"><span className="sr-only">DIGITAL SELF-DEFENSE FOR EVERYONE</span><DojoArt x={270} y={92} w={447} h={155} className="hero-lettering" /></h1><h2>Cybersecurity training without gatekeeping.</h2><p>Bushido Ops is an anti-gatekeeping cybersecurity dojo.<br className="desktop-break" />We teach practical self-defense from complete beginner<br className="desktop-break" />upward—one go, just practical skills.</p><div className="hero-actions"><PixelButton href="#dojo">{dojoLabel} <span aria-hidden="true">➜</span></PixelButton><PixelButton light href="#belts">VIEW THE BELTS <span aria-hidden="true">➜</span></PixelButton></div></div>
+          <div className="hero-copy"><h1 id="hero-title"><span className="sr-only">DIGITAL SELF-DEFENSE FOR EVERYONE</span><DojoArt x={270} y={92} w={447} h={155} className="hero-lettering" /></h1><h2>Cybersecurity training without gatekeeping.</h2><p>Bushido Ops is an anti-gatekeeping cybersecurity dojo.<br className="desktop-break" />We teach practical self-defense from complete beginner<br className="desktop-break" />upward—one step at a time. Just practical skills.</p><div className="hero-actions"><PixelButton href="#dojo">{dojoLabel} <span aria-hidden="true">➜</span></PixelButton><PixelButton light href="#belts">VIEW THE BELTS <span aria-hidden="true">➜</span></PixelButton></div></div>
         </section>
         <section className="activity-cards content-width" aria-label="How to train">{[
           { id: "warmup", title: "WARM-UP", copy: <>Sharpen your awareness<br />with quick wins.</>, icon: [166, 389, 44, 39], art: [360, 402, 232, 96] },
@@ -150,16 +149,7 @@ export default function Home() {
         <section className="belt-section content-width" id="home-belt-path" aria-labelledby="belt-title"><h2 className="section-heading" id="belt-title"><span>THE BELT PATH</span></h2><div className="belt-path">{belts.map((belt, i) => <a key={belt.id} className="belt-step" href={`#belts/${belt.id}`} aria-label={`Explore the ${belt.name.toLowerCase()} belt`} style={{ "--idle-delay": `${i * -0.71}s`, "--idle-period": `${5.2 + (i % 3) * 0.9}s` } as React.CSSProperties}><div className="belt-art"><DojoArt x={belt.x} y={637} w={76} h={73} className="belt-character" /><DojoArt x={belt.x + 76} y={651} w={57} h={44} className="belt-symbol" /></div><strong>{belt.name.toUpperCase()}</strong></a>)}</div></section>
         <section className="principles content-width" aria-label="Bushido principles">{principles.map(p => <a key={p.id} href={`#philosophy/${p.id}`} aria-label={`Explore ${p.name.toLowerCase()}`}><DojoArt x={p.icon.x} y={738} w={p.icon.w} h={61} /><article><h3>{p.name}</h3><p>{p.homeCopy[0]}<br />{p.homeCopy[1]}</p></article></a>)}</section>
       </main>
-      <footer className="journey-footer"><div className="footer-left"><DojoArt x={0} y={810} w={343} h={131} /><DojoArt x={0} y={810} w={343} h={131} source="./art/dojo-background-clean.png" className="footer-clean-scene" /><AnimatedFighter className="footer-fighter" role="footer" /></div><DojoArt x={1415} y={810} w={257} h={131} className="footer-right" /><div className="footer-message"><h2><span className="sr-only">READY TO BEGIN YOUR JOURNEY?</span><DojoArt x={358} y={830} w={563} h={39} className="footer-lettering" /></h2><p>Step onto the path. Train with purpose. Earn your belt.</p><div className="footer-progress"><span>LVL 01</span><Progress value={xp} aria-label="White belt practice progress" /><span>{xp} / 100 XP</span><span className="coins">◉ 000</span></div></div><div className="footer-action"><PixelButton href="#dojo">{dojoLabel} <span aria-hidden="true">➜</span></PixelButton><p>No signup. No gatekeeping. Just training.</p><a className="footer-progress-link" href="#belts/progress">MY PROGRESS <span aria-hidden="true">➜</span></a></div></footer>
-    </div> : view === "belts" ? <BeltsPage brand={<Brand />} headingRef={heading} belt={activeBelt} completed={completed} hasStarted={hasStarted} progressManagement={<ProgressManager store={store} snapshot={snapshot} />} /> : view === "about" ? <AboutPage brand={<Brand />} headingRef={heading} module={aboutModule} /> : view === "philosophy" ? <PhilosophyPage brand={<Brand />} headingRef={heading} principle={principle} commitments={commitments} onToggleCommitment={id => store.dispatch({ type: "toggle-habit", id })} /> : <div className="training-shell">
-      <DojoPageHeader brand={<Brand />} currentPage="dojo" />
-      <main className="training-main" id="training-content" tabIndex={-1}><div className="training-intro"><div><p className="eyebrow">WHITE BELT / FIRST PRACTICE</p><h1 ref={heading} tabIndex={-1}>PAUSE. VERIFY. PROTECT.</h1><p>Learn to spot the pressure behind a suspicious message.</p></div><AnimatedFighter className="training-fighter" role="training" /></div><div className="practice-progress"><span>{completed.length} / 3 complete</span><Progress value={xp} aria-label="Training progress" /><strong>{xp} / 100 XP</strong></div>
-        <Tabs value={tab} onValueChange={changeTab} className="training-tabs"><TabsList aria-label="Training modules"><TabsTrigger value="warmup">01 WARM-UP {completed.includes("warmup") ? "✓" : ""}</TabsTrigger><TabsTrigger value="lesson">02 LESSON {completed.includes("lesson") ? "✓" : ""}</TabsTrigger><TabsTrigger value="quiz">03 QUIZ {completed.includes("quiz") ? "✓" : ""}</TabsTrigger></TabsList>
-          <TabsContent value="warmup"><section className="practice-card pixel-frame"><p className="eyebrow">A QUICK WIN · +20 XP</p><h2>Don’t let urgency choose for you.</h2><div className="sample-message"><span>FROM: Account Security &lt;support@account-help.example&gt;</span><strong>URGENT: Your account will be deleted</strong><p>Confirm your login in the next 30 minutes to avoid losing access.</p><span className="sample-link">[ Confirm account ]</span><small>Training example — no real link.</small></div><h3>{warmup.prompt}</h3><ChoiceGroup options={warmup.options} name="warmup" value={warmupAnswer} onChange={answer => store.dispatch({ type: "warmup-answer", answer })} />{warmupChecked && <div role="status" className={`feedback ${Number(warmupAnswer) === warmup.correct ? "success" : ""}`}><strong>{Number(warmupAnswer) === warmup.correct ? "Good instinct. Warm-up complete. 20 XP counted once." : "Pause and try again."}</strong><p>Urgency is a pressure tactic. Open the official service yourself and check there. An unusual sender is a clue, not proof on its own.</p></div>}<div className="practice-actions"><PixelButton disabled={warmupAnswer === ""} onClick={() => store.dispatch({ type: "check-warmup" })}>{completed.includes("warmup") ? "CHECK AGAIN" : "CHECK ANSWER"}</PixelButton>{completed.includes("warmup") && <PixelButton light href="#dojo/lesson">CONTINUE TO LESSON</PixelButton>}</div></section></TabsContent>
-          <TabsContent value="lesson"><section className="practice-card pixel-frame"><p className="eyebrow">BITE-SIZED LESSON · +30 XP</p><h2>The three-move defense.</h2><p>Phishing is a deceptive message designed to make you reveal information, send money, or take a harmful action. It can arrive by email, text, social media, or a phone call.</p><div className="lesson-moves"><article><span>01</span><div><h3>Pause</h3><p>Slow down when a message creates urgency, fear, or an unexpected reward. A deadline does not make a request trustworthy.</p></div></article><article><span>02</span><div><h3>Verify</h3><p>Open the official app, type a known website address, or call a number you already trust. Check the request through that independent channel.</p></div></article><article><span>03</span><div><h3>Protect</h3><p>Keep passwords and one-time sign-in codes private. Report suspicious messages using the service’s or your organization’s reporting process.</p></div></article></div><aside className="lesson-note"><strong>A logo is decoration, not verification.</strong><p>A familiar logo, a polished message, or your real name does not prove who sent it.</p></aside><div className="practice-actions"><PixelButton onClick={() => store.dispatch({ type: "complete-lesson" })} disabled={completed.includes("lesson")}>{completed.includes("lesson") ? "LESSON COMPLETE ✓" : "MARK LESSON COMPLETE"}</PixelButton><PixelButton light href="#dojo/quiz">TAKE THE QUIZ</PixelButton></div></section></TabsContent>
-          <TabsContent value="quiz"><section className="practice-card pixel-frame"><p className="eyebrow">KNOWLEDGE CHECK · +50 XP</p><h2>Put your instincts to the test.</h2><p>Three questions. Take your time. You can retry and learn from each answer.</p>{questions.map((question, i) => <fieldset className="quiz-question" key={i}><legend><span>0{i + 1}</span> {question.prompt}</legend><ChoiceGroup name={`quiz-${i}`} options={question.options} value={quizAnswers[i]} onChange={answer => store.dispatch({ type: "quiz-answer", index: i, answer })} disabled={quizSubmitted} />{quizSubmitted && <p className={`question-feedback ${quizAnswers[i] === String(question.correct) ? "correct" : ""}`}><strong>{quizAnswers[i] === String(question.correct) ? "✓ Correct. " : "Keep practicing. "}</strong>{question.explanation}</p>}</fieldset>)}{quizSubmitted && <div role="status" className={`feedback ${quizCorrect === 3 ? "success" : ""}`}><strong>{quizCorrect === 3 ? "3 / 3. Practice complete. 50 XP counted once." : `${quizCorrect} / 3. Review the explanations and try again.`}</strong><p>{quizCorrect === 3 ? "Keep the habit: pause, verify independently, and protect your sign-in details." : "You earn quiz XP when all three answers are correct."}</p></div>}<div className="practice-actions">{!quizSubmitted ? <PixelButton disabled={quizAnswers.some(answer => answer === "")} onClick={() => store.dispatch({ type: "submit-quiz" })}>CHECK MY ANSWERS</PixelButton> : <PixelButton light onClick={() => store.dispatch({ type: "retry-quiz" })}>PRACTICE AGAIN</PixelButton>}<PixelButton light href="#">RETURN TO THE DOJO HOME</PixelButton></div></section></TabsContent>
-        </Tabs>{xp === 100 && <div className="practice-complete" role="status"><strong>WHITE BELT PRACTICE COMPLETE</strong><p>100 XP. One useful habit you can use today.</p></div>}<p className="session-note">Pilot practice. Progress is saved on this browser when storage is available. The full belt curriculum is in development.</p>
-      </main><footer className="training-footer">BUSHIDO OPS <span>Order. Respect. Honor.</span></footer>
-    </div>}
+      <footer className="journey-footer"><div className="footer-left"><DojoArt x={0} y={810} w={343} h={131} /><DojoArt x={0} y={810} w={343} h={131} source="./art/dojo-background-clean.png" className="footer-clean-scene" /><AnimatedFighter className="footer-fighter" role="footer" /></div><DojoArt x={1415} y={810} w={257} h={131} className="footer-right" /><div className="footer-message"><h2><span className="sr-only">READY TO BEGIN YOUR JOURNEY?</span><DojoArt x={358} y={830} w={563} h={39} className="footer-lettering" /></h2><p>Step onto the path. Train with purpose. Earn your belt.</p><div className="footer-progress"><span>YOUR PRACTICE</span><Progress value={summary.maxXp ? summary.xp / summary.maxXp * 100 : 0} aria-label="Available training progress" /><span>{summary.xp} / {summary.maxXp} XP</span></div></div><div className="footer-action"><PixelButton href="#dojo">{dojoLabel} <span aria-hidden="true">➜</span></PixelButton><p>No signup. No gatekeeping. Just training.</p><a className="footer-progress-link" href="#my-dojo">MY DOJO <span aria-hidden="true">➜</span></a></div></footer>
+    </div> : view === "my-dojo" ? <MyDojoPage brand={<Brand />} headingRef={heading} store={store} snapshot={snapshot} /> : view === "belts" ? <BeltsPage brand={<Brand />} headingRef={heading} belt={activeBelt} data={snapshot.data} progressManagement={<ProgressManager store={store} snapshot={snapshot} />} /> : view === "about" ? <AboutPage brand={<Brand />} headingRef={heading} module={aboutModule} /> : view === "philosophy" ? <PhilosophyPage brand={<Brand />} headingRef={heading} principle={principle} commitments={commitments} onToggleCommitment={id => store.dispatch({ type: "toggle-habit", id })} /> : <CoursePlayer brand={<Brand />} headingRef={heading} route={trainingRoute} store={store} snapshot={snapshot} />}
   </>;
 }

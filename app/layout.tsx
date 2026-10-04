@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  other: { "color-scheme": "light" },
+  other: { "color-scheme": "only light" },
   title: "Bushido Ops | Digital self-defense for everyone",
   description: "Cybersecurity training without gatekeeping. Enter a pixel-art dojo, learn practical digital self-defense, and earn your belt.",
   icons: {
@@ -17,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" style={{ colorScheme: "light", backgroundColor: "#fcfaf5" }}>
-      <body className="antialiased">{children}</body>
+    <html lang="en" style={{ colorScheme: "only light", backgroundColor: "#fcfaf5" }}>
+      <body className="antialiased" style={{ backgroundColor: "#fcfaf5", color: "#091222" }}>{children}</body>
     </html>
   );
 }

@@ -6,10 +6,13 @@ import { DojoArt } from "@/components/dojo-art";
 import { DojoPageFooter, DojoPageHeader } from "@/components/dojo-page-chrome";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { beltCurriculum, beltQuestions, pilotSteps } from "@/lib/belts-content";
-import { belts, earnedXp, rewards, type BeltId, type ModuleId } from "@/lib/dojo-content";
+import { beltCurriculum, beltQuestions } from "@/lib/belts-content";
+import { belts, type BeltId } from "@/lib/dojo-content";
+import { courseCatalog, pilotCourse } from "@/lib/course-catalog";
+import { completedModules, courseMaxXp, courseStarted, courseXp, nextCourseModule, trainingHref } from "@/lib/course-engine";
+import type { DojoProgress } from "@/lib/dojo-progress";
 
-type Props = { brand: ReactNode; headingRef: RefObject<HTMLHeadingElement | null>; belt: BeltId; completed: ModuleId[]; hasStarted: boolean; progressManagement: ReactNode };
+type Props = { brand: ReactNode; headingRef: RefObject<HTMLHeadingElement | null>; belt: BeltId; data: DojoProgress; progressManagement: ReactNode };
 
 function repeatJump(event: MouseEvent<HTMLAnchorElement>, section: "path" | "progress") {
   if (window.location.hash !== `#belts/${section}`) return;
@@ -18,14 +21,18 @@ function repeatJump(event: MouseEvent<HTMLAnchorElement>, section: "path" | "pro
   document.getElementById(`belts-${section}-title`)?.focus({ preventScroll: true });
 }
 
-export function BeltsPage({ brand, headingRef, belt, completed, hasStarted, progressManagement }: Props) {
-  const xp = earnedXp(completed);
-  const totalXp = pilotSteps.reduce((total, step) => total + rewards[step.id], 0);
-  const completedCount = pilotSteps.filter(step => completed.includes(step.id)).length;
+export function BeltsPage({ brand, headingRef, belt, data, progressManagement }: Props) {
+  const completed = completedModules(data, pilotCourse);
+  const hasStarted = courseStarted(data, pilotCourse);
+  const xp = courseXp(data, pilotCourse);
+  const totalXp = courseMaxXp(pilotCourse);
+  const pilotSteps = pilotCourse.modules.map((module, index) => ({ id: module.id, number: String(index + 1).padStart(2, "0"), name: module.title.toUpperCase(), task: module.intro, condition: module.kind === "lesson" ? "Lesson marked complete" : module.kind === "warmup" ? "Correct response" : `${module.passingScore} / ${module.questions.length} correct`, reward: module.reward }));
+  const completedCount = completed.length;
   const pilotComplete = completedCount === pilotSteps.length;
-  const nextStep = pilotSteps.find(step => !completed.includes(step.id));
-  const practiceHref = `#dojo/${nextStep?.id ?? "warmup"}`;
+  const nextStep = nextCourseModule(data, pilotCourse);
+  const practiceHref = trainingHref(pilotCourse.id, nextStep?.id);
   const practiceLabel = pilotComplete ? "REVISIT WHITE BELT" : hasStarted ? "CONTINUE YOUR PRACTICE" : "START WHITE BELT";
+  const readyBelts = belts.filter(item => item.available).length;
 
   return <div className="dojo-page-shell belts-shell">
     <DojoPageHeader brand={brand} currentPage="belts" />
@@ -45,7 +52,7 @@ export function BeltsPage({ brand, headingRef, belt, completed, hasStarted, prog
         </aside>
       </section>
 
-      <div className="belts-path-summary" aria-label="Current curriculum availability"><span><strong>01</strong> PILOT READY</span><span><strong>07</strong> BELTS IN DEVELOPMENT</span><span><strong>{totalXp}</strong> PILOT XP</span></div>
+      <div className="belts-path-summary" aria-label="Current curriculum availability"><span><strong>{String(readyBelts).padStart(2, "0")}</strong> BELT PRACTICE READY</span><span><strong>{String(belts.length - readyBelts).padStart(2, "0")}</strong> BELTS IN DEVELOPMENT</span><span><strong>{totalXp}</strong> PILOT XP</span></div>
 
       <section id="belts-path" className="belts-path-section" aria-labelledby="belts-path-title">
         <div className="belts-section-title"><p className="eyebrow">THE BELT PATH</p><h2 id="belts-path-title" tabIndex={-1}>EVERY STEP BUILDS ON THE LAST.</h2><p>Choose a belt to explore its focus, skills and practice mission.</p></div>
@@ -53,8 +60,10 @@ export function BeltsPage({ brand, headingRef, belt, completed, hasStarted, prog
           <TabsList aria-label="Explore the eight belts">{belts.map((item, index) => <TabsTrigger key={item.id} value={item.id} data-belt-id={item.id} aria-label={`${item.name} belt. ${item.available ? "Pilot available" : "Planned curriculum"}`}><span className="belts-tab-number">0{index + 1}</span><span className="belts-tab-art"><DojoArt x={item.x} y={637} w={76} h={73} /><DojoArt x={item.x + 76} y={651} w={57} h={44} /></span><span className="belts-tab-copy"><strong>{item.name.toUpperCase()}</strong><small>{item.available ? "PILOT READY" : "PLANNED"}</small></span></TabsTrigger>)}</TabsList>
           {belts.map((item, index) => {
             const curriculum = beltCurriculum[item.id];
+            const beltCourse = courseCatalog.courses.find(course => course.belt === item.id && course.availability === "available");
+            const beltHref = beltCourse ? trainingHref(beltCourse.id) : practiceHref;
             return <TabsContent key={item.id} value={item.id}><div className="belts-detail pixel-frame">
-              <article className="belts-detail-copy"><div className="belts-detail-label"><p className="eyebrow">0{index + 1} / {item.name.toUpperCase()} BELT</p><span className={`belts-availability ${item.available ? "available" : ""}`}>{item.available ? "PILOT AVAILABLE" : "IN DEVELOPMENT"}</span></div><h3>{item.topic}</h3><p className="belts-focus">{curriculum.focus}</p><p>{item.description}</p><h4>{item.available ? "IN THIS FIRST PRACTICE" : "PLANNED LEARNING OUTCOMES"}</h4><ul>{curriculum.outcomes.map(outcome => <li key={outcome}><span aria-hidden="true">▪</span>{outcome}</li>)}</ul><div className="belts-detail-action"><a href={practiceHref} className="pixel-button">{item.available ? practiceLabel : "TRAIN WHITE BELT"} <span aria-hidden="true">➜</span></a><p>{item.available ? "Three modules. One habit to take with you." : "This curriculum is being developed. Your first practice is ready at White Belt."}</p></div></article>
+              <article className="belts-detail-copy"><div className="belts-detail-label"><p className="eyebrow">0{index + 1} / {item.name.toUpperCase()} BELT</p><span className={`belts-availability ${item.available ? "available" : ""}`}>{item.available ? "PILOT AVAILABLE" : "IN DEVELOPMENT"}</span></div><h3>{item.topic}</h3><p className="belts-focus">{curriculum.focus}</p><p>{item.description}</p><h4>{item.available ? "IN THIS FIRST PRACTICE" : "PLANNED LEARNING OUTCOMES"}</h4><ul>{curriculum.outcomes.map(outcome => <li key={outcome}><span aria-hidden="true">▪</span>{outcome}</li>)}</ul><div className="belts-detail-action"><a href={beltHref} className="pixel-button">{item.available ? item.id === "white" ? practiceLabel : "OPEN BELT PRACTICE" : "TRAIN WHITE BELT"} <span aria-hidden="true">➜</span></a><p>{item.available ? `${beltCourse?.modules.length ?? 0} steps. One habit to take with you.` : "This curriculum is being developed. Your first practice is ready at White Belt."}</p></div></article>
               <aside className="belts-mission"><div className="belts-mission-top"><p className="eyebrow">{item.available ? "YOUR FIRST MISSION" : "PLANNED PRACTICE"}</p><DojoArt x={item.x + 76} y={651} w={57} h={44} /></div><h4>{curriculum.mission}</h4><p>{curriculum.situation}</p><details className="belts-next-move" key={item.id}><summary>{item.available ? "REVEAL THE FIRST MOVE" : "EXPLORE THE APPROACH"}<span className="philosophy-disclosure-marker" aria-hidden="true" /></summary><p>{curriculum.nextMove}</p></details><span className="belts-mission-note">{item.available ? "Try this situation in the live Warm-up." : "Curriculum preview / exercise not yet playable"}</span></aside>
             </div></TabsContent>;
           })}
@@ -62,11 +71,11 @@ export function BeltsPage({ brand, headingRef, belt, completed, hasStarted, prog
       </section>
 
       <section id="belts-progress" className="belts-progress pixel-frame" aria-labelledby="belts-progress-title">
-        <div className="belts-progress-heading"><div><p className="eyebrow">WHITE BELT / YOUR PROGRESS</p><h2 id="belts-progress-title" tabIndex={-1}>{pilotComplete ? "FIRST PRACTICE COMPLETE." : "THREE STEPS. ONE USEFUL HABIT."}</h2><p>{pilotComplete ? "You practiced pausing, verifying and protecting. Revisit any step when you want another round." : "Work through the first practice at your own pace. Your progress follows you around the dojo and is saved on this browser when storage is available."}</p></div><div className="belts-progress-total"><strong>{xp} / {totalXp} XP</strong><span>{completedCount} / {pilotSteps.length} complete</span></div></div>
+        <div className="belts-progress-heading"><div><p className="eyebrow">WHITE BELT / YOUR PROGRESS</p><h2 id="belts-progress-title" tabIndex={-1}>{pilotComplete ? "FIRST PRACTICE COMPLETE." : "YOUR STEPS. ONE USEFUL HABIT."}</h2><p>{pilotComplete ? "You practiced pausing, verifying and protecting. Revisit any step when you want another round." : "Work through the first practice at your own pace. Your progress follows you around the dojo and is saved on this browser when storage is available."}</p></div><div className="belts-progress-total"><strong>{xp} / {totalXp} XP</strong><span>{completedCount} / {pilotSteps.length} complete</span></div></div>
         <Progress value={xp / totalXp * 100} aria-label="White Belt saved progress XP" aria-valuetext={`${xp} of ${totalXp} XP`} />
         <ol className="belts-pilot-steps">{pilotSteps.map(step => {
           const done = completed.includes(step.id);
-          return <li key={step.id}><a href={`#dojo/${step.id}`} className={done ? "complete" : ""}><div><span className="belts-step-number">{step.number}</span><span className="belts-step-status">{done ? "COMPLETE ✓" : "READY TO PRACTICE"}</span></div><h3>{step.name}</h3><p>{step.task}</p><small>{step.condition}</small><span className="belts-step-reward"><strong>{done ? "EARNED" : "REWARD"} / {rewards[step.id]} XP</strong><span aria-hidden="true">➜</span></span></a></li>;
+          return <li key={step.id}><a href={trainingHref(pilotCourse.id, step.id)} className={done ? "complete" : ""}><div><span className="belts-step-number">{step.number}</span><span className="belts-step-status">{done ? "COMPLETE ✓" : "READY TO PRACTICE"}</span></div><h3>{step.name}</h3><p>{step.task}</p><small>{step.condition}</small><span className="belts-step-reward"><strong>{done ? "EARNED" : "REWARD"} / {step.reward} XP</strong><span aria-hidden="true">➜</span></span></a></li>;
         })}</ol>
         <p className="belts-progress-note">Rewards count once per module. Your progress survives reloads when this browser allows saving. {totalXp} XP completes the pilot; the full belt curriculum is still in development.</p>
         {progressManagement}

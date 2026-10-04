@@ -8,6 +8,7 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; color-scheme: only light; background-color: #fcfaf5; min-height: 100%; }
 body { margin: 0; background: #fcfaf5; color: #091222; font-family: "Courier New", monospace; }
+#root { min-height: 100vh; background: #fcfaf5; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
 button, a { touch-action: manipulation; }
 button { cursor: pointer; }
@@ -39,7 +40,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .pixel-button:active { transform: translateY(1px); }
 .pixel-button-light { background: #fffdf9; color: #091222; box-shadow: inset 0 0 0 2px #e5e0d6, 2px 2px 0 #15202a; }
 .masthead > .pixel-button { min-height: calc(44 * var(--s)); padding-inline: calc(28 * var(--s)); }
-.hero { height: calc(292 * var(--s)); position: relative; overflow: hidden; background: linear-gradient(110deg,#f3e9d9 0,#fffdf8 25%,#fcf8ef 48%,#e6d2b7 100%); }
+.hero { height: calc(292 * var(--s)); position: relative; overflow: hidden; background: #fcfaf5; }
 .hero-lantern { position: absolute; left: 0; top: 0; width: calc(199 * var(--s)); height: calc(292 * var(--s)); }
 .hero-seal { position: absolute; left: calc(199 * var(--s)); top: calc(17 * var(--s)); width: calc(49 * var(--s)); height: calc(101 * var(--s)); }
 .hero-scene { position: absolute; right: 0; top: 0; width: calc(956 * var(--s)); height: calc(292 * var(--s)); }
@@ -199,7 +200,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px s
   .masthead { margin: 12px 24px; height: auto; min-height: 84px; padding: 10px 20px; flex-wrap: wrap; gap: 14px 24px; }
   .masthead nav { order: 3; width: 100%; justify-content: space-between; gap: 20px; padding: 8px 0; font-size: 24px; }
   .masthead > .pixel-button { margin-left: auto; min-height: 44px; padding-inline: 20px; font-size: 23px; }
-  .hero { height: auto; overflow: hidden; display: flex; flex-direction: column; background: #f9f2e7; }
+  .hero { height: auto; overflow: hidden; display: flex; flex-direction: column; }
   .hero-lantern { display: none; }
   .hero-seal { left: 28px; top: 28px; }
   .hero-copy { margin-left: 110px; padding: 28px 24px 0 0; width: auto; }
@@ -420,6 +421,7 @@ body {
 html:has(.dojo-page-shell) { scroll-behavior: auto; }
 .principles > a:hover { background: #f6eddd; }
 .dojo-page-shell { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 20px auto 0; }
+.dojo-page-shell, .training-shell { background: #fcfaf5; }
 .dojo-page-header { --s: 1px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 22px; }
 .dojo-page-header nav { display: flex; align-items: center; gap: 28px; font: bold 24px/1 "Dojo Terminal", monospace; }
 .dojo-page-header nav a { padding-block: 8px; }
@@ -498,6 +500,11 @@ html:has(.dojo-page-shell) { scroll-behavior: auto; }
 .dojo-page-footer > span { color: #e3b66d; }
 .dojo-page-footer a:hover { color: #f4c276; }
 .dojo-page-footer nav { display: flex; flex-wrap: wrap; gap: 16px 24px; }
+@media (max-width: 1150px) {
+  .dojo-page-header { flex-wrap: wrap; gap: 16px; }
+  .dojo-page-header nav { order: 3; width: 100%; justify-content: space-between; }
+  .dojo-page-header > .pixel-button { margin-left: auto; }
+}
 @media (max-width: 1000px) {
   .dojo-page-header { flex-wrap: wrap; gap: 16px; }
   .dojo-page-header nav { order: 3; width: 100%; justify-content: space-between; }
@@ -862,4 +869,132 @@ html:has(.dojo-page-shell) { scroll-behavior: auto; }
   .belts-pilot-steps { grid-template-columns: 1fr; gap: 12px; }
   .belts-code, .belts-start { padding: 24px 18px; }
   .belts-code > .pixel-button, .belts-start > .pixel-button { width: 100%; font-size: 22px; }
+}
+
+/* v0.3: the same pixel frames, ivory canvas and quiet arcade feedback. */
+.training-breadcrumb { display: flex; gap: 12px; align-items: center; margin-bottom: 18px; font: bold 21px/1.3 "Dojo Terminal", monospace; }
+.training-breadcrumb a:hover { color: #b80910; }
+.training-intro > div { min-width: 0; }
+.training-intro h1 { overflow-wrap: anywhere; }
+.training-step-label { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 14px; color: #b80910; font: bold 21px/1.3 "Dojo Terminal", monospace; }
+.training-step-label span { color: #5a554b; }
+.training-tabs > [data-slot="tabs-list"] { display: flex; flex-wrap: wrap; }
+.training-tabs [data-slot="tabs-trigger"] { flex: 1 1 150px; height: auto; min-height: 48px; padding: 10px 14px; white-space: normal; text-align: center; line-height: 1.25; }
+.training-step-nav { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
+.training-step-nav .pixel-button { white-space: normal; text-align: center; min-height: 46px; }
+.quiz-question { min-width: 0; }
+.quiz-review { margin-top: 16px; border-top: 1px dashed #a99d83; padding-top: 14px; }
+.quiz-review h3 { margin: 0; font: bold 24px/1.2 "Dojo Terminal", monospace; }
+.quiz-review ul { list-style: square; padding-left: 20px; margin-top: 8px; }
+.quiz-review li { margin-top: 6px; }
+.practice-complete a { display: inline-block; color: #e3b66d; margin-top: 10px; font: bold 23px/1.3 "Dojo Terminal", monospace; }
+.training-unavailable { margin: 48px auto; max-width: 930px; padding: 36px; }
+.training-unavailable h1 { font: 22px/1.7 "Dojo Pixel", monospace; margin: 16px 0; overflow-wrap: anywhere; }
+.training-unavailable > p:last-of-type { font-size: 16px; line-height: 1.75; }
+.training-prerequisites { padding: 0; list-style: none; display: grid; gap: 10px; margin-top: 20px; }
+.training-prerequisites a { display: inline-block; padding: 12px 16px; border: 1px solid #bfb5a4; font: bold 23px/1.3 "Dojo Terminal", monospace; color: #a40e14; }
+.reward-feedback { animation: dojo-reward-tick 240ms steps(2, end) 1; }
+@keyframes dojo-reward-tick { 50% { transform: translateY(-2px); box-shadow: 0 2px 0 #35744c; } }
+.my-dojo-main, .my-dojo-intro h1 { outline: none; }
+.my-dojo-intro { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin: 42px 0 28px; }
+.my-dojo-intro h1 { font: 28px/1.7 "Dojo Pixel", monospace; letter-spacing: -.8px; margin: 12px 0; }
+.my-dojo-intro p:last-of-type { font-size: 17px; line-height: 1.7; }
+.my-dojo-storage { display: inline-block; margin-top: 14px; color: #5a554b; font: bold 19px/1.3 "Dojo Terminal", monospace; }
+.my-dojo-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.my-dojo-stats article { padding: 22px; display: grid; gap: 14px; }
+.my-dojo-stats article > span { font: bold 19px/1.2 "Dojo Terminal", monospace; color: #5a554b; }
+.my-dojo-stats strong { font: bold 41px/1 "Dojo Terminal", monospace; color: #a40e14; }
+.my-dojo-stats small { font-size: 24px; color: #5a554b; }
+.my-dojo-next { display: grid; grid-template-columns: minmax(0, 1fr) 240px; align-items: center; gap: 32px; background: #091d34; color: #fff4df; margin-top: 24px; padding: 32px; }
+.my-dojo-next::before { border-color: #52637a; }
+.my-dojo-next .eyebrow { color: #ffb27d; }
+.my-dojo-next h2 { font: bold 37px/1.2 "Dojo Terminal", monospace; color: #e3b66d; margin: 8px 0 12px; }
+.my-dojo-next p:not(.eyebrow) { font-size: 15px; line-height: 1.75; max-width: 690px; color: #e0e2e5; }
+.my-dojo-next .pixel-button { margin-top: 20px; min-height: 46px; }
+.my-dojo-overall { margin-top: 24px; display: grid; gap: 10px; font-size: 13px; color: #e0e2e5; }
+.my-dojo-overall [data-slot="progress"] { height: 10px; border-radius: 0; background: #3a4c60; }
+.my-dojo-overall [data-slot="progress-indicator"] { background: #e3b66d; }
+.my-dojo-guardian { display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px dashed #667082; gap: 12px; padding-left: 30px; }
+.my-dojo-fighter { width: 205px; height: 180px; }
+.my-dojo-guardian > span { font: bold 24px/1.2 "Dojo Terminal", monospace; text-align: center; color: #e3b66d; }
+.my-dojo-courses { margin-top: 34px; }
+.my-dojo-course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 24px; }
+.my-dojo-course { padding: 28px; }
+.my-dojo-course-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.course-status { padding: 5px 9px; border: 1px solid #a79d8d; background: #f2eddf; color: #655844; font: bold 18px/1.2 "Dojo Terminal", monospace; }
+.status-completed .course-status { background: #edf2e9; border-color: #6b8254; color: #32552c; }
+.status-in-progress .course-status { background: #f9ead8; border-color: #a96118; color: #874719; }
+.my-dojo-course h3 { font: bold 32px/1.25 "Dojo Terminal", monospace; margin: 14px 0 10px; }
+.my-dojo-course > p { font-size: 15px; line-height: 1.7; }
+.my-dojo-course-progress { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; margin: 22px 0 10px; }
+.my-dojo-course [data-slot="progress"] { height: 10px; border-radius: 0; background: #e7e2d7; }
+.my-dojo-course ol { list-style: none; display: grid; gap: 8px; padding: 0; margin: 22px 0; }
+.my-dojo-course li > a { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; padding: 13px 16px; background: #f7f2e8; border: 1px solid #c6bba8; font: bold 23px/1.2 "Dojo Terminal", monospace; }
+.my-dojo-course li > a:hover { border-color: #a40e14; }
+.my-dojo-course li span { color: #a40e14; }
+.my-dojo-course li small { font-size: 20px; color: #5a554b; }
+.my-dojo-review { padding: 28px; margin-top: 28px; }
+.my-dojo-review h2, .my-dojo-backups h2 { font: bold 32px/1.25 "Dojo Terminal", monospace; margin: 8px 0 12px; }
+.my-dojo-review > p:not(.eyebrow) { font-size: 15px; line-height: 1.7; }
+.my-dojo-review ul { display: grid; gap: 8px; padding: 0; list-style: none; margin-top: 18px; }
+.my-dojo-review li a { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px; border: 1px solid #c6bba8; font-size: 15px; line-height: 1.6; }
+.my-dojo-review li a > span { flex-shrink: 0; color: #a40e14; font: bold 22px/1.2 "Dojo Terminal", monospace; }
+.my-dojo-planned { margin: 28px 0; border: 1px solid #bfb5a4; padding: 22px; background: #f7f2e8; }
+.my-dojo-planned summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: bold 26px/1.25 "Dojo Terminal", monospace; cursor: pointer; list-style: none; }
+.my-dojo-planned summary::-webkit-details-marker { display: none; }
+.my-dojo-planned summary:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.my-dojo-planned > p { margin-top: 16px; font-size: 14px; line-height: 1.7; }
+.my-dojo-planned-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 20px; }
+.my-dojo-planned-grid article { display: flex; align-items: flex-start; gap: 18px; padding: 22px; background: #fffdf9; border: 1px solid #c6bba8; }
+.my-dojo-planned-grid .dojo-art { flex-shrink: 0; width: 70px; height: 67px; }
+.my-dojo-planned-grid h3 { font: bold 25px/1.2 "Dojo Terminal", monospace; margin: 14px 0 8px; }
+.my-dojo-planned-grid p { font-size: 14px; line-height: 1.6; }
+.my-dojo-planned-grid a { display: inline-block; margin-top: 14px; font: bold 20px/1.2 "Dojo Terminal", monospace; color: #a40e14; }
+.my-dojo-backups { padding: 28px; margin: 28px 0; scroll-margin-top: 20px; }
+.my-dojo-backups .progress-manager { margin-top: 18px; padding-top: 22px; }
+.my-dojo-note { font-size: 13px; line-height: 1.8; color: #5a554b; margin: 22px 0 32px; }
+.my-dojo-note a { display: block; font: bold 21px/1.3 "Dojo Terminal", monospace; color: #a40e14; margin-top: 10px; }
+.progress-paste { grid-column: 1 / -1; }
+.progress-paste > button { text-align: left; }
+.progress-paste form { display: grid; gap: 12px; margin-top: 16px; }
+.progress-paste label { font-size: 15px; font-weight: bold; }
+.progress-paste textarea { width: 100%; min-height: 150px; resize: vertical; border: 1px solid #8f887b; padding: 14px; font: 13px/1.6 monospace; background: #fffdf9; color: #091222; }
+.progress-paste textarea:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.progress-paste form .pixel-button { justify-self: start; white-space: normal; }
+@media (max-width: 800px) {
+  .my-dojo-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .my-dojo-next { grid-template-columns: minmax(0, 1fr) 175px; gap: 20px; }
+  .my-dojo-guardian { padding-left: 16px; }
+  .my-dojo-fighter { width: 155px; height: 136px; }
+  .my-dojo-planned-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 580px) {
+  .dojo-page-header nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .my-dojo-intro { align-items: flex-start; flex-direction: column; margin-top: 28px; gap: 18px; }
+  .my-dojo-intro h1 { font-size: clamp(17px, 5.1vw, 23px); letter-spacing: -.5px; }
+  .my-dojo-stats { gap: 12px; }
+  .my-dojo-stats article { padding: 18px 14px; }
+  .my-dojo-stats article > span { font-size: 18px; }
+  .my-dojo-stats strong { font-size: 35px; }
+  .my-dojo-stats small { font-size: 21px; }
+  .my-dojo-next { grid-template-columns: 1fr; padding: 24px 18px; }
+  .my-dojo-next h2 { font-size: 31px; }
+  .my-dojo-guardian { display: none; }
+  .my-dojo-next .pixel-button, .my-dojo-course > .pixel-button { width: 100%; }
+  .my-dojo-course, .my-dojo-backups, .my-dojo-review { padding: 22px 18px; }
+  .my-dojo-course li > a { padding: 12px 10px; font-size: 21px; gap: 8px; }
+  .my-dojo-course li small { font-size: 18px; }
+  .my-dojo-review li a { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .my-dojo-planned { padding: 20px 16px; }
+  .my-dojo-planned summary { font-size: 24px; }
+  .my-dojo-planned-grid article { flex-direction: column; padding: 18px; }
+  .training-intro h1 { font-size: clamp(14px, 4vw, 18px); }
+  .training-step-nav { flex-direction: column; }
+  .training-step-nav .pixel-button { width: 100%; }
+  .training-tabs [data-slot="tabs-trigger"] { flex-basis: 90px; padding-inline: 6px; }
+  .training-unavailable { padding: 26px 18px; }
+  .training-unavailable h1 { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reward-feedback { animation: none; }
 }
