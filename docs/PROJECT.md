@@ -1,6 +1,6 @@
 # Bushido Ops — project brief and delivery plan
 
-Product owner: Damiano. Current release: 0.3, modular infrastructure with the existing pilot.
+Product owner: Damiano. Current release: 0.4, mobile refinement with the existing pilot.
 
 ## Product
 Practical, welcoming cybersecurity training in a pixel-art dojo. A session consists of a warm-up, a short lesson, and a quiz. The eight-belt path describes the learning journey. Copy and visual direction follow the supplied English-language reference.
@@ -40,6 +40,8 @@ This is a working prototype, not a complete course. Pilot progress, unfinished a
 - 22 meaningful tests and a repeatable Pages release check. New curriculum remains deferred.
 
 ## Next milestones
+The approved direction is now specified in [PLAN-1.0.md](PLAN-1.0.md): accounts and synchronization, complete free White Belt, subscription access to higher belts, and a commercial launch at 1.0. Learners cannot edit teaching content. Owner/editor authoring tools and personal preferences are deferred. No services or payments are activated by 0.4.
+
 1. **Approve the interface and pilot.** Compare desktop with the reference and review mobile, keyboard use, explanations, and XP behavior. Resolve design deviations before expanding.
 2. **Define learners and a complete white belt.** Select independent beginners, UniHackers students, or both. Define learning outcomes, lessons, duration, assessment, and what a belt means. A belt must not imply an accredited certification.
 3. **Review the new infrastructure.** The data-driven course engine, prerequisite enforcement, local migration, dashboard and release checks are implemented. Define full-belt advancement rules when the curriculum is ready; broader accessibility and physical-device QA remain to be completed. Account-based learning and synchronization remain a separate future decision.
@@ -55,7 +57,7 @@ This is a working prototype, not a complete course. Pilot progress, unfinished a
 - Prototype limitations are visible, and unfinished content is not presented as available.
 
 ## Decisions still open
-Primary learner audience; full white-belt curriculum; optional accounts and synchronization; belt advancement rules; when and whether to make the review site public.
+Primary learner audience; exact white-belt curriculum; implementation details for planned accounts and synchronization; final belt assessment rules; price and explicit 1.0 launch decision.
 
 ## Approved character direction — 3 October 2026
 
@@ -65,3 +67,7 @@ Primary learner audience; full white-belt curriculum; optional accounts and sync
 - Idle motion stays very small. Larger gestures require mouse interaction or keyboard focus.
 
 All three characters and the matching clean background are included. The latest approved style is 8-bit pixel art. See `CHARACTERS.md` for assets, timing and frame layout.
+
+## Release 0.4 — implemented
+
+Shared collapsible phone navigation, comfortable touch controls, mobile hero/cards and backup viewport fallback. Complete sprite poses and palette are unchanged; animation scheduling follows the existing 100 ms frame cadence and touch/pen taps can trigger a brief reaction. Framework and Pages builds work without Sites-specific hosting metadata. Account/curriculum/hosting specifications are included as future work. See [RELEASE-0.4.md](RELEASE-0.4.md) for validation and limits.

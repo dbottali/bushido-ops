@@ -1,4 +1,17 @@
-# Bushido Ops validation — 4 October 2026
+# Bushido Ops validation — 6 October 2026
+
+## Version 0.4 — mobile refinement
+
+- `pnpm check:pages` passes TypeScript, all 22 existing meaningful catalog/model/store/route tests and the Pages production build. `pnpm build` also completes the portable framework build; source exports no longer require absent Sites hosting metadata.
+- All seven views (Home, About, Belts, Philosophy, My Dojo, Warm-up and Quiz) were measured in the real-app iframe at 320, 390, 768 and 1024 px. Client and scroll widths match; body background is ivory `rgb(252, 250, 245)`. Home also passes at 580, 680 and 1280 px. The initially sampled 1024 Home mount was rechecked once its heading rendered. Measurements: `responsive-0.4-qa.json`.
+- Mobile menu opens with the original five destinations, links to About and closes on selection. Escape returns focus to its button. Crossing to 768 px closes the menu; desktop navigation remains visible. Header brand, menu and links measure 44 px high; the CTA is 48 px.
+- An empty local profile completed Warm-up (20 XP), Lesson (50 total) and a perfect Quiz (100 total) at 320 px. My Dojo shows one complete practice and 3/3 steps, retained after reload. Once-only rewards and backup validation remain covered by the 22 tests.
+- Phone Home was visually inspected at 390 px. Proof: `mobile-0.4-preview.jpg`. Approved artwork, sprite poses and 8-bit palette are unchanged. Scheduling uses the existing 100 ms frame cadence, and static footer idle has no continuous timer. Touch/pen tap versus scroll and hidden/offscreen/reduced-motion behavior were reviewed in source; touch and OS preference changes were not emulated.
+- Browser logs inspected contain extension metadata errors and no application errors. These checks are Chrome responsive QA, not physical phone/Safari/iPad tests. The user's prior confirmation of correct rendering on physical Safari refers to the earlier version; the cause of Brave's reported brown rendering remains unconfirmed.
+- Account, synchronization, subscription and curriculum extensions are specifications in `PLAN-1.0.md`, not working features. No editor is exposed to learners, no external service is provisioned and no online deployment is performed.
+- Preview-only package override and QA HTML fixture are removed from the delivered source. Artwork, fonts, source and compiled root assets are included in the ZIP; dependencies and temporary builds are omitted.
+
+Earlier validation remains below as release history.
 
 ## Version 0.3 — modular infrastructure
 

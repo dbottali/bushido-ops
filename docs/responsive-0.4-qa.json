@@ -1,0 +1,290 @@
+{
+  "checked": "2026-10-06",
+  "browser": "Chrome responsive iframe",
+  "layouts": [
+    {
+      "viewport": 320,
+      "page": "",
+      "background": "rgb(252, 250, 245)",
+      "hash": "",
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "scroll": 305,
+      "width": 305
+    },
+    {
+      "viewport": 320,
+      "page": "#about",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#about",
+      "heading": "CYBERSECURITYIS FOR EVERYONE.",
+      "scroll": 305,
+      "width": 305
+    },
+    {
+      "viewport": 320,
+      "page": "#belts",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#belts",
+      "heading": "ONE PATH.EIGHT BELTS.",
+      "scroll": 305,
+      "width": 305
+    },
+    {
+      "viewport": 320,
+      "page": "#philosophy",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#philosophy",
+      "heading": "TRAIN YOUR SKILL.CHOOSE YOUR CONDUCT.",
+      "scroll": 305,
+      "width": 305
+    },
+    {
+      "viewport": 320,
+      "page": "#my-dojo",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#my-dojo",
+      "heading": "YOUR PRACTICE.YOUR PACE.",
+      "scroll": 305,
+      "width": 305
+    },
+    {
+      "viewport": 320,
+      "page": "#dojo/warmup",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/warmup",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 305,
+      "width": 305
+    },
+    {
+      "viewport": 320,
+      "page": "#dojo/quiz",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/quiz",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 305,
+      "width": 305
+    },
+    {
+      "viewport": 390,
+      "page": "",
+      "background": "rgb(252, 250, 245)",
+      "hash": "",
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "scroll": 375,
+      "width": 375
+    },
+    {
+      "viewport": 390,
+      "page": "#about",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#about",
+      "heading": "CYBERSECURITYIS FOR EVERYONE.",
+      "scroll": 375,
+      "width": 375
+    },
+    {
+      "viewport": 390,
+      "page": "#belts",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#belts",
+      "heading": "ONE PATH.EIGHT BELTS.",
+      "scroll": 375,
+      "width": 375
+    },
+    {
+      "viewport": 390,
+      "page": "#philosophy",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#philosophy",
+      "heading": "TRAIN YOUR SKILL.CHOOSE YOUR CONDUCT.",
+      "scroll": 375,
+      "width": 375
+    },
+    {
+      "viewport": 390,
+      "page": "#my-dojo",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#my-dojo",
+      "heading": "YOUR PRACTICE.YOUR PACE.",
+      "scroll": 375,
+      "width": 375
+    },
+    {
+      "viewport": 390,
+      "page": "#dojo/warmup",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/warmup",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 375,
+      "width": 375
+    },
+    {
+      "viewport": 390,
+      "page": "#dojo/quiz",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/quiz",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 375,
+      "width": 375
+    },
+    {
+      "viewport": 768,
+      "page": "",
+      "background": "rgb(252, 250, 245)",
+      "hash": "",
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "scroll": 753,
+      "width": 753
+    },
+    {
+      "viewport": 768,
+      "page": "#about",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#about",
+      "heading": "CYBERSECURITYIS FOR EVERYONE.",
+      "scroll": 753,
+      "width": 753
+    },
+    {
+      "viewport": 768,
+      "page": "#belts",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#belts",
+      "heading": "ONE PATH.EIGHT BELTS.",
+      "scroll": 753,
+      "width": 753
+    },
+    {
+      "viewport": 768,
+      "page": "#philosophy",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#philosophy",
+      "heading": "TRAIN YOUR SKILL.CHOOSE YOUR CONDUCT.",
+      "scroll": 753,
+      "width": 753
+    },
+    {
+      "viewport": 768,
+      "page": "#my-dojo",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#my-dojo",
+      "heading": "YOUR PRACTICE.YOUR PACE.",
+      "scroll": 753,
+      "width": 753
+    },
+    {
+      "viewport": 768,
+      "page": "#dojo/warmup",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/warmup",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 753,
+      "width": 753
+    },
+    {
+      "viewport": 768,
+      "page": "#dojo/quiz",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/quiz",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 753,
+      "width": 753
+    },
+    {
+      "viewport": 1024,
+      "page": "",
+      "background": "rgb(252, 250, 245)",
+      "hash": "",
+      "scroll": 1009,
+      "width": 1009,
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "menu": "none"
+    },
+    {
+      "viewport": 1024,
+      "page": "#about",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#about",
+      "heading": "CYBERSECURITYIS FOR EVERYONE.",
+      "scroll": 1009,
+      "width": 1009
+    },
+    {
+      "viewport": 1024,
+      "page": "#belts",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#belts",
+      "heading": "ONE PATH.EIGHT BELTS.",
+      "scroll": 1009,
+      "width": 1009
+    },
+    {
+      "viewport": 1024,
+      "page": "#philosophy",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#philosophy",
+      "heading": "TRAIN YOUR SKILL.CHOOSE YOUR CONDUCT.",
+      "scroll": 1009,
+      "width": 1009
+    },
+    {
+      "viewport": 1024,
+      "page": "#my-dojo",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#my-dojo",
+      "heading": "YOUR PRACTICE.YOUR PACE.",
+      "scroll": 1009,
+      "width": 1009
+    },
+    {
+      "viewport": 1024,
+      "page": "#dojo/warmup",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/warmup",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 1009,
+      "width": 1009
+    },
+    {
+      "viewport": 1024,
+      "page": "#dojo/quiz",
+      "background": "rgb(252, 250, 245)",
+      "hash": "#dojo/quiz",
+      "heading": "PAUSE. VERIFY. PROTECT.",
+      "scroll": 1009,
+      "width": 1009
+    }
+  ],
+  "boundaries": [
+    {
+      "viewport": 580,
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "menu": "flex",
+      "scroll": 565,
+      "width": 565
+    },
+    {
+      "viewport": 680,
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "menu": "flex",
+      "scroll": 665,
+      "width": 665
+    },
+    {
+      "viewport": 1024,
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "menu": "none",
+      "scroll": 1009,
+      "width": 1009
+    },
+    {
+      "viewport": 1280,
+      "heading": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+      "menu": "none",
+      "scroll": 1280,
+      "width": 1280
+    }
+  ],
+  "physicalDevice": false
+}
