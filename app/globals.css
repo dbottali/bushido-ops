@@ -998,3 +998,48 @@ html:has(.dojo-page-shell) { scroll-behavior: auto; }
 @media (prefers-reduced-motion: reduce) {
   .reward-feedback { animation: none; }
 }
+
+/* 0.4: one mobile header, comfortable touch controls and readable practice. */
+.dojo-menu-button { display: none; }
+.dojo-page-header .dojo-primary-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.dojo-page-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+.progress-dialog { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overscroll-behavior: contain; }
+.progress-paste textarea { font-size: 16px; }
+@media (max-width: 680px) {
+  .home-header-wrap, .dojo-page-shell > .content-width, .training-shell > .content-width { width: calc(100% - 32px); }
+  .dojo-page-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; padding: 14px 12px; gap: 12px; }
+  .dojo-page-header .brand { min-width: 0; min-height: 44px; gap: 8px; }
+  .dojo-page-header .brand-mark { width: 36px; height: 36px; flex-shrink: 0; }
+  .dojo-page-header .brand strong { font-size: clamp(10px, 2.6vw, 14px); letter-spacing: 0; }
+  .dojo-page-header .brand small { font-size: 11px; letter-spacing: 1px; }
+  .dojo-menu-button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 72px; padding: 8px; border: 2px solid #172339; background: #fffdf9; color: #091222; font: bold 21px/1 "Dojo Terminal", monospace; }
+  .dojo-menu-button span { font: 19px/1 monospace; }
+  .dojo-page-header .dojo-primary-nav { display: none; grid-column: 1 / -1; order: initial; width: 100%; }
+  .dojo-page-header[data-menu-open="true"] .dojo-primary-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; padding-block: 8px; border-block: 1px solid #c6bba8; }
+  .dojo-page-header .dojo-primary-nav a { padding: 8px; font-size: 23px; }
+  .dojo-page-header > .pixel-button { grid-column: 1 / -1; order: initial; width: 100%; min-height: 48px; margin: 0; white-space: normal; }
+  .training-breadcrumb { flex-wrap: wrap; }
+  .training-breadcrumb a, .my-dojo-note a, .my-dojo-planned-grid a { min-height: 44px; display: inline-flex; align-items: center; }
+  .practice-actions .pixel-button, .training-step-nav .pixel-button, .progress-manager .pixel-button { min-height: 48px; }
+  .answer-option { min-height: 56px; padding: 16px 14px; font-size: 16px; line-height: 1.55; }
+  .progress-dialog { padding: 24px 18px; overflow-wrap: anywhere; }
+  .dojo-page-footer nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 8px 16px; }
+  .dojo-page-footer { padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 580px) {
+  .hero-seal { display: none; }
+  .hero-copy { margin-left: 16px; padding-right: 16px; }
+  .hero-actions { margin-left: 0; }
+  .hero-actions .pixel-button { min-height: 48px; }
+  .activity-card { height: 200px; }
+  .activity-card p { font-size: 15px; }
+  .card-art, .card-lesson .card-art, .card-quiz .card-art { top: 58px; width: 44%; height: 128px; }
+  .section-heading { height: auto; min-height: 36px; white-space: normal; text-align: center; }
+  .section-heading span::before, .section-heading span::after { content: none; }
+  .training-intro h1 { font-size: clamp(15px, 4.5vw, 19px); }
+  .practice-card > p, .lesson-moves p, .lesson-note p, .quiz-instructions, .feedback p { font-size: 16px; }
+  .training-tabs [data-slot="tabs-trigger"] { min-height: 52px; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .pixel-button:hover, .activity-card:hover, .belt-step:hover .dojo-art { transform: none; }
+}

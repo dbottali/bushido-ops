@@ -177,6 +177,9 @@ export function sites({ mockAuth = true } = {}): Plugin {
       const hostingConfig = resolve(root, ".openai", "hosting.json");
       const drizzleSource = resolve(root, "drizzle");
 
+      // A portable source export has no Sites project metadata to copy.
+      if (!(await exists(hostingConfig))) return;
+
       await rm(outputDirectory, { recursive: true, force: true });
       await mkdir(outputDirectory, { recursive: true });
 
