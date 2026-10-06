@@ -43,16 +43,17 @@ export function AnimatedFighter({ className = "", role = "hero" }: { className?:
     delete wrapper.dataset.loadError;
 
     let disposed = false, loaded = false, imageLoaded = false, backgroundLoaded = role === "training", visible = true;
-    let raf = 0, reactionStarted = -Infinity, reactions = 0;
+    let timer = 0, reactionStarted = -Infinity, reactions = 0;
     let paint: (now: number, force?: boolean) => void = () => {};
-    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
+    const stop = () => { window.clearTimeout(timer); timer = 0; };
     const schedule = () => {
-      if (!disposed && loaded && visible && !document.hidden && !motion.matches && !raf) raf = requestAnimationFrame(tick);
+      const needsMotion = profile.idleSpan > 0 || performance.now() - reactionStarted < profile.duration;
+      if (!disposed && loaded && visible && !document.hidden && !motion.matches && !timer && needsMotion) timer = window.setTimeout(tick, 100);
     };
-    const tick = (now: number) => {
-      raf = 0;
+    const tick = () => {
+      timer = 0;
       if (disposed || !visible || document.hidden || motion.matches) return;
-      paint(now); schedule();
+      paint(performance.now()); schedule();
     };
     const initialize = () => {
       if (disposed || loaded || !imageLoaded || !backgroundLoaded) return;
@@ -133,6 +134,17 @@ export function AnimatedFighter({ className = "", role = "hero" }: { className?:
       paint(now, true); schedule();
     };
     const onPointerEnter = (event: Event) => { if ((event as PointerEvent).pointerType === "mouse") react(); };
+    let touchStart: { id: number; x: number; y: number } | null = null;
+    const onPointerDown = (event: Event) => {
+      const pointer = event as PointerEvent;
+      if (pointer.isPrimary && pointer.pointerType !== "mouse") touchStart = { id: pointer.pointerId, x: pointer.clientX, y: pointer.clientY };
+    };
+    const onPointerUp = (event: Event) => {
+      const pointer = event as PointerEvent;
+      if (touchStart?.id === pointer.pointerId && Math.hypot(pointer.clientX - touchStart.x, pointer.clientY - touchStart.y) < 12) react();
+      touchStart = null;
+    };
+    const onPointerCancel = () => { touchStart = null; };
     const onPreferenceChange = () => {
       reactionStarted = -Infinity; stop();
       if (loaded) paint(performance.now(), true);
@@ -149,6 +161,9 @@ export function AnimatedFighter({ className = "", role = "hero" }: { className?:
       else { if (loaded) paint(performance.now(), true); schedule(); }
     });
     host.addEventListener("pointerenter", onPointerEnter);
+    host.addEventListener("pointerdown", onPointerDown, { passive: true });
+    host.addEventListener("pointerup", onPointerUp, { passive: true });
+    host.addEventListener("pointercancel", onPointerCancel);
     host.addEventListener("focusin", react);
     motion.addEventListener("change", onPreferenceChange);
     document.addEventListener("visibilitychange", onVisibilityChange);
@@ -158,6 +173,9 @@ export function AnimatedFighter({ className = "", role = "hero" }: { className?:
     return () => {
       disposed = true; stop(); observer.disconnect();
       host.removeEventListener("pointerenter", onPointerEnter);
+      host.removeEventListener("pointerdown", onPointerDown);
+      host.removeEventListener("pointerup", onPointerUp);
+      host.removeEventListener("pointercancel", onPointerCancel);
       host.removeEventListener("focusin", react);
       motion.removeEventListener("change", onPreferenceChange);
       document.removeEventListener("visibilitychange", onVisibilityChange);

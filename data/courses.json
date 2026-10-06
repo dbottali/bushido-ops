@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "courses": [
+    {
+      "id": "white-phishing-pilot", "belt": "white", "title": "PAUSE. VERIFY. PROTECT.",
+      "summary": "Learn to spot the pressure behind a suspicious message.", "availability": "available", "prerequisites": [],
+      "modules": [
+        {
+          "id": "warmup", "kind": "warmup", "title": "WARM-UP", "reward": 20,
+          "intro": "Don’t let urgency choose for you.",
+          "scenario": { "from": "Account Security <support@account-help.example>", "title": "URGENT: Your account will be deleted", "body": "Confirm your login in the next 30 minutes to avoid losing access.", "action": "Confirm account" },
+          "question": { "id": "pressure", "prompt": "A message says your account will be deleted in 30 minutes. What is the safest first move?", "options": ["Click the link before time runs out.", "Open the service yourself, using its app or a known address.", "Reply with your password to prove it is your account."], "correct": 1, "explanation": "Urgency is a pressure tactic. Open the official service yourself and check there. An unusual sender is a clue, not proof on its own." }
+        },
+        {
+          "id": "lesson", "kind": "lesson", "title": "LESSON", "reward": 30,
+          "intro": "The three-move defense.",
+          "lead": "Phishing is a deceptive message designed to make you reveal information, send money, or take a harmful action. It can arrive by email, text, social media, or a phone call.",
+          "sections": [
+            { "title": "Pause", "body": "Slow down when a message creates urgency, fear, or an unexpected reward. A deadline does not make a request trustworthy." },
+            { "title": "Verify", "body": "Open the official app, type a known website address, or call a number you already trust. Check the request through that independent channel." },
+            { "title": "Protect", "body": "Keep passwords and one-time sign-in codes private. Report suspicious messages using the service’s or your organization’s reporting process." }
+          ],
+          "note": { "title": "A logo is decoration, not verification.", "body": "A familiar logo, a polished message, or your real name does not prove who sent it." }
+        },
+        {
+          "id": "quiz", "kind": "quiz", "title": "QUIZ", "reward": 50,
+          "intro": "Put your instincts to the test.", "passingScore": 3,
+          "questions": [
+            { "id": "logos", "prompt": "A message uses a company's real logo. Does that prove it is genuine?", "options": ["Yes. Only the company can use its logo.", "No. A logo can be copied.", "Yes, if the message sounds professional."], "correct": 1, "explanation": "Logos and writing styles are easy to copy. Verify the request through a channel you already trust." },
+            { "id": "official-channel", "prompt": "You receive an unexpected security alert. Where should you check it?", "options": ["In the link provided by the message.", "By replying to the sender.", "In the official app or website you open independently."], "correct": 2, "explanation": "Open the official service yourself. Do not let an unexpected message choose your destination." },
+            { "id": "private-code", "prompt": "A caller asks for your one-time sign-in code. What should you do?", "options": ["Keep the code private and verify through the service's official support.", "Share it if they know your name.", "Share it if they say it is urgent."], "correct": 0, "explanation": "A one-time code can let someone into your account. Keep it private, end the call, and verify independently." }
+          ]
+        }
+      ]
+    },
+    { "id": "yellow-accounts", "belt": "yellow", "title": "ACCOUNTS & IDENTITY", "summary": "Unique passwords, multifactor authentication and recovery.", "availability": "planned", "prerequisites": ["white-phishing-pilot"], "modules": [] },
+    { "id": "orange-devices", "belt": "orange", "title": "DEVICES & DATA", "summary": "Updates, backups and protecting personal information.", "availability": "planned", "prerequisites": ["yellow-accounts"], "modules": [] },
+    { "id": "green-networks", "belt": "green", "title": "NETWORKS & THE WEB", "summary": "Understand connections and the basics of network security.", "availability": "planned", "prerequisites": ["orange-devices"], "modules": [] },
+    { "id": "blue-defense", "belt": "blue", "title": "DEFENSIVE THINKING", "summary": "Recognize threats, understand risk and choose defenses.", "availability": "planned", "prerequisites": ["green-networks"], "modules": [] },
+    { "id": "purple-investigation", "belt": "purple", "title": "INVESTIGATION & DETECTION", "summary": "Read signals, investigate activity and document evidence.", "availability": "planned", "prerequisites": ["blue-defense"], "modules": [] },
+    { "id": "brown-response", "belt": "brown", "title": "INCIDENT RESPONSE", "summary": "Contain problems, recover safely and improve defenses.", "availability": "planned", "prerequisites": ["purple-investigation"], "modules": [] },
+    { "id": "black-mentorship", "belt": "black", "title": "PRACTICE & MENTORSHIP", "summary": "Connect your skills and help the next learner.", "availability": "planned", "prerequisites": ["brown-response"], "modules": [] }
+  ]
+}
