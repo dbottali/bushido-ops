@@ -1,4 +1,4 @@
-# Bushido Ops — v0.3
+# Bushido Ops — v0.4
 
 A pixel-art cybersecurity dojo for practical digital self-defense. This interactive, animated prototype includes a playable white-belt phishing exercise and dedicated My Dojo, About, Belts and Philosophy pages.
 
@@ -7,12 +7,14 @@ A pixel-art cybersecurity dojo for practical digital self-defense. This interact
 ## What works
 
 - Responsive home page and shared navigation: Home, About, Belts, Philosophy, My Dojo and Enter the Dojo use the same header on every page.
+- Collapsible phone navigation, 44–48 px header controls, larger answer targets and readable mobile hero/cards. Escape closes the menu and returns focus.
+- Full-pose 8-bit sprites use a 100 ms timer, with brief touch/pen tap reactions alongside mouse/focus. Static footer poses do not run a continuous loop.
 - Explicit ivory page background and light color scheme, with a viewport-unit fallback for browsers without container query units.
 - Home uses the same ivory background at desktop, tablet and mobile widths; HTML, body and the React root have an explicit background before the stylesheet loads.
 - Belts: eight selectable curriculum previews, practical missions, live White Belt progress and a Continue action that opens the first incomplete pilot module.
 - About: the mission, who the dojo is for, an interactive training overview, belt availability and expandable FAQs. Every training preview links to its playable pilot module.
 - Philosophy: Order, Respect and Honor, with practical habits, expandable scenarios and a personal dojo code with browser-local saved choices.
-- 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on mouse entry or keyboard focus, with no automatic punches.
+- 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on interaction, with no automatic punches.
 - Warm-up and Quiz start with the clean scene while their fighters load, preventing a brief flash of the original Ryu illustration on Home and About.
 - Warm-up, short lesson, and three-question quiz with explanations and retries.
 - Modular course engine: actual content, assessment rules, rewards and prerequisites are defined in JSON. Stable course/module/question IDs support future content without duplicating player code.
@@ -67,6 +69,8 @@ The static build is generated in `dist-pages/`, with asset URLs configured for `
 React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Workers. Artwork and local fonts are included under `public/`.
 
 - [Project brief and roadmap](docs/PROJECT.md)
+- [Account, curriculum and hosting specifications for 1.0](docs/PLAN-1.0.md)
+- [Version 0.4 changes and validation](docs/RELEASE-0.4.md)
 - [Validation and known limitations](docs/QA.md)
 - [Characters and 8-bit animation](docs/CHARACTERS.md)
 - [Philosophy content and interactions](docs/PHILOSOPHY.md)
