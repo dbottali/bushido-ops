@@ -1,3 +1,5 @@
+> Historical 0.4 design/documentation. The 0.5 implementation and its required three-question guest → free account → premium funnel supersede the earlier optional-account proposal. See [SETUP-0.5.md](SETUP-0.5.md), [CLOUD-ARCHITECTURE.md](CLOUD-ARCHITECTURE.md) and [PROJECT.md](PROJECT.md) for current behavior.
+
 # Browser-local progress — version 0.3
 
 Training data lives in `data/courses.json`; `lib/course-engine.ts` computes completion, XP, availability, prerequisites, grading and the next step. The versioned store in `lib/dojo-progress.ts` owns validation, serialization, migrations and persistence. React connects through `useSyncExternalStore`.

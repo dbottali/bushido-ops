@@ -1,0 +1,410 @@
+[
+  {
+    "requestedWidth": "320",
+    "page": "",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "320",
+    "page": "dojo",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "YOUR FIRST THREE MOVES.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "320",
+    "page": "account/signup",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "THREE QUESTIONS.THEN YOUR OWN DOJO.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "320",
+    "page": "my-dojo",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "YOUR PRACTICE.YOUR PACE.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "320",
+    "page": "belts",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "ONE PATH.EIGHT BELTS.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "320",
+    "page": "about",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "CYBERSECURITYIS FOR EVERYONE.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "320",
+    "page": "philosophy",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "TRAIN YOUR SKILL.CHOOSE YOUR CONDUCT.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "320",
+    "page": "owner",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "BUILD THE TRAINING PATH.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 305,
+    "width": 305
+  },
+  {
+    "requestedWidth": "390",
+    "page": "",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "DIGITAL SELF-DEFENSE FOR EVERYONE",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "390",
+    "page": "dojo",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "YOUR FIRST THREE MOVES.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "390",
+    "page": "account/signup",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "THREE QUESTIONS.THEN YOUR OWN DOJO.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "390",
+    "page": "my-dojo",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "YOUR PRACTICE.YOUR PACE.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "390",
+    "page": "belts",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "ONE PATH.EIGHT BELTS.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "390",
+    "page": "about",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "CYBERSECURITYIS FOR EVERYONE.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "390",
+    "page": "philosophy",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "TRAIN YOUR SKILL.CHOOSE YOUR CONDUCT.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "390",
+    "page": "owner",
+    "bg": "rgb(252, 250, 245)",
+    "h1": "BUILD THE TRAINING PATH.",
+    "nav": [
+      "HOME",
+      "ABOUT",
+      "BELTS",
+      "PHILOSOPHY",
+      "MY DOJO"
+    ],
+    "scroll": 375,
+    "width": 375
+  },
+  {
+    "requestedWidth": "768",
+    "page": "",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "768",
+    "page": "dojo",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "768",
+    "page": "account/signup",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "768",
+    "page": "my-dojo",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "768",
+    "page": "belts",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "768",
+    "page": "about",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "768",
+    "page": "philosophy",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "768",
+    "page": "owner",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 753,
+    "width": 753
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "dojo",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "account/signup",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "my-dojo",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "belts",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "about",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "philosophy",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1024",
+    "page": "owner",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1009,
+    "width": 1009
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1280,
+    "width": 1280
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "dojo",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1265,
+    "width": 1265
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "account/signup",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1265,
+    "width": 1265
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "my-dojo",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1265,
+    "width": 1265
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "belts",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1265,
+    "width": 1265
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "about",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1265,
+    "width": 1265
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "philosophy",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1265,
+    "width": 1265
+  },
+  {
+    "requestedWidth": "1280",
+    "page": "owner",
+    "bg": "rgb(252, 250, 245)",
+    "scroll": 1265,
+    "width": 1265
+  }
+]

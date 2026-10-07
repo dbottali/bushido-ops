@@ -1,3 +1,5 @@
+> Historical 0.4 design/documentation. The 0.5 implementation and its required three-question guest → free account → premium funnel supersede the earlier optional-account proposal. See [SETUP-0.5.md](SETUP-0.5.md), [CLOUD-ARCHITECTURE.md](CLOUD-ARCHITECTURE.md) and [PROJECT.md](PROJECT.md) for current behavior.
+
 # Learning engine — v0.3
 
 The actual practice is defined in `data/courses.json`. `CoursePlayer` renders its modules; My Dojo, routes and the store share pure selectors and rules. Only the existing phishing pilot is published. The other seven course entries remain planned and empty.

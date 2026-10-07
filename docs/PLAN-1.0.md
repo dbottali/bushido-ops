@@ -1,165 +1,183 @@
-# Bushido Ops — specifiche verso la 1.0
+# Bushido Ops — decisioni e percorso verso la 1.0
 
-Data: 6 ottobre 2026. Product owner: Damiano. Stato: progetto delle funzionalità future, incluso nella release 0.4.
+Aggiornato: 7 ottobre 2026. Product owner: Damiano.
+Stato: roadmap aggiornata alla consegna del codice 0.5, pronto da configurare su staging. Nessun servizio, dominio, pagamento reale o pubblicazione è stato attivato. Il lancio commerciale resta alla 1.0.
 
-La 0.4 implementa l'ottimizzazione mobile. Account, sincronizzazione, nuovo curriculum e pagamenti descritti qui sono specifiche da implementare in seguito. Nessun servizio è stato attivato e nessuna spesa o pubblicazione è stata eseguita.
+## Avanzamento — release 0.5
 
-## 1. Mobile — implementato nella 0.4
+Implementati account email/password con conferma e recupero, impostazioni/export/cancellazione, progressi nel database, ripresa, bozze e conflitti fra dispositivi, correzione degli esami sul server, XP univoci e assegnazione delle cinture con prerequisiti. Le API autenticano ogni richiesta e gli studenti non possono modificare contenuti, premi o diritti di accesso.
 
-- Un unico header su Home, About, Belts, Philosophy, My Dojo e training.
-- Su smartphone, menu espandibile con le cinque destinazioni esistenti e accesso al dojo sempre visibile. Escape chiude il menu e restituisce il focus; una destinazione selezionata lo chiude.
-- Comandi del menu di almeno 44 px, CTA di 48 px, risposte con altezza minima di 56 px e testo di 16 px.
-- Hero più leggibile, schede ridisposte e backup con campo testo leggibile senza zoom automatico dovuto a font piccoli.
-- Sprite completi e palette 8 bit conservati. Timer di 100 ms coerente con i fotogrammi esistenti; arresto fuori schermo, a pagina nascosta e con movimento ridotto. Il footer fermo non avvia un ciclo continuo.
-- Tap touch/pen distinto dallo scorrimento per la breve reazione del personaggio. L'esercizio non dipende dall'animazione.
+Il nuovo percorso approvato è: **tre domande come ospite → account gratuito per continuare e completare la bianca → abbonamento e prerequisiti per gialla e superiori**. La registrazione non è più facoltativa dopo la prova iniziale. Pagare non assegna una cintura.
 
-Verifica: TypeScript, 22 test del modello e build Pages; build framework locale; sette pagine a quattro larghezze, menu e pilota completo in Chrome. Il controllo su un telefono/iPad fisico con questa release resta da fare. Non è una PWA e non installa un'app.
+Integrati Stripe sandbox, portale, verifica webhook, gestione della scadenza e importazione JSON riservata al proprietario. Il futuro editor visuale resta rimandato. Il pilota bianco resta materiale campione, senza cintura completa; un catalogo sintetico separato permette di collaudare White → Black e pagamenti di test. Nessun contenuto definitivo è stato aggiunto.
 
-## 2. Account — proposta concreta
+47 test automatici locali passati, TypeScript e build frontend/API Cloudflare compilati. Otto percorsi controllati in Chrome alle larghezze richieste di 320, 390, 768, 1024 e 1280 px: nessun overflow orizzontale del body, sfondo avorio e menu condiviso. Prova ospite 3/3 e 20 XP provvisori, richiesta account e menu da tastiera verificati. Grafica 8 bit e personaggi approvati conservati.
 
-### Esperienza iniziale
+L'archivio 0.5 include sorgenti, migrazione e seed Supabase, template email, contenuti di collaudo, demo statica e guida di configurazione. Cloudflare, Supabase, email, Stripe e dominio sono da collegare dal proprietario. Il dominio non è ancora registrato: lo staging può iniziare su pages.dev. Con SMTP predefinito Supabase si prova soltanto verso gli indirizzi del team, entro i limiti del servizio; per tester esterni serve un dominio mittente verificato.
 
-La bianca resta utilizzabile come ospite. Alla fine di una missione, un invito facoltativo propone di salvare il percorso su più dispositivi. Nessuna registrazione prima del primo esercizio.
+Il collaudo con servizi esterni, due dispositivi/account, consegna email, rinnovo/cancellazione Stripe, ripristino backup e iPad/Safari/Brave fisici resta da completare. La 0.5 è pronta da configurare e testare; non è un servizio commerciale già operativo.
 
-Prima modalità proposta: email e password con verifica dell'email e recupero tramite servizio gestito. Evitare più modalità social nel primo rilascio. Gli invii richiedono un servizio email transazionale configurato e una prova su Safari e Brave, inclusa l'apertura del link in un browser diverso.
+Prossimi passi: registrare i servizi di staging seguendo Bushido-Ops-0.5-Setup.md, collaudare i flussi, poi caricare il materiale definitivo con ID propri. La produzione sarà separata dai dati e dalle cinture fittizie del collaudo.
 
-| Stato | Bianca | Premium disponibile | Progressi | Modifica contenuti |
-|---|---|---|---|---|
-| Ospite | Sì | No | Nel browser, con backup | No |
-| Account gratuito | Sì | No | Sincronizzati | No |
-| Abbonamento attivo | Sì | Sì, con prerequisiti didattici | Sincronizzati | No |
-| Abbonamento scaduto | Sì | No | Conservati; rinnovo riprende il percorso | No |
-| Proprietario | Secondo accesso assegnato | Secondo accesso assegnato | Propri | Pubblicazione dal repository; editor futuro separato |
+## Decisioni confermate da Damiano
 
-Pagare concede il diritto di accesso; superare le verifiche concede una cintura. Sono due stati separati. Non associare il ruolo editoriale alla registrazione o all'abbonamento. Gli studenti non possono editare il materiale.
+- Gli utenti non possono modificare il materiale didattico.
+- Editor visuale e authoring avanzato restano rimandati. La 0.5 autorizzata implementa una semplice importazione JSON con validazione e conferma, solo per il proprietario.
+- La prossima priorità dell'interfaccia è l'ottimizzazione per smartphone e tablet.
+- Il pannello delle preferenze e altre opzioni personali sono rimandati. Resta il rispetto delle impostazioni di movimento ridotto già previsto.
+- Il project manager valuta quali controlli automatici siano utili; evitare una nuova infrastruttura di test sproporzionata.
+- Iniziare a progettare account, progressione per cinture, hosting e sostenibilità economica.
+- Tre domande White senza account; poi account gratuito per completare la bianca. Gialla e superiori con bianca ottenuta, abbonamento attivo e prerequisiti didattici.
+- Il successivo sviluppo della 0.5 è stato autorizzato. Account e pagamenti solo in collaudo; lancio pubblico commerciale e incassi reali alla release 1.0.
+- Eventuale app mobile da valutare.
+- Preservare palette avorio/rosso/blu, grafica 8 bit, personaggio principale con gi bianco, pugile Warm-up e combattente in blu nel Quiz. Idle discreto; gesti ampi solo su interazione.
+- Il proprietario ha confermato il corretto sfondo su Safari nell'iPad. Il marrone osservato in Brave resta una differenza da diagnosticare: la causa non è stata confermata.
 
-### Dati e responsabilità
+## Punto di partenza e confine del materiale
 
-Schema proposto, senza migrazioni o tabelle create nella 0.4:
+La 0.4 conserva il catalogo modulare, le pagine informative, il pilota locale e i backup. La 0.5 aggiunge il modello cloud e conserva il profilo 0.4 come archivio separato. Le tre risposte iniziali possono essere importate esplicitamente e ricorrette; completamenti/XP locali non provano una cintura o un abbonamento.
 
-| Entità | Chiave / informazioni | Regola |
-|---|---|---|
-| Profilo | ID del servizio auth, nome opzionale | Lo studente legge/modifica solo il proprio nome; nessun ruolo assegnabile dal client |
-| Progressi | Utente + corso + modulo, versione contenuto, risposte, completamento | ID stabili del catalogo; aggiornamento autenticato e validato |
-| Tentativi | Utente, modulo, risposte, esito, data | Esito calcolato dal server per verifiche che assegnano cinture |
-| Cinture ottenute | Utente + cintura, regola/versione, data | Assegnazione server; unicità per cintura e regola |
-| Abbonamento | Utente, cliente Stripe, stato, scadenza del diritto | Scrittura solo dal servizio server che gestisce eventi verificati |
-| Eventi pagamento | ID evento Stripe, stato elaborazione | Un evento duplicato non concede diritti o addebiti doppi |
-| Catalogo | ID, versione, disponibilità, prerequisiti, livello accesso | Contenuti pubblicati dal proprietario; materiale premium fuori dal bundle pubblico |
+È pubblicabile il solo pilota White incluso; le altre cinture hanno obiettivi e anteprime pianificati. Il catalogo sintetico serve al collaudo, non all'insegnamento definitivo. Le otto cinture reali richiedono materiale e criteri editoriali revisionati.
 
-L'email rimane nel sistema di autenticazione: non usarla come identificativo permanente. Nessun profilo pubblico, chat o classifica nel primo rilascio.
+## Valutazione del project manager
 
-API proposte: lettura del proprio percorso; salvataggio del modulo; invio verifica; anteprima/importazione locale; caricamento contenuto autorizzato; avvio checkout e portale abbonamento. Il server ricava l'utente dalla sessione, valida gli ID e applica permessi e prerequisiti. La chiave amministrativa del database e il segreto Stripe non arrivano nel browser.
+Ha senso un investimento piccolo e delimitato per verificare un prodotto didattico riconoscibile e sostenibile. L'esperienza di insegnamento del proprietario e il dojo 8 bit sono punti di partenza utili. La disponibilità a pagare non è ancora dimostrata.
 
-### Passaggio dai progressi locali
+Il primo obiettivo economico è pagare infrastruttura e aggiornamenti. Coprire i server è diverso dal remunerare preparazione delle lezioni, manutenzione e assistenza. Misurare separatamente spesa monetaria e ore.
 
-1. Dopo il primo accesso, rilevare il profilo locale valido e mostrare una sintesi di cosa verrà importato.
-2. Chiedere una scelta esplicita: importare oppure mantenere il percorso dell'account. Non sovrascrivere silenziosamente.
-3. Importare solo corsi/moduli riconosciuti e risposte valide. Conservare i completamenti già presenti, senza duplicare XP; non sovrascrivere tentativi più recenti senza una scelta dell'utente.
-4. I dati importati non provano pagamento o superamento di un esame. Il pilota può essere conservato come pratica storica; le future cinture richiedono la verifica prevista.
-5. Confermare il salvataggio remoto prima di considerare concluso il trasferimento. Lasciare il backup locale disponibile.
+Il rischio di prodotto principale è proporre un abbonamento a un catalogo finito che lo studente conclude e abbandona. Il valore ricorrente dovrà essere sostenuto da scenari nuovi, pratica e aggiornamenti realistici, con una cadenza che Damiano possa mantenere. Non promettere nuovi contenuti settimanali prima di aver misurato il lavoro necessario.
 
-Per la sincronizzazione, usare revisioni del record e rifiutare scritture su una revisione superata, mostrando un conflitto da risolvere. Mai far tornare incompleto un modulo già completato per un semplice salvataggio tardivo da un altro dispositivo.
+Pubblico iniziale proposto: principianti adulti che vogliono difendersi online e proseguire verso le basi della difesa informatica. Questa è un'ipotesi da validare, non una decisione definitiva sul pubblico. Le cinture avanzate possono guidare chi vuole continuare; evitare promesse di qualifica professionale non dimostrate.
 
-### Criteri di accettazione prima della 1.0
+## Ambito storico della 0.4 — implementato
 
-- Accesso verificato, recupero e disconnessione funzionanti; scadenza della sessione gestita senza perdere la risposta corrente.
-- Un secondo utente non legge o modifica i dati del primo; database con policy per utente e test delle API protette.
-- Stesso progresso su due dispositivi; importazione esplicita e XP non duplicati.
-- Export e cancellazione account con conseguenze spiegate, inclusa la gestione separata dell'abbonamento attivo.
-- Accesso premium controllato sul server; esami e diritti non modificabili tramite backup o richieste client.
+- Header e menu leggibili su smartphone senza comprimere le voci; stessa identità e destinazioni.
+- Titoli, contenuti e pulsanti leggibili in portrait e landscape.
+- Schede, dashboard, percorso cinture e quiz senza scorrimento orizzontale.
+- Interazioni touch equivalenti alle azioni importanti oggi associate a hover/focus; gesti dei personaggi sempre brevi e discreti.
+- Ridurre lavoro grafico inutile e verificare fluidità su un dispositivo reale.
+- Pochi controlli di regressione per navigazione, ricaricamento, XP non duplicati, recupero/importazione dei progressi e larghezza mobile.
+- Nessun editor per gli studenti; nessun pannello preferenze; nessuna attivazione di account o pagamenti in questo sprint.
 
-## 3. Percorso per cinture — proposta editoriale
+Criterio di uscita: un utente può completare il pilota e riprenderlo dal telefono; testo e controlli sono comodi e nessuna azione richiede il mouse.
 
-Un'unica struttura: Warm-up → Lesson → Quiz. Sessioni proposte da 5–10 minuti, da misurare con persone reali. Le missioni qui sotto sono titoli e obiettivi di progettazione: non sono lezioni o nuovi quiz già disponibili.
+## Architettura degli account — implementata nella 0.5, da collaudare sui servizi
 
-| Cintura | Tema esistente | Risultato osservabile | Accesso | Ipotesi di rilascio |
-|---|---|---|---|---|
-| Bianca | Pause. Verify. Protect. | Davanti a una richiesta sospetta, scegliere un canale indipendente e proteggere informazioni sensibili | Free | Completa alla 1.0 |
-| Gialla | Accounts & Identity | Preparare credenziali, MFA e recupero di un account di prova | Abbonamento | Primo gruppo premium |
-| Arancione | Devices & Data | Configurare aggiornamenti, permessi e un backup; dimostrare un ripristino | Abbonamento | Primo gruppo premium |
-| Verde | Networks & the Web | Motivare scelte su rete, Wi-Fi e navigazione | Abbonamento | Pianificata |
-| Blu | Defensive Thinking | Prioritizzare difese secondo rischio e privilegi | Abbonamento | Pianificata |
-| Viola | Investigation & Detection | Interpretare segnali e log in un laboratorio didattico | Abbonamento | Pianificata |
-| Marrone | Incident Response | Eseguire un piano guidato di contenimento e recupero | Abbonamento | Pianificata |
-| Nera | Practice & Mentorship | Completare e spiegare un progetto finale di difesa | Abbonamento | Pianificata |
+- Prova iniziale di tre domande White per ospiti; account gratuito verificato richiesto per proseguire.
+- Supabase Auth: email e password, conferma e recupero tramite email. Template con token_hash per l'apertura su un altro dispositivo; nessun login social nel primo rilascio.
+- My Dojo associato all'account: moduli, completamenti, ripresa, risultati e cinture coerenti fra dispositivi.
+- Importazione esplicita delle tre risposte iniziali, ricorrette sul server; archivio 0.4 separato. Nessun diritto premium, cintura o XP fidato dal browser.
+- Profilo minimo: email e nome opzionale; gestione, recupero, export e cancellazione implementati, da provare sui servizi configurati.
+- Studenti e proprietario hanno autorizzazioni diverse. L'iscrizione non concede editing dei contenuti.
+- Abbonamento e livello didattico sono due stati distinti: pagare concede accesso, superare la verifica concede la cintura.
+- Alla scadenza dell'abbonamento il percorso gratuito e i progressi rimangono; l'accesso ai contenuti premium dipende dal diritto attivo. La cancellazione dell'account è un'azione separata.
+- Le verifiche dei diritti premium devono avvenire sul server o nel database, con isolamento dei dati per utente. Nascondere pulsanti nel browser non protegge contenuti.
+- Il materiale a pagamento non va distribuito nel bundle pubblico o nel repository pubblico.
+- Diritti test aggiornati tramite eventi Stripe verificati, lettura dello stato corrente, deduplicazione e scadenza. Il ritorno dal checkout non conferma l'accesso. Modalità live rinviata alla 1.0.
+- Account e progresso sul server introducono manutenzione reale: backup, recupero, isolamento degli ambienti e controllo delle autorizzazioni.
 
-### Bianca gratuita: confine proposto
+Le funzioni sono implementate nel pacchetto 0.5 e verificate localmente; i provider devono essere configurati e il collaudo esterno rimane aperto.
 
-Cinque missioni: pressione/urgenza; verifica del mittente e del canale; password e codici privati; link e richieste inattese; segnalazione e prima risposta. Il pilota sul phishing è il punto di partenza, non l'intera cintura.
+## Proposta del curriculum per cinture
 
-Verifica finale proposta: uno scenario nuovo in cui lo studente deve motivare una scelta sicura. La bianca deve dare un risultato utile completo e un riconoscimento interno al dojo, senza obbligo di acquisto. Il premium approfondisce account e dispositivi.
+| Cintura | Tema coerente con il catalogo | Risultato pratico iniziale | Accesso proposto |
+|---|---|---|---|
+| Bianca | Pause. Verify. Protect. | Riconoscere una richiesta sospetta, verificare con un canale affidabile e scegliere un'azione sicura. | Gratuito |
+| Gialla | Accounts & Identity | Proteggere un account con credenziali adeguate, MFA e recupero accesso. | Abbonamento |
+| Arancione | Devices & Data | Gestire aggiornamenti, permessi, dati e backup; provare un ripristino guidato. | Abbonamento |
+| Verde | Networks & the Web | Capire connessioni, Wi-Fi, HTTPS e rischi della navigazione; scegliere configurazioni sensate. | Abbonamento |
+| Blu | Defensive Thinking | Valutare rischi, privilegi e priorità; motivare misure di protezione. | Abbonamento |
+| Viola | Investigation & Detection | Analizzare segnali e log didattici per riconoscere attività sospette. | Abbonamento |
+| Marrone | Incident Response | Seguire un piano guidato di contenimento, recupero e comunicazione. | Abbonamento |
+| Nera | Practice & Mentorship | Completare un progetto finale e spiegare ad altri le scelte di difesa. | Abbonamento |
 
-### Primo premium sostenibile
+La bianca deve essere un percorso gratuito completo e utile, non solo l'attuale esercizio pilota.
+Ogni cintura avrà pochi obiettivi misurabili, sessioni brevi Warm-up → Lesson → Quiz, una verifica finale su uno scenario e feedback per correggere gli errori.
+La cintura richiede apprendimento verificato; l'XP serve a mostrare il percorso e non sostituisce la prova.
+Soglia di superamento, durata, numero di missioni e prerequisiti restano da definire con il materiale. La cintura è un riconoscimento interno al dojo e non una certificazione accreditata.
 
-Gialla: cinque missioni proposte su credenziali, password manager, MFA, recupero e sessioni/dispositivi. Arancione: cinque su aggiornamenti, permessi, dati, backup e ripristino. Scrivere e revisionare prima il piccolo catalogo iniziale; non promettere tutte le otto cinture come disponibili.
+Per la 1.0 propongo bianca completa e almeno gialla/arancione realmente disponibili e revisionate. Le altre possono restare una roadmap esplicitamente indicata. L'abbonamento darà accesso a tutte le cinture premium disponibili, senza acquisto separato per cintura.
 
-Regola proposta di avanzamento: completare le missioni obbligatorie e superare lo scenario finale. Soglia e prove pratiche si definiscono insieme al materiale; una soglia numerica non prova da sola l'apprendimento. Nessuna penalità per ripetere la pratica. XP descrittivo, calcolato dai completamenti unici; nessun acquisto di XP o cintura. L'attuale pilota mantiene la propria regola di 3/3 e i suoi 100 XP.
+## Modello economico da validare
 
-Bianca e teoria iniziale devono funzionare da smartphone. Per laboratori avanzati distinguere esercizi fruibili su telefono e attività che richiedono un computer, indicandolo prima di iniziare. Non promettere che un laboratorio Linux completo sia utilizzabile da mobile.
+- Un livello gratuito: bianca.
+- Un solo piano premium per iniziare; evitare più livelli di prezzo e accesso.
+- Ipotesi di prezzo da testare: 9 EUR/mese. Non è un prezzo già approvato né una valutazione di mercato.
+- Sconti annuali ed eventuali offerte per gruppi si valutano dopo i primi dati; evitare di vincolare un anno quando il catalogo è ancora piccolo.
+- Ipotesi di tetto per il primo esperimento: 100–200 EUR di spesa monetaria complessiva, usando i piani gratuiti dove adatti. Non è una stima del costo di sviluppo professionale.
+- Budget tecnico indicativo al primo lancio, con poco traffico: 30–50 EUR/mese per un'architettura piccola. È un'ipotesi di budget, non un preventivo: dipende da piano, cambio USD/EUR, imposte, email, uso e dominio.
+- Quel budget esclude commissioni di incasso, consulenza, creazione del materiale, supporto e valore delle ore del proprietario. Prima della 1.0 ricalcolare il costo effettivo.
 
-Prima di pubblicare: ciascuna missione deve avere obiettivo, versione, durata stimata, scenario, spiegazione degli errori, verifica del contenuto e indicazione del dispositivo richiesto. Nessuna certificazione accreditata implicita.
+Scenari aritmetici con prezzo ipotetico di 9 EUR/mese:
 
-## 4. Hosting e sostenibilità — scelta candidata
+| Abbonati attivi | Ricavi mensili lordi |
+|---|---:|
+| 10 | 90 EUR |
+| 30 | 270 EUR |
+| 50 | 450 EUR |
 
-Proposta PM: codice su GitHub, frontend statico su Cloudflare Pages, autenticazione/database su Supabase, abbonamento su Stripe Checkout/Billing con funzioni server per diritti e pagamenti. È una scelta da confermare prima di creare i servizi.
+Sono ricavi lordi, prima di commissioni, IVA ove applicabile, imposte e costi. Non sono previsioni di utenti o utile.
+Stripe in Germania indica attualmente 1,5% + 0,25 EUR per carte EEA standard e 0,7% aggiuntivo per Billing pay-as-you-go; altri metodi e carte hanno tariffe diverse.
+A titolo puramente tecnico, un incasso di 9 EUR con quelle due componenti avrebbe circa 0,448 EUR di commissioni. Questa cifra non determina l'utile e non include altre eventuali componenti.
 
-| Componente | Responsabilità | Preparazione richiesta |
-|---|---|---|
-| GitHub | Codice, revisioni e release | Protezione dei segreti; curriculum premium in area privata |
-| Cloudflare Pages | Interfaccia, asset e dominio | Build con base URL del nuovo dominio, HTTPS, ambienti separati |
-| Supabase | Auth, progressi, contenuti protetti | Regione UE, policy per utente, backup e prova di ripristino |
-| Funzioni server | Verifiche, autorizzazioni, checkout, webhook | Segreti solo server, validazione input, eventi idempotenti |
-| Stripe | Incassi, rinnovi e portale abbonamento | Ambiente test prima del live; stato accesso aggiornato da eventi verificati |
-| Email e dominio | Verifica/recupero account e identità | SMTP transazionale configurato e dominio scelto dal proprietario |
+Misura guida: margine dopo costi / ore mensili. Un progetto che paga l'hosting ma richiede troppe ore deve ridurre scope o rivedere offerta e prezzo.
 
-```mermaid
-flowchart TD
-  A["Webapp"] --> B["Auth e progressi"]
-  A --> C["API protette"]
-  C --> D["Contenuti e diritti"]
-  C --> E["Stripe"]
-  E -->|"Evento verificato"| C
-  C -->|"Aggiorna accesso"| D
-```
+## Hosting proposto per la 1.0
 
-Il ritorno dal checkout mostra l'esito di navigazione; non concede da solo accesso. Rinnovo, cancellazione, scadenza e pagamento fallito aggiornano il diritto dal server. La cancellazione a fine periodo conserva l'accesso fino alla scadenza confermata; i progressi restano dopo la scadenza.
+Configurazione scelta per lo staging 0.5; verificare nuovamente piani, limiti e costi prima della produzione:
 
-### Costi e disciplina del primo esperimento
+- GitHub per mantenere il codice e la cronologia.
+- Cloudflare Pages per il frontend: richieste a file statici gratuite; funzioni e servizi ulteriori hanno limiti/tariffe propri.
+- Supabase per autenticazione, database, progressi e API protette; piano Free per esperimenti, Pro da 25 USD/mese per valutare il primo lancio. Scegliere una regione UE disponibile. Il Free può essere sospeso dopo una settimana di inattività e non include backup automatici.
+- Stripe Checkout/Billing per pagamenti e gestione abbonamento; verifica server degli eventi.
+- Dominio proprio ed email transazionali configurate. L'SMTP predefinito Supabase non è un servizio di invio email pubblico per produzione.
+- Informazioni sui dati degli utenti, condizioni del servizio, prezzi, fatturazione e trattamento fiscale da preparare prima del lancio, in funzione del modello e dei paesi serviti.
 
-Ipotesi iniziale, da approvare: tetto di 100–200 EUR per validazione e primi servizi; 30–50 EUR/mese come budget tecnico orientativo al piccolo lancio. Non è un preventivo e non include ore, contenuti, imposte, commissioni o supporto. Monitorare spesa e ore separatamente.
+GitHub Pages rimane pertinente al prototipo esistente; i suoi limiti vietano l'uso come hosting gratuito di un business/e-commerce/SaaS commerciale. Pianificare la migrazione del sito prima del lancio a pagamento.
+Non usare l'homelab personale come dipendenza operativa del servizio agli abbonati nel primo rilascio.
 
-Al 6 ottobre 2026, Cloudflare indica richieste statiche gratuite; funzioni e altri servizi hanno regole proprie. Supabase Pro parte da 25 USD/mese; il Free può essere sospeso per inattività. Il piano email va previsto separatamente. Ricontrollare prezzi, cambio e uso prima di acquistare.
+Questa selezione non crea account, non compra il dominio, non sposta il sito e non autorizza costi.
 
-Un solo piano premium, con accesso alle cinture premium effettivamente disponibili. Prezzo sperimentale proposto: 9 EUR/mese, non ancora approvato. Dieci abbonati darebbero 90 EUR mensili lordi, trenta 270: aritmetica, non previsione di domanda o utile. La priorità è provare che qualcuno completa la bianca e torna; poi verificare la disponibilità a pagare per materiale concreto.
+## Mobile e possibile app
 
-GitHub Pages resta il prototipo attuale. Prima del lancio commerciale migrare: le condizioni di Pages escludono l'hosting gratuito di business/e-commerce/SaaS commerciali. Dominio previsto: `bushi.do`; registrazione e collegamento all'hosting non sono verificati in questa consegna.
+Prima perfezionare il sito mobile. Successivamente valutare una PWA: la stessa webapp con manifest, icona e un'esperienza adatta all'apertura dalla schermata Home.
+Installazione e capacità variano secondo browser e dispositivo; provarle prima di promettere funzioni. Apple documenta l'apertura di un sito come webapp dalla Home dell'iPad.
+L'installazione non concede automaticamente modalità offline. Cache, aggiornamenti e contenuti premium offline richiedono una progettazione separata.
+Un'app nativa per gli store è una decisione successiva, da legare a utilizzo mobile ripetuto e a un vantaggio concreto che giustifichi costo e manutenzione.
 
-### Passaggi di rilascio
+## Sequenza verso la 1.0
 
-1. Completare QA mobile fisico della 0.4 e approvare le specifiche.
-2. Quando autorizzato, implementare account e sincronizzazione in un ambiente di test, con email di prova e nessun incasso live.
-3. Inserire bianca completa e primo premium revisionato. Provare importazione, isolamento dati, esami, webhook duplicati, cancellazione e recupero account.
-4. Organizzare una prova privata con 10–20 volontari solo su istruzione del proprietario; raccogliere completamento, comprensione, ritorno e motivi di acquisto.
-5. Preparare candidata 1.0: costi, informazioni sui dati e sul servizio, prezzo, assistenza, backup/ripristino, dominio e trasferimento hosting. Decidere il lancio con Damiano.
-6. Pubblicare e attivare pagamenti alla 1.0 dopo la decisione sul rilascio.
+1. **0.4 — Mobile:** migliorare interfaccia touch e controllare le regressioni del pilota.
+2. **0.5 — Infrastruttura:** codice account, sincronizzazione, esami/cinture, importazione proprietario e Stripe sandbox consegnato; materiale campione.
+3. **Configurazione e prova privata:** creare/collegare servizi di staging, collaudare email, due dispositivi, accessi, Stripe, backup e iPad; poi materiale definitivo. Nessuna attivazione commerciale.
+4. **Candidata 1.0:** percorso gratuito completo, premium iniziale concreto, recupero account, dati fra dispositivi, accessi verificati, checkout/cancellazione provati, informazioni per utenti e costi effettivi rivisti.
+5. **1.0 — Lancio commerciale:** solo dopo decisione esplicita del proprietario sul rilascio.
+6. **Dopo 1.0:** contenuti aggiuntivi, PWA/app, eventuale editor privato e preferenze, in base ai riscontri.
 
-L'archivio 0.4 mantiene la base `/bushido-ops/` per il prototipo esistente. Un dominio alla radice richiederà una build con base `/`; non trasferire alla cieca i bundle Pages. La 0.4 non pubblica automaticamente il sito.
+Non serve riempire adesso tutte le versioni intermedie con feature nuove. Una release deve risolvere un bisogno osservato.
 
-## Rimandato e vincoli permanenti
+## Prova di interesse prima di ampliare il progetto
 
-- Gli studenti non modificano mai il materiale.
-- Editor/bozze/anteprima di authoring, se serviranno, saranno privati e riservati al proprietario o a editor autorizzati.
-- Pannello preferenze rimandato; movimento ridotto del sistema già rispettato.
-- PWA/app nativa da valutare dopo uso mobile ripetuto. Installazione, offline e premium offline richiedono progettazione separata.
-- Nessuna nuova infrastruttura di test pesante: estendere controlli mirati quando si aggiungono auth, dati remoti e pagamenti.
+Proposta da approvare e organizzare senza pubblicazione commerciale:
 
-## Fonti tecniche verificate il 6 ottobre 2026
+- 10–20 tester volontari, invitati privatamente quando autorizzato.
+- Osservare se completano la bianca senza assistenza, applicano il principio e tornano entro 7–14 giorni.
+- Mostrare una proposta premium chiara e il prezzo ipotetico; raccogliere motivi, obiezioni e disponibilità a pagare.
+- La disponibilità dichiarata è un segnale preliminare. Acquisti e rinnovi reali dopo il lancio sono una prova più forte.
+- Ampliare il catalogo o spendere per acquisizione solo dopo risultati concreti.
+- Non contattare automaticamente studenti, colleghi o altre persone a nome del proprietario.
 
-- [Cloudflare Pages: prezzi di asset statici e Functions](https://developers.cloudflare.com/pages/functions/pricing/)
-- [Supabase: piani e limiti](https://supabase.com/pricing)
-- [Supabase: email con SMTP](https://supabase.com/docs/guides/auth/auth-smtp)
-- [Stripe: eventi degli abbonamenti](https://docs.stripe.com/billing/subscriptions/webhooks)
-- [GitHub Pages: condizioni e limiti](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
+Prime decisioni da prendere: pubblico iniziale, materiale della bianca gratuita e prima offerta premium sostenibile; prezzo e tempo mensile per aggiornamenti/supporto. Il confine del funnel account è già approvato.
 
-Le scelte di prodotto, le missioni e i budget di questa specifica sono proposte del project manager; le fonti descrivono i servizi, non dimostrano domanda o sostenibilità del progetto.
+## Fonti verificate il 5 ottobre 2026
+
+Prezzi, limiti e condizioni possono cambiare; riverificarli prima di acquistare o pubblicare.
+
+- Cloudflare Pages, pricing: https://developers.cloudflare.com/pages/functions/pricing/
+- Supabase, pricing: https://supabase.com/pricing
+- Supabase, email SMTP: https://supabase.com/docs/guides/auth/auth-smtp
+- Supabase, Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
+- Stripe, pricing Germania: https://stripe.com/de/pricing
+- Stripe, subscription webhooks: https://docs.stripe.com/billing/subscriptions/webhooks
+- GitHub Pages, limiti: https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits
+- Apple, webapp iPad: https://support.apple.com/en-euro/guide/ipad/ipad8f1f7a29/ipados

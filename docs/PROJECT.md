@@ -1,73 +1,25 @@
-# Bushido Ops — project brief and delivery plan
+# Bushido Ops — project brief
 
-Product owner: Damiano. Current release: 0.4, mobile refinement with the existing pilot.
+Product owner: Damiano. Current package: **0.5, staging infrastructure ready to connect**. Commercial launch: 1.0. UI in English; planning/setup in Italian.
 
-## Product
-Practical, welcoming cybersecurity training in a pixel-art dojo. A session consists of a warm-up, a short lesson, and a quiz. The eight-belt path describes the learning journey. Copy and visual direction follow the supplied English-language reference.
+Practical digital self-defense in a welcoming 8-bit dojo. Approved ivory/red/navy palette, pixel frames, dojo scenery, white-gi hero, boxer Warm-up and blue Quiz fighter are preserved. Body poses remain connected; idle is subtle and gestures require interaction. All public/account/owner/training pages share the established five-item menu.
 
-## Design contract
-`public/art/dojo-reference.png` is the approved layout reference. Preserve its ivory, red, and navy palette, pixel frames, Japanese dojo, section order, and content. The approved character update adds complete sprite poses and matching clean background crops. Other regions, including lesson art, lettering and belt characters, continue to use the original. Text, navigation, buttons, exercises, progress bars, and dialogs are accessible UI. Desktop follows the reference proportions. Smaller screens reflow the same content so text and controls remain usable.
+## Confirmed learning model
 
-## Release 0.1 — implemented
-- Home navigation, hero, warm-up/lesson/quiz cards, why, eight belts, three principles, and final CTA.
-- Dedicated Philosophy page: three principle tabs, practical habits, expandable examples, an optional three-habit dojo code and direct entry to white-belt practice. Home principle cards link to the corresponding tab.
-- Dedicated About page: mission, learner audiences, a three-step training overview, belt availability, five FAQs and links to the playable pilot. About, Belts and Philosophy share a consistent header and footer.
-- White-belt phishing practice: interactive warm-up, three-part lesson, three-question quiz, and feedback.
-- XP: 20 + 30 + 50. A module counts once, including after reload and retry. XP is derived from unique completed modules.
-- Dedicated Belts page: eight selectable curricula with outcomes and mission previews, actual pilot progress, per-module completion and continuation to the first incomplete module. Home and About belt cards open the corresponding preview. Only the white-belt pilot is playable; future content is explicitly marked.
-- Responsive layout, keyboard-accessible controls, local fonts, and custom favicon.
-- Optional page-scoped agent actions: read browser-local progress and open a training module.
-- Three animated fighters rendered on a 64 × 56 grid with sixteen opaque colors and nearest-neighbor scaling. Each cached frame is a complete redrawn body. Calm idle uses small breathing and bobbing movements, distinct periods and pauses. Mouse entry or card keyboard focus triggers one brief punch without repeating while the pointer remains in place. The footer is still at rest and briefly changes guard on interaction. Belts retain small breathing or weight shifts. Motion honors reduced-motion preferences and pauses offscreen or in hidden tabs.
+Guest: three White questions. Free verified account: continue and complete White with progress across devices. Premium: published Yellow and higher courses after a full White award, active subscription and preceding course. Payment opens training; passing lessons/exams earns a belt. Students never edit content. The owner can import structured JSON; a visual editor and personal preferences remain future options.
 
-## Prototype boundaries
-This is a working prototype, not a complete course. Pilot progress, unfinished answers and dojo-code choices save in browser-local storage. Backup export/import supports a manual device transfer. Unavailable storage uses a clearly labeled temporary session; unreadable or newer saved data is preserved until an explicit import or reset. No learner accounts, cloud synchronization, analytics, payments or certifications. Belt advancement beyond the pilot is not implemented. “No signup” describes the learning interface. Dedicated generated sprite sheets use complete-body poses, a fixed per-character scale and a shared 8-bit palette; the head and arm are never animated as separate cutouts.
+## Current delivery
 
-## First infrastructure sprint — implemented
-- Versioned progress store, stable pilot identity, saved drafts, resume and cross-tab updates.
-- Validated JSON export/import and confirmed reset, with no duplicate XP.
-- Shared header for Home, Dojo, About, Belts and Philosophy, using the established content-page design.
-- Explicit ivory background and light theme in both browser-only and framework entry points.
-- Nine meaningful progress-store tests. Full curriculum remains deferred by the product owner.
+0.4 supplied responsive browser-local training and backups. 0.5 adds Supabase Auth, protected Cloudflare API, PostgreSQL grading/progress/awards, owner imports and Stripe sandbox subscriptions. It preserves the previous local profile as historical practice instead of trusting local XP for cloud permissions. The original pilot is still sample material and awards no complete White. A separate synthetic catalog can test the entire eight-belt chain.
 
-## Release 0.3 — implemented
+External services have not been created/configured and no remote site/repository has been overwritten. Setup and connected acceptance testing remain necessary. See [SETUP-0.5.md](SETUP-0.5.md), [QA.md](QA.md) and [RELEASE-0.5.md](RELEASE-0.5.md).
 
-- Validated JSON course catalog, generic player and stable course/module/question identities.
-- Available/in-progress/completed/locked/planned states, prerequisites, data-defined quiz thresholds and once-only rewards.
-- My Dojo dashboard with available-only totals, next step, last-answer review, habits and backup management.
-- Automatic v1/v2 migration into version-3 progress under the original storage key.
-- Legacy pilot links preserved; canonical per-course routes, missing-link screens and previous/next steps.
-- Shared six-destination header including My Dojo; approved art, subtle sprite behavior and ivory background retained.
-- 22 meaningful tests and a repeatable Pages release check. New curriculum remains deferred.
+## Next steps
 
-## Next milestones
-The approved direction is now specified in [PLAN-1.0.md](PLAN-1.0.md): accounts and synchronization, complete free White Belt, subscription access to higher belts, and a commercial launch at 1.0. Learners cannot edit teaching content. Owner/editor authoring tools and personal preferences are deferred. No services or payments are activated by 0.4.
+1. Configure staging on Cloudflare and Supabase; test the owner's confirmation/recovery email. Add a domain/SMTP for external testers.
+2. Exercise guest transfer, two devices, isolation, owner import and Stripe sandbox cancellation/expiry. Complete physical phone/iPad QA and a backup restore.
+3. Write and review the free White curriculum and the first sustainable premium path. Use private authoring files and stable real IDs.
+4. Prepare price, operational costs and user information; separately implement/review production billing before 1.0.
+5. Release commercially only on the owner's explicit decision. Evaluate a PWA/mobile app and visual editor after evidence of repeated use.
 
-1. **Approve the interface and pilot.** Compare desktop with the reference and review mobile, keyboard use, explanations, and XP behavior. Resolve design deviations before expanding.
-2. **Define learners and a complete white belt.** Select independent beginners, UniHackers students, or both. Define learning outcomes, lessons, duration, assessment, and what a belt means. A belt must not imply an accredited certification.
-3. **Review the new infrastructure.** The data-driven course engine, prerequisite enforcement, local migration, dashboard and release checks are implemented. Define full-belt advancement rules when the curriculum is ready; broader accessibility and physical-device QA remain to be completed. Account-based learning and synchronization remain a separate future decision.
-4. **Test with a small learner group.** Observe comprehension, completion, and whether learners can apply the skill. Fix the difficulties observed.
-5. **Release to learners.** Review all content, finish accessibility and mobile QA, provide essential privacy information, and explicitly select the audience before changing access.
-
-## Acceptance criteria
-- Desktop section order, illustration regions, palette, and proportions match the reference.
-- Every navigation item, belt, card, and CTA has a meaningful destination or preview.
-- A beginner can complete the three pilot modules without coaching.
-- Wrong answers explain the principle; retries do not award duplicate XP.
-- Mobile has no horizontal overflow, and controls remain readable and reachable.
-- Prototype limitations are visible, and unfinished content is not presented as available.
-
-## Decisions still open
-Primary learner audience; exact white-belt curriculum; implementation details for planned accounts and synchronization; final belt assessment rules; price and explicit 1.0 launch decision.
-
-## Approved character direction — 3 October 2026
-
-- Main hero: preserve the original Ryu-style white-gi character.
-- Warm-up: a boxer with red gloves.
-- Quiz: a blue-outfit kung-fu fighter inspired by Chun-Li.
-- Idle motion stays very small. Larger gestures require mouse interaction or keyboard focus.
-
-All three characters and the matching clean background are included. The latest approved style is 8-bit pixel art. See `CHARACTERS.md` for assets, timing and frame layout.
-
-## Release 0.4 — implemented
-
-Shared collapsible phone navigation, comfortable touch controls, mobile hero/cards and backup viewport fallback. Complete sprite poses and palette are unchanged; animation scheduling follows the existing 100 ms frame cadence and touch/pen taps can trigger a brief reaction. Framework and Pages builds work without Sites-specific hosting metadata. Account/curriculum/hosting specifications are included as future work. See [RELEASE-0.4.md](RELEASE-0.4.md) for validation and limits.
+Keep scope and spending small until learner completion, return visits and interest in the premium offer have been measured. No new outreach or account/domain purchase is authorized by this document.
