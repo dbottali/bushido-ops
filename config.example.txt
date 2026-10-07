@@ -1,0 +1,13 @@
+# Copy these VALUES into Cloudflare Pages Settings > Variables and Secrets.
+# For local development only, copy this file to .env.local (excluded from Git and the release ZIP).
+# Never put private values in VITE_* variables or paste them into chat.
+DEPLOYMENT_STAGE=staging
+APP_URL=https://bushido-ops-staging.pages.dev
+SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_REPLACE_IN_DASHBOARD
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_REPLACE_IN_DASHBOARD
+OWNER_USER_IDS=YOUR_VERIFIED_SUPABASE_USER_UUID
+STRIPE_SECRET_KEY=sk_test_REPLACE_IN_DASHBOARD
+STRIPE_PRICE_ID=price_REPLACE_IN_DASHBOARD
+STRIPE_WEBHOOK_SECRET=whsec_REPLACE_IN_DASHBOARD
+SUPPORT_EMAIL=your-existing-support-address@example.com

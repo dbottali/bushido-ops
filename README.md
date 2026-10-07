@@ -1,91 +1,61 @@
-# Bushido Ops — v0.4
+# Bushido Ops — 0.5
 
-A pixel-art cybersecurity dojo for practical digital self-defense. This interactive, animated prototype includes a playable white-belt phishing exercise and dedicated My Dojo, About, Belts and Philosophy pages.
+An 8-bit cybersecurity dojo with a three-question guest preview, free account-based White training and server-controlled premium access. Product owner: Damiano. UI: English. Commercial launch: 1.0.
 
-![Bushido Ops My Dojo](docs/my-dojo-preview.jpg)
+**This package is staging infrastructure, ready to connect.** External services are not configured by the archive. Without them, the guest preview and public pages work; the account screen explains the missing connection. The existing White pilot is sample content and does not award a full belt. Higher belts remain planned. Stripe supports sandbox payments only.
 
-## What works
+## What's implemented
 
-- Responsive home page and shared navigation: Home, About, Belts, Philosophy, My Dojo and Enter the Dojo use the same header on every page.
-- Collapsible phone navigation, 44–48 px header controls, larger answer targets and readable mobile hero/cards. Escape closes the menu and returns focus.
-- Full-pose 8-bit sprites use a 100 ms timer, with brief touch/pen tap reactions alongside mouse/focus. Static footer poses do not run a continuous loop.
-- Explicit ivory page background and light color scheme, with a viewport-unit fallback for browsers without container query units.
-- Home uses the same ivory background at desktop, tablet and mobile widths; HTML, body and the React root have an explicit background before the stylesheet loads.
-- Belts: eight selectable curriculum previews, practical missions, live White Belt progress and a Continue action that opens the first incomplete pilot module.
-- About: the mission, who the dojo is for, an interactive training overview, belt availability and expandable FAQs. Every training preview links to its playable pilot module.
-- Philosophy: Order, Respect and Honor, with practical habits, expandable scenarios and a personal dojo code with browser-local saved choices.
-- 8-bit fighters: a Ryu-style main hero, a boxer for Warm-up, and a Chun-Li-inspired fighter for Quiz. Small idle movements and one complete-body punch on interaction, with no automatic punches.
-- Warm-up and Quiz start with the clean scene while their fighters load, preventing a brief flash of the original Ryu illustration on Home and About.
-- Warm-up, short lesson, and three-question quiz with explanations and retries.
-- Modular course engine: actual content, assessment rules, rewards and prerequisites are defined in JSON. Stable course/module/question IDs support future content without duplicating player code.
-- My Dojo: available-only XP and completion, course states, resume, last-attempt review, Philosophy habits and backup management.
-- Saved pilot progress: 20 XP for the warm-up, 30 for the lesson, and 50 for a perfect quiz. Each module counts once, including after reload or retry.
-- Resume the first incomplete module. Unfinished answers and submitted feedback survive reloads.
-- Export, validate and import a JSON backup, or reset progress with confirmation, from My Dojo → Manage Backups or Belts → Your Progress. Paste-JSON import offers an alternative to the file picker.
-- Version-3 progress migrates known v1/v2 profiles without losing pilot completion, answers or habits. Invalid or newer saved copies are protected.
-- Previous/next training links, data-driven quiz summaries and mistakes to review; tiny check-triggered feedback.
-- Keyboard-accessible controls and support for reduced-motion preferences.
+- Approved ivory/red/navy design, consistent five-item menu, phone navigation and full-pose 8-bit fighters: white-gi hero, boxer and blue quiz fighter. Subtle idle; larger moves only on interaction.
+- Three guest questions, explanations and provisional progress. A free account is required for the lesson/exam and cloud progress. Existing 0.4 browser progress remains a separate archive; local XP cannot become a cloud belt or subscription.
+- Email/password signup, confirmation, sign-in/out, recovery, account settings, own-data export and confirmed account deletion.
+- Supabase-backed progress and resume, answer drafts, conflict detection and retries. SQL grades assessments, awards XP once and records belts only after the required course and final exam.
+- White remains free. Yellow and above need White, an active unexpired subscription and course prerequisites. Cancellation retains progress. Unavailable courses cannot be sold as ready.
+- Cloudflare Pages Functions authenticate each request against Supabase. Database RLS isolates users; students cannot modify content, grading, XP, belts or subscription records.
+- Stripe sandbox Checkout, subscription portal, status refresh and signed webhooks. Replayed notifications and checkout return URLs cannot grant extra access. Live keys/events are rejected.
+- Owner-only JSON validation, reviewed publication, catalog backup and audit history. Used courses are protected from silent replacement. No student editor.
+- A separate synthetic staging catalog exercises White → Black and billing before the real curriculum is written. Test awards are labelled.
 
-Only the white-belt pilot is playable. Progress saves on this browser when local storage is available. Export/import transfers it between devices; there is no account or automatic cloud synchronization. If storage fails, training remains usable with a visible temporary-session notice. The remaining curriculum and belt advancement are future work.
+## Start here
 
-## Run locally
+**[Italian service signup and setup guide](docs/SETUP-0.5.md)** covers Cloudflare, Supabase, email templates, Resend SMTP, owner authorization, Stripe sandbox, deployment, backups and connected acceptance checks.
 
-Requirements: Node.js 22.13.0 or later and pnpm 11.25.0, as pinned in `package.json`.
+No domain purchase is needed for the first owner-only test on `pages.dev`. Email to external testers requires a verified sending domain and custom SMTP.
+
+## Local development
+
+Node.js ≥22.13.0 and pnpm 11.25.0:
 
 ```sh
-git clone https://github.com/dbottali/bushido-ops.git
-cd bushido-ops
 pnpm install --frozen-lockfile
-pnpm dev
+pnpm dev:cloud
 ```
 
-Open the local URL printed by the development server. A clean clone uses the portable development profile.
-
-## Check and build
+The unconfigured preview is usable immediately. For connected staging, copy `config.example.txt` to `.env.local`, fill it locally and set `APP_URL` to the local server origin. Keep private credentials out of Git, public assets and `VITE_*` variables.
 
 ```sh
-pnpm check:pages
+pnpm check:cloud
+pnpm preview:cloud
 ```
 
-This release check runs TypeScript, 22 meaningful engine/progress/route tests, the Pages production build and required asset checks. `pnpm test:progress` runs the tests alone.
+`check:cloud` verifies TypeScript, 22 existing progress/engine tests, 25 cloud API/PostgreSQL/guest tests, content validation, frontend assets and the Cloudflare Functions bundle. Wrangler uses local `.dev.vars` bindings for the bundled preview; it does not automatically read Vite's `.env.local`.
 
-The separate framework profile remains available through `pnpm build` (Worker assets in `dist/`) and `pnpm start` (local Wrangler preview).
+## Deploy staging
 
-## Deployment
+Cloudflare Pages Git integration: source at the repository root; branch `staging-0.5`; build `pnpm install --frozen-lockfile && pnpm build:cloud`; output `dist-cloud`. Pin `NODE_VERSION=22.16.0`, `PNPM_VERSION=11.25.0` and `SKIP_DEPENDENCY_INSTALL=true`. Follow the setup guide for runtime secrets and database initialization.
 
-This repository contains the full application source and a browser-only build for GitHub Pages. The earlier Sites review deployment is separate and is not updated by a GitHub upload.
+The root `index.html`, `assets/`, artwork and fonts are a prebuilt **GitHub Pages guest demo**, using `/bushido-ops/` URLs. They do not provide accounts or payments. `pnpm check:pages` rebuilds/checks this static profile. [Static demo instructions](docs/PAGES.md).
 
-The Worker build requires a compatible hosting runtime. GitHub Pages uses the dedicated browser-only build, which preserves the animated home and the playable pilot:
+No remote deployment or repository overwrite was performed while creating this release.
 
-```sh
-pnpm dev:pages
-pnpm build:pages
-```
+## Documentation
 
-The static build is generated in `dist-pages/`, with asset URLs configured for `https://dbottali.github.io/bushido-ops/`. Copy the contents of that directory into the repository root for branch-based GitHub Pages publishing. [Deployment instructions](docs/PAGES.md).
-
-## Stack and project notes
-
-React 19, TypeScript, Vinext/Vite, Tailwind CSS, Radix UI, and Cloudflare Workers. Artwork and local fonts are included under `public/`.
-
-- [Project brief and roadmap](docs/PROJECT.md)
-- [Account, curriculum and hosting specifications for 1.0](docs/PLAN-1.0.md)
-- [Version 0.4 changes and validation](docs/RELEASE-0.4.md)
-- [Validation and known limitations](docs/QA.md)
+- [0.5 changes and boundaries](docs/RELEASE-0.5.md)
+- [Cloud architecture and permissions](docs/CLOUD-ARCHITECTURE.md)
+- [Preparing and importing learning content](docs/CONTENT-0.5.md)
+- [Validation and remaining connected tests](docs/QA.md)
+- [Project direction](docs/PROJECT.md)
+- [Roadmap to 1.0](docs/PLAN-1.0.md)
 - [Characters and 8-bit animation](docs/CHARACTERS.md)
-- [Philosophy content and interactions](docs/PHILOSOPHY.md)
-- [About content and navigation](docs/ABOUT.md)
-- [Belts curriculum and saved progress](docs/BELTS.md)
-- [Progress model, backups and storage](docs/PROGRESS.md)
-- [Learning engine and adding courses](docs/LEARNING-ENGINE.md)
-- [Upload version 0.3](docs/RELEASE-0.3.md)
-- [Earlier infrastructure update](docs/INFRASTRUCTURE-UPDATE.md)
-- [Tablet background correction](docs/IPAD-BACKGROUND-FIX.md)
-- [Upload the latest loading fix](docs/LOADING-FIX.md)
-- [Upload the Belts update](docs/BELTS-UPDATE.md)
-- [Upload the About update](docs/ABOUT-UPDATE.md)
-- [Upload the Philosophy update](docs/PHILOSOPHY-UPDATE.md)
-- [Upload this animation update](docs/ANIMATION-UPDATE.md)
-- [Platform and runtime details](docs/PLATFORM.md)
 
-The ready-to-upload update preserves the existing project. Committing it to the current branch keeps earlier versions available through Git.
+Earlier release notes and browser-progress documentation are retained as historical references. They do not describe the new cloud permissions or signup funnel.
