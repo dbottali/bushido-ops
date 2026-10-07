@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useCloud } from "./cloud-provider";
 
-type Page = "home" | "dojo" | "about" | "philosophy" | "belts" | "my-dojo";
+type Page = "home" | "dojo" | "about" | "philosophy" | "belts" | "my-dojo" | "account" | "owner";
 
 export function DojoPageHeader({ brand, currentPage }: { brand: ReactNode; currentPage: Page }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -34,16 +35,17 @@ export function DojoPageHeader({ brand, currentPage }: { brand: ReactNode; curre
       <a href="#about" aria-current={currentPage === "about" ? "page" : undefined}>ABOUT</a>
       <a href="#belts" aria-current={currentPage === "belts" ? "page" : undefined}>BELTS</a>
       <a href="#philosophy" aria-current={currentPage === "philosophy" ? "page" : undefined}>PHILOSOPHY</a>
-      <a href="#my-dojo" aria-current={currentPage === "my-dojo" ? "page" : undefined}>MY DOJO</a>
+      <a href="#my-dojo" aria-current={["my-dojo","account","owner"].includes(currentPage) ? "page" : undefined}>MY DOJO</a>
     </nav>
     <a className="pixel-button" href="#dojo" onClick={() => setMenuOpen(false)} aria-current={currentPage === "dojo" ? "page" : undefined}>ENTER THE DOJO <span aria-hidden="true">➜</span></a>
   </header>;
 }
 
 export function DojoPageFooter() {
+  const cloud=useCloud();
   return <footer className="dojo-page-footer">
     <a href="#">BUSHIDO OPS / HOME</a>
-    <span>ORDER. RESPECT. HONOR. / v0.4</span>
-    <nav aria-label="Footer navigation"><a href="#about">ABOUT</a><a href="#belts">BELTS</a><a href="#philosophy">PHILOSOPHY</a><a href="#my-dojo">MY DOJO</a><a href="#dojo">ENTER THE DOJO ➜</a></nav>
+    <span>ORDER. RESPECT. HONOR. / v0.5</span>
+    <nav aria-label="Footer navigation"><a href="#about">ABOUT</a><a href="#belts">BELTS</a><a href="#philosophy">PHILOSOPHY</a><a href="#my-dojo">MY DOJO</a><a href="#account">{cloud.session?"ACCOUNT":"SIGN IN / JOIN"}</a>{cloud.owner&&<a href="#owner">OWNER</a>}{cloud.config?.supportEmail&&<a href={`mailto:${cloud.config.supportEmail}`}>SUPPORT</a>}<a href="#dojo">ENTER THE DOJO ➜</a></nav>
   </footer>;
 }

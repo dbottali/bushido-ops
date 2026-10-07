@@ -27,7 +27,7 @@ export function AboutPage({ brand, headingRef, module }: Props) {
             document.getElementById("about-how-title")?.focus({ preventScroll: true });
           }}>SEE HOW IT WORKS <span aria-hidden="true">↓</span></a></div>
         </div>
-        <div className="about-dojo pixel-frame"><div className="about-stage"><DojoArt x={716} y={74} w={956} h={292} /><DojoArt x={716} y={74} w={956} h={292} source="./art/dojo-background-clean.png" className="hero-clean-scene" /><AnimatedFighter className="hero-fighter" role="hero" /></div><div className="about-dojo-caption"><span className="eyebrow">YOUR FIRST STEP</span><strong>A BEGINNER’S MIND.<br />A USEFUL HABIT.</strong><span>No signup. Start where you are.</span></div></div>
+        <div className="about-dojo pixel-frame"><div className="about-stage"><DojoArt x={716} y={74} w={956} h={292} /><DojoArt x={716} y={74} w={956} h={292} source="./art/dojo-background-clean.png" className="hero-clean-scene" /><AnimatedFighter className="hero-fighter" role="hero" /></div><div className="about-dojo-caption"><span className="eyebrow">YOUR FIRST STEP</span><strong>A BEGINNER’S MIND.<br />A USEFUL HABIT.</strong><span>Try White. Free account to continue.</span></div></div>
       </section>
 
       <section className="about-mission" aria-labelledby="about-mission-title"><div><p className="eyebrow">WHY THIS DOJO EXISTS</p><h2 id="about-mission-title">NO GATEKEEPING.<br />ROOM TO GROW.</h2></div><p>You should be able to ask a basic question without feeling out of place. Bushido Ops brings the learning back to clear explanations, practical decisions and steady repetition. Curiosity is enough to take the first step.</p></section>
