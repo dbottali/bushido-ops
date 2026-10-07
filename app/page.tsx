@@ -7,14 +7,19 @@ import { AnimatedFighter } from "@/components/animated-fighter";
 import { PhilosophyPage } from "@/components/philosophy-page";
 import { AboutPage } from "@/components/about-page";
 import { BeltsPage } from "@/components/belts-page";
-import { MyDojoPage } from "@/components/my-dojo-page";
-import { CoursePlayer } from "@/components/course-player";
+import { CloudMyDojoPage } from "@/components/cloud-my-dojo-page";
+import { CloudCoursePlayer } from "@/components/cloud-course-player";
+import { CloudProvider, useCloud } from "@/components/cloud-provider";
+import { AccountPage, type AccountMode } from "@/components/account-page";
+import { OwnerPage } from "@/components/owner-page";
 import { DojoPageHeader } from "@/components/dojo-page-chrome";
 import { ProgressManager } from "@/components/progress-manager";
 import { useDojoProgress } from "@/components/use-dojo-progress";
 import { courseCatalog, pilotCourse, PILOT_ID } from "@/lib/course-catalog";
 import { completedModules, courseStarted, courseStatus, learningSummary, trainingHref } from "@/lib/course-engine";
-import { resolveTrainingRoute, type TrainingRoute } from "@/lib/dojo-routes";
+import type { TrainingRoute } from "@/lib/dojo-routes";
+import { resolveCloudRoute } from "@/lib/cloud-navigation";
+import { previewScore } from "@/lib/guest-preview";
 import { isPrincipleId, principles, type PrincipleId } from "@/lib/philosophy-content";
 import { belts, isBeltId, type BeltId, type ModuleId } from "@/lib/dojo-content";
 
@@ -28,19 +33,23 @@ function PixelButton({ children, href, light = false, className = "" }: {
 function Brand() {
   return <a href="#" className="brand" aria-label="Bushido Ops home"><DojoArt x={197} y={10} w={58} h={55} className="brand-mark" /><span><strong>BUSHIDO OPS</strong><small lang="ja">デジタル道場</small></span></a>;
 }
-type View = "home" | "dojo" | "my-dojo" | "philosophy" | "about" | "belts";
-export default function Home() {
+type View = "home" | "dojo" | "my-dojo" | "philosophy" | "about" | "belts" | "account" | "owner";
+export default function BushidoApp() { return <CloudProvider><Home /></CloudProvider>; }
+function Home() {
   const { store, snapshot } = useDojoProgress();
-  const { commitments } = snapshot.data;
+  const cloud=useCloud();
+  const commitments=cloud.session&&cloud.snapshot?cloud.snapshot.profile.habits.filter(isPrincipleId):snapshot.data.commitments;
   const [view, setView] = useState<View>("home");
   const currentView = useRef(view);
   const [principle, setPrinciple] = useState<PrincipleId>("order");
   const [aboutModule, setAboutModule] = useState<ModuleId>("warmup");
   const [trainingRoute, setTrainingRoute] = useState<TrainingRoute>({ courseId: PILOT_ID, moduleId: "warmup" });
   const [activeBelt, setActiveBelt] = useState<BeltId>("white");
+  const [accountMode,setAccountMode]=useState<AccountMode>("profile");
   const heading = useRef<HTMLHeadingElement>(null);
-  const summary = learningSummary(snapshot.data, courseCatalog);
-  const hasStarted = courseCatalog.courses.some(course => courseStarted(snapshot.data, course));
+  const published=cloud.courses.filter(course=>course.availability==="available");
+  const summary = cloud.session&&cloud.snapshot?{xp:cloud.snapshot.xp,maxXp:published.reduce((sum,course)=>sum+course.maxXp,0),availableCourses:published.length,completedCourses:published.filter(course=>cloud.snapshot!.modules.filter(item=>item.course_id===course.id&&item.completed).length===course.moduleCount).length}:{xp:cloud.guest.submitted&&previewScore(cloud.guest)===3?20:0,maxXp:20,availableCourses:1,completedCourses:cloud.guest.submitted?1:0};
+  const hasStarted = cloud.session?!!cloud.snapshot?.modules.length:Object.keys(cloud.guest.answers).length>0;
   const allComplete = summary.availableCourses > 0 && summary.completedCourses === summary.availableCourses;
   const dojoLabel = allComplete ? "REVISIT THE DOJO" : hasStarted ? "CONTINUE TRAINING" : "ENTER THE DOJO";
 
@@ -52,13 +61,16 @@ export default function Home() {
       const philosophy = hash === "#philosophy" || hash.startsWith("#philosophy/") || hash === "#philosophy-content";
       const about = hash === "#about" || hash.startsWith("#about/") || hash === "#about-content";
       const beltPage = hash === "#belts" || hash.startsWith("#belts/") || hash === "#belts-content";
-      const nextView: View = training ? "dojo" : myDojo ? "my-dojo" : philosophy ? "philosophy" : about ? "about" : beltPage ? "belts" : "home";
+      const account=hash==="#account"||hash.startsWith("#account/")||hash==="#account-content";
+      const owner=hash==="#owner"||hash==="#owner-content";
+      const nextView: View = training ? "dojo" : myDojo ? "my-dojo" : philosophy ? "philosophy" : about ? "about" : beltPage ? "belts" : account?"account":owner?"owner":"home";
       const enteringView = currentView.current !== nextView;
       const keepTabFocus = !enteringView && document.activeElement?.getAttribute("role") === "tab";
       currentView.current = nextView;
       setView(nextView);
       const module = hash.split("/")[1];
-      if (training && (hash !== "#training-content" || enteringView)) setTrainingRoute(resolveTrainingRoute(hash, store.getSnapshot().data));
+      if (training && (hash !== "#training-content" || enteringView)) setTrainingRoute(resolveCloudRoute(hash));
+      if(account)setAccountMode(["signup","login","forgot","reset"].includes(module)?module as AccountMode:"profile");
       if (philosophy && isPrincipleId(module)) setPrinciple(module);
       else if (hash === "#philosophy") setPrinciple("order");
       if (about && ["warmup", "lesson", "quiz"].includes(module)) setAboutModule(module as ModuleId);
@@ -67,7 +79,7 @@ export default function Home() {
       else if (beltPage && module !== "path" && module !== "progress" && hash !== "#belts-content") setActiveBelt("white");
       // Wait for React to mount a different view before moving focus or scrolling.
       requestAnimationFrame(() => {
-        if (["#training-content", "#philosophy-content", "#about-content", "#belts-content", "#my-dojo-content"].includes(hash)) {
+        if (["#training-content", "#philosophy-content", "#about-content", "#belts-content", "#my-dojo-content","#account-content","#owner-content"].includes(hash)) {
           const target = document.getElementById(hash.slice(1));
           target?.scrollIntoView({ block: "start", behavior: "instant" }); target?.focus({ preventScroll: true });
         } else if (myDojo && (module === "backups" || hash === "#progress")) {
@@ -88,7 +100,7 @@ export default function Home() {
         } else if (enteringView || (training && !keepTabFocus)) {
           window.scrollTo({ top: 0, behavior: "instant" }); heading.current?.focus({ preventScroll: true });
         }
-        if (!training && !myDojo && !philosophy && !about && !beltPage && hash && hash !== "#") document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center", behavior: enteringView ? "instant" : "smooth" });
+        if (!training && !myDojo && !philosophy && !about && !beltPage && !account && !owner && hash && hash !== "#") document.getElementById(hash.slice(1))?.scrollIntoView({ block: "center", behavior: enteringView ? "instant" : "smooth" });
       });
     };
     readHash(); window.addEventListener("hashchange", readHash);
@@ -104,7 +116,7 @@ export default function Home() {
   }, [store]);
 
   useEffect(() => {
-    const name = view === "my-dojo" ? "My Dojo" : view === "belts" ? "Belts" : view === "about" ? "About" : view === "philosophy" ? "Philosophy" : view === "dojo" ? courseCatalog.courses.find(course => course.id === trainingRoute.courseId)?.title ?? "Training" : "";
+    const name = view === "my-dojo" ? "My Dojo" : view === "belts" ? "Belts" : view === "about" ? "About" : view === "philosophy" ? "Philosophy" : view === "account"?"Account":view==="owner"?"Owner":view === "dojo" ? cloud.courses.find(course => course.id === trainingRoute.courseId)?.title ?? "Training" : "";
     document.title = name ? `${name} | Bushido Ops` : "Bushido Ops | Digital self-defense for everyone";
   }, [view, trainingRoute.courseId]);
 
@@ -125,7 +137,7 @@ export default function Home() {
   }, [store]);
 
   if (!snapshot.ready) return <main className="progress-loading" aria-busy="true"><Brand /><p role="status">OPENING YOUR DOJO…</p></main>;
-  const skipTarget = view === "home" ? "#main" : view === "my-dojo" ? "#my-dojo-content" : view === "belts" ? "#belts-content" : view === "about" ? "#about-content" : view === "philosophy" ? "#philosophy-content" : "#training-content";
+  const skipTarget = view === "home" ? "#main" : view === "my-dojo" ? "#my-dojo-content" : view === "belts" ? "#belts-content" : view === "about" ? "#about-content" : view === "philosophy" ? "#philosophy-content" :view==="account"?"#account-content":view==="owner"?"#owner-content":"#training-content";
   return <>
     <a className="skip-link" href={skipTarget}>Skip to content</a>
     {snapshot.notice && <div className="progress-notice" role="status"><p>{snapshot.notice}</p><a href="#my-dojo/backups">MANAGE YOUR PROGRESS <span aria-hidden="true">➜</span></a></div>}
@@ -149,7 +161,7 @@ export default function Home() {
         <section className="belt-section content-width" id="home-belt-path" aria-labelledby="belt-title"><h2 className="section-heading" id="belt-title"><span>THE BELT PATH</span></h2><div className="belt-path">{belts.map((belt, i) => <a key={belt.id} className="belt-step" href={`#belts/${belt.id}`} aria-label={`Explore the ${belt.name.toLowerCase()} belt`} style={{ "--idle-delay": `${i * -0.71}s`, "--idle-period": `${5.2 + (i % 3) * 0.9}s` } as React.CSSProperties}><div className="belt-art"><DojoArt x={belt.x} y={637} w={76} h={73} className="belt-character" /><DojoArt x={belt.x + 76} y={651} w={57} h={44} className="belt-symbol" /></div><strong>{belt.name.toUpperCase()}</strong></a>)}</div></section>
         <section className="principles content-width" aria-label="Bushido principles">{principles.map(p => <a key={p.id} href={`#philosophy/${p.id}`} aria-label={`Explore ${p.name.toLowerCase()}`}><DojoArt x={p.icon.x} y={738} w={p.icon.w} h={61} /><article><h3>{p.name}</h3><p>{p.homeCopy[0]}<br />{p.homeCopy[1]}</p></article></a>)}</section>
       </main>
-      <footer className="journey-footer"><div className="footer-left"><DojoArt x={0} y={810} w={343} h={131} /><DojoArt x={0} y={810} w={343} h={131} source="./art/dojo-background-clean.png" className="footer-clean-scene" /><AnimatedFighter className="footer-fighter" role="footer" /></div><DojoArt x={1415} y={810} w={257} h={131} className="footer-right" /><div className="footer-message"><h2><span className="sr-only">READY TO BEGIN YOUR JOURNEY?</span><DojoArt x={358} y={830} w={563} h={39} className="footer-lettering" /></h2><p>Step onto the path. Train with purpose. Earn your belt.</p><div className="footer-progress"><span>YOUR PRACTICE</span><Progress value={summary.maxXp ? summary.xp / summary.maxXp * 100 : 0} aria-label="Available training progress" /><span>{summary.xp} / {summary.maxXp} XP</span></div></div><div className="footer-action"><PixelButton href="#dojo">{dojoLabel} <span aria-hidden="true">➜</span></PixelButton><p>No signup. No gatekeeping. Just training.</p><a className="footer-progress-link" href="#my-dojo">MY DOJO <span aria-hidden="true">➜</span></a></div></footer>
-    </div> : view === "my-dojo" ? <MyDojoPage brand={<Brand />} headingRef={heading} store={store} snapshot={snapshot} /> : view === "belts" ? <BeltsPage brand={<Brand />} headingRef={heading} belt={activeBelt} data={snapshot.data} progressManagement={<ProgressManager store={store} snapshot={snapshot} />} /> : view === "about" ? <AboutPage brand={<Brand />} headingRef={heading} module={aboutModule} /> : view === "philosophy" ? <PhilosophyPage brand={<Brand />} headingRef={heading} principle={principle} commitments={commitments} onToggleCommitment={id => store.dispatch({ type: "toggle-habit", id })} /> : <CoursePlayer brand={<Brand />} headingRef={heading} route={trainingRoute} store={store} snapshot={snapshot} />}
+      <footer className="journey-footer"><div className="footer-left"><DojoArt x={0} y={810} w={343} h={131} /><DojoArt x={0} y={810} w={343} h={131} source="./art/dojo-background-clean.png" className="footer-clean-scene" /><AnimatedFighter className="footer-fighter" role="footer" /></div><DojoArt x={1415} y={810} w={257} h={131} className="footer-right" /><div className="footer-message"><h2><span className="sr-only">READY TO BEGIN YOUR JOURNEY?</span><DojoArt x={358} y={830} w={563} h={39} className="footer-lettering" /></h2><p>Step onto the path. Train with purpose. Earn your belt.</p><div className="footer-progress"><span>{cloud.session?"YOUR PRACTICE":"GUEST PREVIEW"}</span><Progress value={summary.maxXp ? summary.xp / summary.maxXp * 100 : 0} aria-label={cloud.session?"Account training progress":"Guest preview progress"} /><span>{summary.xp} / {summary.maxXp} XP</span></div></div><div className="footer-action"><PixelButton href="#dojo">{dojoLabel} <span aria-hidden="true">➜</span></PixelButton><p>Try White. Free account to finish. Premium from Yellow.</p><a className="footer-progress-link" href="#my-dojo">MY DOJO <span aria-hidden="true">➜</span></a></div></footer>
+    </div> : view === "my-dojo" ? <CloudMyDojoPage brand={<Brand />} headingRef={heading} store={store} snapshot={snapshot} /> : view === "belts" ? <BeltsPage brand={<Brand />} headingRef={heading} belt={activeBelt} data={snapshot.data} progressManagement={<a className="pixel-button pixel-button-light" href="#my-dojo">VIEW MY ACCOUNT PROGRESS ➜</a>} /> : view === "about" ? <AboutPage brand={<Brand />} headingRef={heading} module={aboutModule} /> : view === "philosophy" ? <PhilosophyPage brand={<Brand />} headingRef={heading} principle={principle} commitments={commitments} onToggleCommitment={id => { if(cloud.session&&cloud.snapshot) { if(cloud.busy)return; const habits=commitments.includes(id)?commitments.filter(item=>item!==id):[...commitments,id]; void cloud.updateProfile(cloud.snapshot.profile.display_name,habits).catch(()=>{}); } else store.dispatch({ type: "toggle-habit", id }); }} /> : view === "account" ? <AccountPage brand={<Brand />} headingRef={heading} mode={accountMode} /> : view === "owner" ? <OwnerPage brand={<Brand />} headingRef={heading} /> : <CloudCoursePlayer brand={<Brand />} headingRef={heading} route={trainingRoute} />}
   </>;
 }

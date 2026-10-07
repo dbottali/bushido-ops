@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "../vendor/shadcn-tailwind-4.13.0.css";
 
+/* Bushido Ops 0.5: account and cloud practice use the same ivory/red/navy design. */
+
 @font-face { font-family: "Dojo Pixel"; src: url("/fonts/press-start-2p.ttf") format("truetype"); font-display: swap; }
 @font-face { font-family: "Dojo Terminal"; src: url("/fonts/vt323.ttf") format("truetype"); font-display: swap; }
 
@@ -1042,4 +1044,96 @@ html:has(.dojo-page-shell) { scroll-behavior: auto; }
 }
 @media (hover: none) and (pointer: coarse) {
   .pixel-button:hover, .activity-card:hover, .belt-step:hover .dojo-art { transform: none; }
+}
+
+/* 0.5 account, guest funnel and owner import. The approved sprite assets are unchanged. */
+.account-main { --s: 1px; width: min(1180px, calc(100% - 48px)); margin: 34px auto 60px; }
+.account-main > h1 { font: clamp(19px, 2.6vw, 30px)/1.55 "Dojo Pixel", monospace; margin: 16px 0 30px; }
+.account-main .training-intro { margin-bottom: 28px; }
+.account-entry, .account-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.account-entry { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+.account-card, .guest-migration { padding: 28px; min-width: 0; }
+.account-card h2, .guest-migration h2, .account-benefits h2 { font: bold 32px/1.25 "Dojo Terminal", monospace; margin: 12px 0 16px; }
+.account-card p, .guest-migration p, .account-benefits p, .account-benefits li { font-size: 15px; line-height: 1.7; margin: 12px 0; }
+.account-card .eyebrow, .guest-migration .eyebrow, .account-benefits .eyebrow { font-size: 21px; }
+.account-card .pixel-button, .guest-migration .pixel-button { white-space: normal; text-align: center; min-height: 44px; }
+.account-tabs { display: flex; gap: 20px; border-bottom: 2px solid #cec5b6; margin: 24px 0; }
+.account-tabs a { font: bold 24px/1.2 "Dojo Terminal", monospace; padding: 12px 0; border-bottom: 3px solid transparent; }
+.account-tabs [aria-current] { color: #b80910; border-bottom-color: #b80910; }
+.account-form { display: grid; gap: 18px; margin: 20px 0; }
+.account-form label, .catalog-file, .catalog-json { display: grid; gap: 8px; font: bold 23px/1.2 "Dojo Terminal", monospace; }
+.account-form label > span { font: 13px/1.6 "Courier New", monospace; color: #605b51; }
+.account-form input, .catalog-json textarea { width: 100%; min-height: 48px; padding: 12px; border: 2px solid #8d877c; border-radius: 0; background: #fffdf9; color: #091222; font: 16px/1.4 "Courier New", monospace; }
+.account-form input:focus-visible, .catalog-json textarea:focus-visible, .catalog-file input:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.account-form small { font: 13px/1.6 "Courier New", monospace; }
+.account-form > .pixel-button { justify-self: start; }
+.account-benefits { padding: 30px 24px; border-top: 3px solid #b80910; }
+.account-benefits ul { padding-left: 22px; list-style-type: square; }
+.account-benefits .about-text-link { margin-top: 20px; display: inline-block; }
+.configuration-note { padding: 20px; background: #f7f2e8; border: 1px solid #c5bba9; margin-top: 20px; }
+.configuration-note strong { font: bold 25px/1.3 "Dojo Terminal", monospace; }
+.account-email, .account-card [role="alert"], .guest-migration [role="alert"] { overflow-wrap: anywhere; }
+.account-details { border-top: 1px solid #c5bba9; margin-top: 22px; padding-top: 18px; }
+.account-details summary { min-height: 44px; cursor: pointer; font: bold 24px/1.2 "Dojo Terminal", monospace; }
+.account-details summary:focus-visible { outline: 3px solid #086ad2; outline-offset: 3px; }
+.billing-price { font: bold 27px/1.4 "Dojo Terminal", monospace !important; color: #a40e14; }
+.guest-migration { margin-bottom: 28px; background: #fffaf0; }
+.account-gate { border-top: 2px solid #b80910; padding-top: 24px; margin: 28px 0; }
+.account-gate h2 { font-size: 30px; margin: 12px 0; }
+.account-gate p { font-size: 15px; line-height: 1.7; }
+.journey-access { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; margin: 22px 0; }
+.journey-access span { border: 1px solid #c5bba9; padding: 12px; font: bold 21px/1.2 "Dojo Terminal", monospace; text-align: center; }
+.journey-access .access-active { background: #b80910; color: #fffaf0; border-color: #b80910; }
+.cloud-module-nav { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0; }
+.cloud-module-nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 18px; border: 2px solid #b9afa0; font: bold 23px/1.2 "Dojo Terminal", monospace; }
+.cloud-module-nav [aria-current] { border-color: #a40e14; color: #a40e14; background: #fff5ed; }
+.cloud-save-state { margin: 18px 0 0; font: bold 20px/1.4 "Dojo Terminal", monospace; color: #5b564c; }
+.pilot-label { margin: 18px 0; padding: 12px 16px; border-left: 3px solid #b80910; background: #f5eee2; font-size: 13px; line-height: 1.7; }
+.my-dojo-planned h2 { font: bold 30px/1.2 "Dojo Terminal", monospace; margin-top: 12px; }
+.my-dojo-planned-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 22px; }
+.my-dojo-planned-list a { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #c5bba9; padding: 14px; min-width: 0; }
+.my-dojo-planned-list strong { font: bold 23px/1.2 "Dojo Terminal", monospace; }
+.my-dojo-planned-list a > span { font-size: 12px; line-height: 1.5; }
+.my-dojo-habits, .my-dojo-belts { padding: 28px; margin: 28px 0; }
+.my-dojo-habits h2, .my-dojo-belts h2 { font: bold 31px/1.25 "Dojo Terminal", monospace; margin: 12px 0 20px; }
+.my-dojo-habit-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+.my-dojo-habit-grid a { display: grid; gap: 14px; padding: 18px; border: 1px solid #c5bba9; }
+.my-dojo-habit-grid strong { font: bold 25px/1.2 "Dojo Terminal", monospace; }
+.my-dojo-habit-grid span { font-size: 12px; line-height: 1.6; }
+.belt-record { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+.belt-record-item { border: 1px solid #c5bba9; padding: 14px; display: grid; gap: 10px; font: bold 23px/1.2 "Dojo Terminal", monospace; }
+.belt-record-item.earned { border: 2px solid #198048; background: #f0f7ed; }
+.belt-record-item small { font: 12px/1.4 "Courier New", monospace; }
+.belt-dot { width: 38px; height: 12px; border: 2px solid #091222; box-shadow: 2px 2px 0 #091222; background: #fff; }
+.belt-yellow { background: #e5be22; }.belt-orange { background: #e3781d; }.belt-green { background: #218440; }.belt-blue { background: #2763b3; }.belt-purple { background: #7241a2; }.belt-brown { background: #704523; }.belt-black { background: #20232b; }
+.owner-card { margin-bottom: 28px; }
+.owner-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.catalog-file { margin: 22px 0; }
+.catalog-file input { font: 16px/1.6 "Courier New", monospace; min-height: 44px; padding: 8px; border: 1px solid #c5bba9; max-width: 100%; }
+.catalog-json { margin: 20px 0; }
+.catalog-json textarea { font-size: 14px; line-height: 1.6; min-height: 300px; resize: vertical; }
+.owner-audit { list-style: none; padding: 0; }
+.owner-audit li { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #c5bba9; padding: 16px 0; font-size: 14px; line-height: 1.7; }
+@media(max-width:900px) {
+  .account-entry,.account-grid { grid-template-columns: minmax(0,1fr); }
+  .account-benefits { padding: 24px 0; }
+  .my-dojo-habit-grid { grid-template-columns: minmax(0,1fr); }
+  .owner-toolbar { align-items: flex-start; flex-direction: column; }
+}
+@media(max-width:680px) {
+  .account-main { width: calc(100% - 32px); margin-top: 28px; }
+  .account-card,.guest-migration,.my-dojo-habits,.my-dojo-belts { padding: 24px 18px; }
+  .account-card h2,.guest-migration h2,.account-benefits h2 { font-size: 28px; }
+  .account-main .training-intro h1 { font-size: clamp(15px,4vw,22px); }
+  .account-tabs { gap: 20px; }
+  .account-form > .pixel-button,.account-card .practice-actions > *, .guest-migration .practice-actions > * { width: 100%; }
+  .journey-access { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .journey-access span { font-size: 20px; padding: 12px 8px; }
+  .account-gate .practice-actions > * { width: 100%; white-space: normal; text-align: center; }
+  .cloud-module-nav a { flex: 1; justify-content: center; font-size: 21px; padding-inline: 10px; }
+  .my-dojo-planned-list { grid-template-columns: minmax(0,1fr); }
+  .belt-record { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .owner-audit li { flex-direction: column; gap: 6px; }
+  .catalog-json textarea { font-size: 16px; }
+  .my-dojo-stats strong { overflow-wrap: anywhere; }
 }
